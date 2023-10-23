@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlDataGridViewEditor", "SqlDataGridViewEditor\SqlDataGridViewEditor.csproj", "{1AB8B79D-1D3B-4AEF-9771-B6185D04A640}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlDataGridViewEditor.PluginsInterface", "SqlDataGridViewEditor.PluginsInterface\SqlDataGridViewEditor.PluginsInterface.csproj", "{F8B089B4-F960-4D78-AD99-63E77B460807}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlDataGridViewEditor.TranscriptPlugin", "SqlDataGridView.TranscriptPlugin\SqlDataGridViewEditor.TranscriptPlugin.csproj", "{5318DEA1-3340-4424-B7FB-C69B80DED94B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1AB8B79D-1D3B-4AEF-9771-B6185D04A640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AB8B79D-1D3B-4AEF-9771-B6185D04A640}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AB8B79D-1D3B-4AEF-9771-B6185D04A640}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AB8B79D-1D3B-4AEF-9771-B6185D04A640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8B089B4-F960-4D78-AD99-63E77B460807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8B089B4-F960-4D78-AD99-63E77B460807}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8B089B4-F960-4D78-AD99-63E77B460807}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8B089B4-F960-4D78-AD99-63E77B460807}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5318DEA1-3340-4424-B7FB-C69B80DED94B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5318DEA1-3340-4424-B7FB-C69B80DED94B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5318DEA1-3340-4424-B7FB-C69B80DED94B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5318DEA1-3340-4424-B7FB-C69B80DED94B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {86578E13-21A1-411D-BF3A-D7E2011FB7C2}
+	EndGlobalSection
+EndGlobal

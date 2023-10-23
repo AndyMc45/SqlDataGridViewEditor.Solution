@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NBuilder" Version="6.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SqlDataGridViewEditor.PluginsInterface\SqlDataGridViewEditor.PluginsInterface.csproj" />
+    <ProjectReference Include="..\SqlDataGridViewEditor\SqlDataGridViewEditor.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xCopy &quot;$(ProjectDir)\bin\Debug\net7.0-windows\*.*&quot; &quot;$(SolutionDir)SqlDataGridViewEditor\PluginsToConsume&quot; /Y" />
+  </Target>
+
+</Project>
