@@ -60,6 +60,7 @@ namespace SqlDataGridViewEditor
                 }
             }
             // At this point the unity container has all the plugin data loaded onto it. 
+            // For each plugin, add its menustrip to plugInMenus
             if (container != null)
             {
                 loadedPlugins = container.ResolveAll<IPlugin>();
@@ -77,4 +78,7 @@ namespace SqlDataGridViewEditor
 
         }
     }
+
+    // Future Plugin - Address book
+    // Print mailing labels, phone book,address book, email list, get email list
 }

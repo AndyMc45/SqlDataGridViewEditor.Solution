@@ -52,8 +52,8 @@ namespace SqlDataGridViewEditor
             writingTable = false;
             doNotRebindGridFV = false;
             doNotWriteGrid = false;
-            fixingDatabase = false;   // Manually set this - 
-            strFixingDatabaseSql = string.Empty;
+            // fixingDatabase = false;   // Manually set this - 
+            // strStaticWhereClause = string.Empty;
             FkFieldInEditingControl = null;
             tableHasForeignKeys = false;
             firstTimeWritingTable = true;
@@ -61,8 +61,8 @@ namespace SqlDataGridViewEditor
             allowDisplayKeyEdit = false;
 
         }
-        internal bool fixingDatabase { get; set; }
-        internal string strFixingDatabaseSql { get; set; }
+        // internal bool fixingDatabase { get; set; }
+        // internal string strStaticWhereClause { get; set; }
         internal bool writingTable { get; set; }
         internal field? FkFieldInEditingControl { get; set; }
         internal bool tableHasForeignKeys { get; set; }

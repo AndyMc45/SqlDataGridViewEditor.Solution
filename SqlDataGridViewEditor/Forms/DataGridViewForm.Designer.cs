@@ -41,12 +41,6 @@
             mnuDeleteConnection = new ToolStripMenuItem();
             mnuClose = new ToolStripMenuItem();
             mnuOpenTables = new ToolStripMenuItem();
-            mnuAddressBook = new ToolStripMenuItem();
-            mnuAddressBookLabels = new ToolStripMenuItem();
-            mnuAddressBookPhoneNumbers = new ToolStripMenuItem();
-            mnuAddressBookAddresses = new ToolStripMenuItem();
-            mnuAddressBookEmails = new ToolStripMenuItem();
-            mnuAddressBookGetEmails = new ToolStripMenuItem();
             mnuTools = new ToolStripMenuItem();
             mnuDatabaseInfo = new ToolStripMenuItem();
             mnuDuplicateDisplayKeys = new ToolStripMenuItem();
@@ -58,11 +52,9 @@
             toolStripBottom = new ToolStrip();
             toolStripMsg = new ToolStripLabel();
             txtRecordsPerPage = new ToolStripTextBox();
-            toolStripButton5 = new ToolStripButton();
             toolStripButton4 = new ToolStripButton();
             toolStripButton3 = new ToolStripButton();
             toolStripButton2 = new ToolStripButton();
-            toolStripButton1 = new ToolStripButton();
             toolStripButtonColumnWidth = new ToolStripButton();
             splitContainer1 = new SplitContainer();
             tableLayoutPanel = new TableLayoutPanel();
@@ -143,7 +135,7 @@
             // 
             MainMenu1.BackColor = SystemColors.ControlLight;
             MainMenu1.ImageScalingSize = new Size(20, 20);
-            MainMenu1.Items.AddRange(new ToolStripItem[] { mnuFile, mnuOpenTables, mnuAddressBook, mnuTools, mnuHelp });
+            MainMenu1.Items.AddRange(new ToolStripItem[] { mnuFile, mnuOpenTables, mnuTools, mnuHelp });
             MainMenu1.Location = new Point(0, 0);
             MainMenu1.Name = "MainMenu1";
             MainMenu1.Padding = new Padding(6, 3, 0, 3);
@@ -206,43 +198,6 @@
             mnuOpenTables.DropDownItemClicked += mnuOpenTables_DropDownItemClicked;
             mnuOpenTables.Click += mnuOpenTables_Click;
             // 
-            // mnuAddressBook
-            // 
-            mnuAddressBook.DropDownItems.AddRange(new ToolStripItem[] { mnuAddressBookLabels, mnuAddressBookPhoneNumbers, mnuAddressBookAddresses, mnuAddressBookEmails, mnuAddressBookGetEmails });
-            mnuAddressBook.Name = "mnuAddressBook";
-            mnuAddressBook.Size = new Size(114, 24);
-            mnuAddressBook.Text = "Address Book";
-            // 
-            // mnuAddressBookLabels
-            // 
-            mnuAddressBookLabels.Name = "mnuAddressBookLabels";
-            mnuAddressBookLabels.Size = new Size(219, 26);
-            mnuAddressBookLabels.Text = "Print mailing labels";
-            // 
-            // mnuAddressBookPhoneNumbers
-            // 
-            mnuAddressBookPhoneNumbers.Name = "mnuAddressBookPhoneNumbers";
-            mnuAddressBookPhoneNumbers.Size = new Size(219, 26);
-            mnuAddressBookPhoneNumbers.Text = "Print phone book";
-            // 
-            // mnuAddressBookAddresses
-            // 
-            mnuAddressBookAddresses.Name = "mnuAddressBookAddresses";
-            mnuAddressBookAddresses.Size = new Size(219, 26);
-            mnuAddressBookAddresses.Text = "Print address book";
-            // 
-            // mnuAddressBookEmails
-            // 
-            mnuAddressBookEmails.Name = "mnuAddressBookEmails";
-            mnuAddressBookEmails.Size = new Size(219, 26);
-            mnuAddressBookEmails.Text = "Print email book";
-            // 
-            // mnuAddressBookGetEmails
-            // 
-            mnuAddressBookGetEmails.Name = "mnuAddressBookGetEmails";
-            mnuAddressBookGetEmails.Size = new Size(219, 26);
-            mnuAddressBookGetEmails.Text = "Get email list";
-            // 
             // mnuTools
             // 
             mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuPrintCurrentTable, mnuViewLog });
@@ -253,34 +208,34 @@
             // mnuDatabaseInfo
             // 
             mnuDatabaseInfo.Name = "mnuDatabaseInfo";
-            mnuDatabaseInfo.Size = new Size(303, 26);
+            mnuDatabaseInfo.Size = new Size(309, 26);
             mnuDatabaseInfo.Text = "Database Information";
             mnuDatabaseInfo.Click += mnuToolsDatabaseInformation_Click;
             // 
             // mnuDuplicateDisplayKeys
             // 
             mnuDuplicateDisplayKeys.Name = "mnuDuplicateDisplayKeys";
-            mnuDuplicateDisplayKeys.Size = new Size(303, 26);
-            mnuDuplicateDisplayKeys.Text = "Update : Duplicate Display Keys";
+            mnuDuplicateDisplayKeys.Size = new Size(309, 26);
+            mnuDuplicateDisplayKeys.Text = "Check for Duplicate Display Keys";
             mnuDuplicateDisplayKeys.Click += mnuToolDuplicateDisplayKeys_Click;
             // 
             // mnuForeignKeyMissing
             // 
             mnuForeignKeyMissing.Name = "mnuForeignKeyMissing";
-            mnuForeignKeyMissing.Size = new Size(303, 26);
-            mnuForeignKeyMissing.Text = "Update : Check for Foreign Key";
+            mnuForeignKeyMissing.Size = new Size(309, 26);
+            mnuForeignKeyMissing.Text = "Prepare a new Foreign Key";
             mnuForeignKeyMissing.Click += mnuForeignKeyMissing_Click;
             // 
             // mnuPrintCurrentTable
             // 
             mnuPrintCurrentTable.Name = "mnuPrintCurrentTable";
-            mnuPrintCurrentTable.Size = new Size(303, 26);
+            mnuPrintCurrentTable.Size = new Size(309, 26);
             mnuPrintCurrentTable.Text = "Print Selection";
             // 
             // mnuViewLog
             // 
             mnuViewLog.Name = "mnuViewLog";
-            mnuViewLog.Size = new Size(303, 26);
+            mnuViewLog.Size = new Size(309, 26);
             mnuViewLog.Text = "View Log";
             // 
             // mnuHelp
@@ -301,9 +256,10 @@
             toolStripBottom.AutoSize = false;
             toolStripBottom.Dock = DockStyle.Bottom;
             toolStripBottom.ImageScalingSize = new Size(20, 20);
-            toolStripBottom.Items.AddRange(new ToolStripItem[] { toolStripMsg, txtRecordsPerPage, toolStripButton5, toolStripButton4, toolStripButton3, toolStripButton2, toolStripButton1, toolStripButtonColumnWidth });
+            toolStripBottom.Items.AddRange(new ToolStripItem[] { toolStripMsg, txtRecordsPerPage, toolStripButton4, toolStripButton3, toolStripButton2, toolStripButtonColumnWidth });
             toolStripBottom.Location = new Point(0, 768);
             toolStripBottom.Name = "toolStripBottom";
+            toolStripBottom.ShowItemToolTips = false;
             toolStripBottom.Size = new Size(1538, 27);
             toolStripBottom.TabIndex = 75;
             toolStripBottom.Text = "toolStrip1";
@@ -325,19 +281,6 @@
             txtRecordsPerPage.TextBoxTextAlign = HorizontalAlignment.Center;
             txtRecordsPerPage.ToolTipText = "Records Per Page";
             txtRecordsPerPage.Leave += txtRecordsPerPage_Leave;
-            // 
-            // toolStripButton5
-            // 
-            toolStripButton5.Alignment = ToolStripItemAlignment.Right;
-            toolStripButton5.AutoToolTip = false;
-            toolStripButton5.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButton5.Image = Properties.Resources.iconmonstr_arrow_32_OneRight;
-            toolStripButton5.ImageTransparentColor = Color.Magenta;
-            toolStripButton5.Name = "toolStripButton5";
-            toolStripButton5.Size = new Size(29, 24);
-            toolStripButton5.Text = "toolStripButton5";
-            toolStripButton5.ToolTipText = "+3 pages";
-            toolStripButton5.Click += toolStripButton5_Click;
             // 
             // toolStripButton4
             // 
@@ -377,19 +320,6 @@
             toolStripButton2.Text = "toolStripButton2";
             toolStripButton2.ToolTipText = "Previous";
             toolStripButton2.Click += toolStripButton2_Click;
-            // 
-            // toolStripButton1
-            // 
-            toolStripButton1.Alignment = ToolStripItemAlignment.Right;
-            toolStripButton1.AutoToolTip = false;
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButton1.Image = Properties.Resources.iconmonstr_arrow_32_LEFT;
-            toolStripButton1.ImageTransparentColor = Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(29, 24);
-            toolStripButton1.Text = "toolStripButton1";
-            toolStripButton1.ToolTipText = "-3 pages";
-            toolStripButton1.Click += toolStripButton1_Click;
             // 
             // toolStripButtonColumnWidth
             // 
@@ -1259,6 +1189,8 @@
 
         #endregion
         public MenuStrip MainMenu1;
+        public DataGridView dataGridView1;
+
         public ToolStripMenuItem mnuFile;
         public ToolStripMenuItem mnuConnections;
         private ToolStripMenuItem mnuConnectionList;
@@ -1267,26 +1199,17 @@
         public ToolStripMenuItem mnuDeleteConnection;
         public ToolStripMenuItem mnuClose;
         public ToolStripMenuItem mnuOpenTables;
-        public ToolStripMenuItem mnuAddressBook;
-        public ToolStripMenuItem mnuAddressBookLabels;
-        public ToolStripMenuItem mnuAddressBookPhoneNumbers;
-        public ToolStripMenuItem mnuAddressBookAddresses;
-        public ToolStripMenuItem mnuAddressBookEmails;
-        public ToolStripMenuItem mnuAddressBookGetEmails;
         public ToolStripMenuItem mnuTools;
         public ToolStripMenuItem mnuPrintCurrentTable;
         public ToolStripMenuItem mnuHelp;
         public ToolStripMenuItem mnuHelpFile;
         private ToolStrip toolStripBottom;
-        private ToolStripButton toolStripButton1;
         private ToolStripButton toolStripButton2;
         private ToolStripButton toolStripButton3;
         private ToolStripButton toolStripButton4;
-        private ToolStripButton toolStripButton5;
         private SplitContainer splitContainer1;
         private TableLayoutPanel tableLayoutPanel;
         private Label lblMainFilter;
-        private DataGridView dataGridView1;
         private ToolStripLabel toolStripMsg;
         private ContextMenuStrip GridContextMenu;
         private ToolStripMenuItem GridContextMenu_FindInDescendent;

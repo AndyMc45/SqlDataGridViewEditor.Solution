@@ -12,7 +12,7 @@ namespace SqlDataGridViewEditor
         {
             txtPassword.PasswordChar = '#';
         }
-        
+
         private void cmdCancel_Click(Object eventSender, EventArgs eventArgs)
         {
             password = "";
@@ -29,6 +29,11 @@ namespace SqlDataGridViewEditor
         {
             if (e.KeyCode == Keys.Enter) { SendKeys.Send("{TAB}"); }
 
+        }
+
+        private void cmdCancel_Click_1(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

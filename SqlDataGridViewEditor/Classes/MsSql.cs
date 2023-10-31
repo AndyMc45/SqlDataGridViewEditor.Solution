@@ -24,14 +24,18 @@ namespace SqlDataGridViewEditor
         public static string databaseType = "MsSql";
         public static string trueString = "True";
         public static string falseString = "False";
+
         // Two connections
         public static SqlConnection cn { get; set; }
         public static SqlConnection noDatabaseConnection { get; set; }
+ 
         // Three sql dataAdapters
         public static SqlDataAdapter currentDA { get; set; }
+        
         // When using extraDT, be careful not to change it before executing any DA command on it.
         public static SqlDataAdapter comboDA { get; set; } 
-        // Used for all datatables that don't have own DataAdaptor - see "GetDataAdaptor" below
+
+        // Used for all datatables that don't have own DataAdaptor - see "GetDataAdaptor" below 
         public static SqlDataAdapter readOnlyDA { get; set; }  // No update of table and so no need to keep adaptar, etc.
 
         // Methods
@@ -54,7 +58,7 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        // Set update command - only one set field and the where is for PK=@PK - i.e. only one row
+        // Set update command - only one set field and the where is for PK=@PK - i.e. only one row        
         public static void SetUpdateCommand(List<field> fieldsToSet, DataTable dataTable)
         {
             if (fieldsToSet.Count > 0)  // Should always be true
@@ -203,13 +207,18 @@ namespace SqlDataGridViewEditor
             return sqlDbType;
         }
 
-        public static List<string> defaultConnectionString()
+        public static List<string> defaultConnectionStrings()
         {
             List<string> defaultStrings = new List<string>();
-            defaultStrings.Add("Data Source={0}; initial catalog = {1}; user id = {2}; password = {3}; MultipleActiveResultSets=true");
-            defaultStrings.Add("server={0};database={1};Trusted_Connection=True; MultipleActiveResultSets=true");
+            // Don't include any spaces before or afer "=" or ";".
+            defaultStrings.Add("Server={0};Database={1};User id={2};Password={3};MultipleActiveResultSets=true");
+            defaultStrings.Add("Data Source={0};initial catalog={1};Trusted_Connection=True;MultipleActiveResultSets=true");
             return defaultStrings;
-            // DESKTOP - 120JH08\SQLEXPRESS
+        }
+
+        public static string GetFetchString(int offset, int pageSize)
+        {
+            return " OFFSET " + offset.ToString() + " ROWS FETCH NEXT " + pageSize.ToString() + " ROWS ONLY";
         }
 
         public static void openConnection(string connectionString)
@@ -220,7 +229,7 @@ namespace SqlDataGridViewEditor
             }
             if (cn.State != ConnectionState.Open)
             {
-                cn.Open();
+                cn.Open();  // May cause an error.  Message will be in 
             }
         }
         
@@ -258,13 +267,8 @@ namespace SqlDataGridViewEditor
             }
         }
 
-
-
-        public static void CloseConnectionAndDataAdapters()
+        public static void CloseConnection()
         {
-            currentDA = null;
-            comboDA = null;
-            readOnlyDA = null;
             if (cn != null)
             {
                 if (cn.State == ConnectionState.Open)
@@ -274,6 +278,13 @@ namespace SqlDataGridViewEditor
             }
             cn = null;
         }
+        public static void CloseDataAdapters()
+        {
+            currentDA = null;
+            comboDA = null;
+            readOnlyDA = null;
+        }
+
 
         public static void CloseNoDatabaseConnection()
         {

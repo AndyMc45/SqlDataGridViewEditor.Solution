@@ -4,21 +4,37 @@
         <name>SqlDataGridViewEditor.TranscriptPlugin</name>
     </assembly>
     <members>
-        <member name="F:SqlDataGridViewEditor.TranscriptPlugin.frmOptions.components">
+        <member name="F:SqlDataGridViewEditor.TranscriptPlugin.frmTranscriptOptions.components">
             <summary>
             Required designer variable.
             </summary>
         </member>
-        <member name="M:SqlDataGridViewEditor.TranscriptPlugin.frmOptions.Dispose(System.Boolean)">
+        <member name="M:SqlDataGridViewEditor.TranscriptPlugin.frmTranscriptOptions.Dispose(System.Boolean)">
             <summary>
             Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:SqlDataGridViewEditor.TranscriptPlugin.frmOptions.InitializeComponent">
+        <member name="M:SqlDataGridViewEditor.TranscriptPlugin.frmTranscriptOptions.InitializeComponent">
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:SqlDataGridViewEditor.TranscriptPlugin.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
             </summary>
         </member>
     </members>

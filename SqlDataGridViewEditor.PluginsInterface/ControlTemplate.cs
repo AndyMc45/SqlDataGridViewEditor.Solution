@@ -26,14 +26,14 @@ namespace SqlDataGridViewEditor.PluginsInterface
 
             // Define and fill the menuStrip
             ToolStripMenuItem topLevelMenuStripItem = new ToolStripMenuItem(menuName.Item1);
-            topLevelMenuStripItem.Text = menuName.Item1;
+            // topLevelMenuStripItem.Text = menuName.Item1;
             topLevelMenuStripItem.Tag = menuName.Item2; 
 
             foreach ((String, String) tuple in menuItems)
             {
                 ToolStripMenuItem dropDownMenuStripItem = new ToolStripMenuItem(tuple.Item1);
-                dropDownMenuStripItem.Click += new EventHandler(MenuItemClickHandler);
                 dropDownMenuStripItem.Tag = tuple.Item2;
+                dropDownMenuStripItem.Click += new EventHandler(MenuItemClickHandler);
                 topLevelMenuStripItem.DropDownItems.Add(dropDownMenuStripItem);
             }
             menuStrip = topLevelMenuStripItem;

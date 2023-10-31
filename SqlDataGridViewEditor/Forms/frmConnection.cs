@@ -27,24 +27,29 @@ namespace SqlDataGridViewEditor
 
             //Load txtHelp
             msg = "For information on connection strings, see www.connectionstrings.com  ";
-            msg = msg + Environment.NewLine + "You must pass test before O.K. butten is enabled";
+            msg = msg + Environment.NewLine + "You must pass test before O.K. button is enabled";
             txtHelp.Text = msg;
 
             //Disable OK
             cmdOK.Enabled = false;
 
-            // Get past successful connections and put in combobox
+            // Load the dropdown combo list
+            // Start with defaults - assume these are formatted correctly - no unnecessary spaces
+            List<string> defaultComboItems = MsSql.defaultConnectionStrings();
+            // Add past successful connections
             csList = AppData.GetConnectionStringList();
             foreach (connectionString conString in csList)
             {
-                cmbStrings.Items.Add(conString.comboString);
+                string strCb = conString.comboString;
+                strCb = strCb.Replace(" ;", ";").Replace("; ", ";").Replace(" =", "=").Replace("= ", "=");
+                if (!defaultComboItems.Contains(strCb))
+                {
+                    defaultComboItems.Add(strCb);
+                }
             }
-            // Add defaults
-            List<string> defaultComboItems = MsSql.defaultConnectionString();
-            foreach (string str in defaultComboItems)
-            {
-                cmbStrings.Items.Add(str);
-            }
+            cmbStrings.Items.Clear();
+            cmbStrings.Items.AddRange(defaultComboItems.ToArray()) ;
+
             // Select the first - this will set the 3 txtboxes
             cmbStrings.SelectedIndex = 0;
         }
@@ -74,7 +79,7 @@ namespace SqlDataGridViewEditor
                 {
                     int nextSemi = conStr.IndexOf(";", one);
                     int lastSemi = conStr.Substring(0, one).LastIndexOf(";");
-                    conStr = conStr.Substring(0,lastSemi + 1) + conStr.Substring(nextSemi+1);
+                    conStr = conStr.Substring(0, lastSemi + 1) + conStr.Substring(nextSemi + 1);
                 }
 
                 conStr = String.Format(conStr, txtServer.Text, "none", txtUserId.Text);
@@ -88,7 +93,7 @@ namespace SqlDataGridViewEditor
                 }
                 List<string> databaseList = getSqlDatabaseList(conStr);
                 if (databaseList.Count > 0)
-                { 
+                {
                     //frmDeleteDatabase used to show databases
                     frmListItems databaseListForm = new frmListItems();
                     databaseListForm.myList = databaseList;
@@ -124,14 +129,12 @@ namespace SqlDataGridViewEditor
             return strList;
         }
 
-
-
         private void cmdCancel_Click(Object eventSender, EventArgs eventArgs)
         {
             this.Close();
         }
 
-        private void cmdTest_Click_1(object sender, EventArgs e)
+        private void cmdTest_Click(object sender, EventArgs e)
         {
             string cs = cmbStrings.Text;
             //Password
@@ -148,54 +151,51 @@ namespace SqlDataGridViewEditor
             //Try to open connection
             try
             {
-                MsSql.openConnection(cs);
-
-                if (Information.Err().Description != "")
-                {
-                    InformationBox.Show("The connection failed. " + Environment.NewLine
-                                    + "Your connection string : " + Environment.NewLine + showUser
-                                    + Environment.NewLine + "VB error message:"
-                                    + Environment.NewLine + Information.Err().Description, "Error",InformationBoxIcon.Error);
-                    cmdOK.Enabled = false;
-                    success = false;
-                }
-                else
-                {
-                    InformationBox.Show("Test passed.", "Success", InformationBoxIcon.Exclamation);
-                    cmdOK.Enabled = true;
-                    success = true;
-                }
+                MsSql.CloseConnection();
+                MsSql.openConnection(cs);  // No error handling in openConnection(cs)
+                InformationBox.Show("Test passed.", "Success", InformationBoxIcon.Success);
+                cmdOK.Enabled = true;
+                success = true;
             }
-            catch
+            catch (System.Exception excep)
             {
-                if (Information.Err().Description != "")
-                {
-                    InformationBox.Show("We are sorry to report that the connection failed. " + Environment.NewLine
-                                    + "Your connection string : " + Environment.NewLine + showUser
-                                    + Environment.NewLine + "Error message:"
-                                    + Environment.NewLine + Information.Err().Description, "Error", InformationBoxIcon.Error);
-                    cmdOK.Enabled = false;
-                    success = false;
-                }
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Error opening connection.");
+                sb.AppendLine(excep.Message);
+                InformationBox.Show(sb.ToString(), "Error", InformationBoxIcon.Error);
+                cmdOK.Enabled = false;
+                success = false;
+
+                //if (Information.Err().Description != "")
+                //{
+                //    InformationBox.Show("We are sorry to report that the connection failed. " + Environment.NewLine
+                //                    + "Your connection string : " + Environment.NewLine + showUser
+                //                    + Environment.NewLine + "Error message:"
+                //                    + Environment.NewLine + Information.Err().Description, "Error", InformationBoxIcon.Error);
+                //}
             }
         }
 
         private void cmdOK_Click(Object eventSender, EventArgs eventArgs)
         {
+            // Get the proposed combo string pattern
             string strCS = cmbStrings.Text;
+            // Make substitutions
             strCS = String.Format(strCS, this.txtServer.Text, this.txtDatabase.Text, this.txtUserId.Text, password);
-            bool readOnly = this.chkReadOnly.Checked;
+            // Create connection String object
             connectionString conString = new connectionString(cmbStrings.Text, this.txtServer.Text, this.txtUserId.Text,
-                        this.txtDatabase.Text, MsSql.databaseType, readOnly);
+                        this.txtDatabase.Text, MsSql.databaseType);
+            // Remove old occurences from stored list of strings - csList is filled of form load.
             foreach (connectionString cs in csList)
             {
-                if (AppData.areEqual(cs, conString))
+                if (AppData.sameConnectionString(cs, conString))
                 {
                     csList.Remove(cs);
-                    break;  // only remove one
+                    break;  // only remove once or you will get an error
                 }
             }
-            csList.Insert(0,conString);
+            // The main form uses the first item in csList
+            csList.Insert(0, conString);
             AppData.storeConnectionStringList(csList);
             this.Close();
         }

@@ -7,21 +7,21 @@ using System.Data;
 using System.Data.SqlClient;
 using SqlDataGridViewEditor;
 using InfoBox;
+using System.Diagnostics.Eventing.Reader;
 
-
-namespace SqlDataGridViewEditor.TranscriptPlugin.Plugins
+namespace SqlDataGridViewEditor.TranscriptPlugin
 {
     public class TransPlugin : IPlugin
     {
-        private ControlTemplate cntTemplate;
-        private String name = String.Empty;
-        private Form mainForm;   // This will be set to the main form by a delegate
         public String Name() { return this.name; }
-        public ControlTemplate CntTemplate() { return cntTemplate;}
-        public Form  MainForm  // read-write instance property
+        public ControlTemplate CntTemplate() { return cntTemplate; }
+        public Form MainForm  // read-write instance property
         {
             set => mainForm = value;
         }
+        private ControlTemplate cntTemplate;
+        private String name = String.Empty;
+        private Form mainForm;   // This will be set to the main form by a delegate
 
 
         public TransPlugin(String name)
@@ -29,36 +29,44 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Plugins
             this.name = "Transcripts"; 
             var tupleList = new List<(String, String)>
             {
-                ("Graduation Requirements", "graduationRequirements"),
                 ("Print Transcript", "printTranscript"),
-                ("Print Transcript - English", "printTranscriptEnglish"),
                 ("Print Course Role", "printCourseRole"),
-                ("Pring Course Rold - English", "printCourseRoleEnglish"),
                 ("Options", "options")
             };
 
-            frmOptions fOptions = new frmOptions();
+            frmTranscriptOptions fOptions = new frmTranscriptOptions();
             cntTemplate = new ControlTemplate(  ("Transcripts","transcriptMenu"), 
-                                                tupleList, 
-                                                fOptions,
-                                                Transcript_CallBack);
-        
+                                                tupleList, fOptions, Transcript_CallBack);
         }
         
+        // CallBack - If things are good, then open the form with 'job'
         void Transcript_CallBack(object? sender, EventArgs<string> e)
         {
             if (e.Value == "transcriptMenu")
             {
                 // Disable some menuItems
+                
             }
             else if (e.Value == "options")
             {
-                frmOptions fOptions = new frmOptions();
+                frmTranscriptOptions fOptions = new frmTranscriptOptions();
+                fOptions.myJob = frmTranscriptOptions.Job.options;
                 fOptions.Show();
             }
-            else if (e.Value == "graduationRequirements")
+            else if (e.Value == "printTranscript")
             {
-                mnuTranscriptCheckGradRequirements_Click();
+                int studentDegreeID = SetStudentDegreeID();  // Shows error message if any
+                if (studentDegreeID == 0)
+                { 
+                    // Messages shown already so do nothing more.
+                }
+                else
+                {
+                    frmTranscriptOptions fOptions = new frmTranscriptOptions();
+                    fOptions.myJob = frmTranscriptOptions.Job.printTranscript;
+                    fOptions.studentDegreeID = studentDegreeID;
+                    fOptions.Show();    // 
+                }
             }
             else
             {
@@ -66,37 +74,54 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Plugins
             }
         }
 
-        private void mnuTranscriptCheckGradRequirements_Click()
+        private int SetStudentDegreeID()
         {
-            SqlFactory sqlCur = ((DataGridViewForm)mainForm).currentSql;
-            // if (currentSql == null) { return; }
-            //if (currentSql.myTable == TaColNames.transcriptTable)
-            //{
-            //    if (dataGridView1.SelectedRows.Count == 1)
-            //    {
-            //        //Get studentDegreeID column
-            //        field fld = dataHelper.getForeignKeyFromRefTableName(currentSql.myTable, TaColNames.studentDegreeTable);
-            //        int colNum = getDGVcolumn(fld);
-            //        int studentDegreeID = (Int32)dataGridView1.SelectedRows[0].Cells[colNum].Value;
-            //        Transcript tScript = new Transcript(studentDegreeID);
-            //        DataRow dr = tScript.studentDegreesDataRow;
-            //        if (dr == null)
-            //        {
-            //            InformationBox.Show("Did not find student information.", "Missing student ?", InformationBoxIcon.Question);
-            //            return;
-            //        }
+            StringBuilder sbError = new StringBuilder();
+            int studentDegreeID = 0;
+            // MainForm variable in the plugin has been set to the mainForm of the program by a delegate.  See mainForm constructor. 
+            DataGridViewForm dgvForm = (DataGridViewForm)mainForm;
+            // Get the studentDegreeID and then call "PrepareToPrint"
+            SqlFactory sqlCur = dgvForm.currentSql;
+            // Return 0 if no table selected in main form
+            if (dgvForm.currentSql == null) { return 0; }
+            // Try to get Student ID
+            if (dgvForm.dataGridView1.SelectedRows.Count == 1)
+            {
+                if (dgvForm.currentSql.myTable == TableName.transcriptTable)
+                {
+                    //Get studentDegreeID column
+                    field fld = dataHelper.getForeignKeyFromRefTableName(dgvForm.currentSql.myTable, TableName.studentDegreesTable);
+                    int colNum = dgvForm.getDGVcolumn(fld);
+                    studentDegreeID = (Int32)dgvForm.dataGridView1.SelectedRows[0].Cells[colNum].Value;
+                }
+                else if (dgvForm.currentSql.myTable == TableName.studentDegreesTable)
+                {
+                    field fld = dataHelper.getTablePrimaryKeyField(TableName.studentDegreesTable);
+                    int colNum = dgvForm.getDGVcolumn(fld);
+                    studentDegreeID = (Int32)dgvForm.dataGridView1.SelectedRows[0].Cells[colNum].Value;
+                }
+                else if (dgvForm.currentSql.myTable == TableName.studentsTable)
+                {
+                    string err = String.Format("Select Student in {0} table (a descendant of the {1} table)", TableName.studentDegreesTable, TableName.studentsTable);
+                    sbError.AppendLine(err);
+                }
+                else
+                {
+                    string err = String.Format("Please select 1 row in the {0} table or {1} table", TableName.transcriptTable, TableName.studentDegreesTable);
+                    sbError.AppendLine(err);
+                }
+            }
+            else
+            {
+                sbError.AppendLine("Please select exactly one row in the table");
+            }
 
-            //        // Fill other two tScript dataTables - not necessarily the same records as in our table
-            //        tScript.fillTranscriptTable();
-            //        // msgText("Transcript rows: " + tScript.transcriptDT.Rows.Count.ToString());
-
-            //        //Fill Student Grad requirements table
-            //        tScript.fillGradRequirementsDT();
-
-            //    }
-
-            //}
+            if (sbError.Length > 0)
+            {
+                InformationBox.Show(sbError.ToString(), "Error message", InformationBoxIcon.Question);
+                return 0;
+            }
+            return studentDegreeID;
         }
-
     }
 }

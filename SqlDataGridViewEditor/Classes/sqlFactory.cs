@@ -10,17 +10,16 @@ namespace SqlDataGridViewEditor
     //internal partial class DataGridViewForm : Form
     public class SqlFactory
     {
-
         #region Variables
-        //The table and job for this sql - myJob will by "" or "combo"
-       public string errorMsg = String.Empty;
-       public string myTable = "";
-       public int myPage = 0;  // Asks for all records, 1 is first page
-       public int myPageSize;  // Set by constructor
-       public bool includeAllColumnsInAllTables { get; set; }
-       public int TotalPages { get; set; } // Set when you set record count
+        public string errorMsg = String.Empty;
+        public string strStaticWhereClause = String.Empty;  // If not empty, this will replace the where list in s
+        public string myTable = "";
+        public int myPage = 0;  // Asks for all records, 1 is first page
+        public int myPageSize;  // Set by constructor
+        public bool includeAllColumnsInAllTables { get; set; }
+        public int TotalPages { get; set; } // Set when you set record count
         private int recordCount = 0;
-       public int RecordCount
+        public int RecordCount
         {
             get { return recordCount; }
             set
@@ -35,19 +34,19 @@ namespace SqlDataGridViewEditor
 
         // Four lists to build, and SQL will be built from these
         // myInnerJoins and myFields remain the same for a given table & job		
-       public List<innerJoin> myInnerJoins = new List<innerJoin>();
-       public List<orderBy> myOrderBys = new List<orderBy>();
-       public List<field> myFields = new List<field>();  // Table and field
-       public List<where> myWheres = new List<where>();
-       public List<where> myComboWheres = new List<where>();  // Must be redone for every combo call
+        public List<innerJoin> myInnerJoins = new List<innerJoin>();
+        public List<orderBy> myOrderBys = new List<orderBy>();
+        public List<field> myFields = new List<field>();  // Table and field
+        public List<where> myWheres = new List<where>();
+        public List<where> myComboWheres = new List<where>();  // Must be redone for every combo call
         // PKs_OstensiveDictionary used to determine which rows to show user for any key.  (Keys is the PKs of all tables in this sql factory)  
-       public Dictionary<Tuple<string,string, string>, List<field>> PKs_OstensiveDictionary = new Dictionary<Tuple<string, string, string>, List<field>>();
+        public Dictionary<Tuple<string,string, string>, List<field>> PKs_OstensiveDictionary = new Dictionary<Tuple<string, string, string>, List<field>>();
         // Pks_InnerjoinMap - map pkRefTable of all FK's in myTable to all ijs below it (include grandkids).  Used to get table string. (Program never requires Table string for lower tables) 
-       public Dictionary<Tuple<string, string, string>, List<innerJoin>> PKs_InnerjoinMap = new Dictionary<Tuple<string, string, string>, List<innerJoin>>();
+        public Dictionary<Tuple<string, string, string>, List<innerJoin>> PKs_InnerjoinMap = new Dictionary<Tuple<string, string, string>, List<innerJoin>>();
 
         #endregion
 
-        //Constructors
+       //Constructors
        public SqlFactory(string table, int page, int pageSize, bool includeAllColumnsInAllTables)
         {
             this.includeAllColumnsInAllTables = includeAllColumnsInAllTables;   // If true, very slow in datagridview, if we make this true for transcripts - 89 columns; but database call fast
@@ -108,18 +107,17 @@ namespace SqlDataGridViewEditor
             //This exception only for combo's, and class must be immediately destroyed afterwards
             if (cmd == command.count)
             {
-                sqlString = "SELECT COUNT(1) FROM " + sqlTableString() + " " + SqlStatic.sqlWhereString(myWheres, strict);  // + " " + sqlOrderByStr();
+                sqlString = "SELECT COUNT(1) FROM " + sqlTableString() + " " + SqlStatic.sqlWhereString(myWheres, strStaticWhereClause, strict);
             }
-            else if (cmd == command.selectAll || (recordCount <= offset + myPageSize))
+            else if (cmd == command.selectAll)
             {
-                sqlString = "SELECT " + SqlStatic.sqlFieldString(myFields) + " FROM " + sqlTableString() + " " + SqlStatic.sqlWhereString(myWheres, strict) + " " + SqlStatic.sqlOrderByStr(myOrderBys) + " ";
+                sqlString = "SELECT " + SqlStatic.sqlFieldString(myFields) + " FROM " + sqlTableString() + " " + SqlStatic.sqlWhereString(myWheres, strStaticWhereClause, strict) + SqlStatic.sqlOrderByStr(myOrderBys) + " ";
             }
             else if (cmd == command.select)
-            { 
-                // Sql 2012 required for this "Fetch" clause paging
-                sqlString = "SELECT " + SqlStatic.sqlFieldString(myFields) + " FROM " + sqlTableString() + SqlStatic.sqlWhereString(myWheres, strict) + SqlStatic.sqlOrderByStr(myOrderBys) + " OFFSET " + offset.ToString() + " ROWS FETCH NEXT " + myPageSize.ToString() + " ROWS ONLY";
+            {
+                // Sql 2012 required for this "Fetch" clause paging - works even when (recordCount <= offset + myPageSize)
+                sqlString = "SELECT " + SqlStatic.sqlFieldString(myFields) + " FROM " + sqlTableString() + SqlStatic.sqlWhereString(myWheres, strStaticWhereClause, strict) + SqlStatic.sqlOrderByStr(myOrderBys) + MsSql.GetFetchString(offset,myPageSize);
             }
-
             return sqlString;
         }
 
@@ -129,6 +127,7 @@ namespace SqlDataGridViewEditor
             string sqlString = string.Empty;
 
             // For primary keys, displayMember is the ostensive display keys and value member is the Pk value.
+            // This displayMember is used in combos to identifies the row; and similarly in mainFilter dropdown items
             if (cmbValueType == comboValueType.PK_myTable || cmbValueType == comboValueType.PK_refTable)  // no distinction between these two
             { 
                 StringBuilder sqlFieldStringSB = new StringBuilder();
@@ -155,7 +154,7 @@ namespace SqlDataGridViewEditor
                 // Add primary key of table as ValueField (May not need to add this twice but O.K. with Alias) 
                 sqlFieldStringSB.Append(dataHelper.QualifiedAliasFieldName(cmbField));
                 sqlFieldStringSB.Append(" as ValueMember");
-                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + sqlTableString(cmbField, key) + " " + SqlStatic.sqlWhereString(myComboWheres, false) + " Order by DisplayMember";
+                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + sqlTableString(cmbField, key) + " " + SqlStatic.sqlWhereString(myComboWheres, strStaticWhereClause, false) + " Order by DisplayMember";
             }
             // For text fields return distinct values - used in combo boxes 
             else if (cmbValueType == comboValueType.textField_myTable || cmbValueType == comboValueType.textField_refTable)  // no distinction between these two
@@ -178,27 +177,15 @@ namespace SqlDataGridViewEditor
                 //    field PkField = dataHelper.getForeignKeyRefField(Keyfield);
                 //    tableString = sqlTableString(PkField, ijList);
                 //}
-                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + tableString + " " + SqlStatic.sqlWhereString(myComboWheres, false) + " Order by DisplayMember";
+                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + tableString + " " + SqlStatic.sqlWhereString(myComboWheres, strStaticWhereClause, false) + " Order by DisplayMember";
             }
             return sqlString;
         }
 
        public string returnOneFieldSql(field fld)
         {
-            string sqlString = "SELECT " + dataHelper.QualifiedAliasFieldName(fld) + " FROM " + sqlTableString() + " " + SqlStatic.sqlWhereString(myWheres, true) + " " + SqlStatic.sqlOrderByStr(myOrderBys) + " ";
+            string sqlString = "SELECT " + dataHelper.QualifiedAliasFieldName(fld) + " FROM " + sqlTableString() + " " + SqlStatic.sqlWhereString(myWheres, strStaticWhereClause, true) + SqlStatic.sqlOrderByStr(myOrderBys) + " ";
             return sqlString;
-        }
-
-
-       public string returnFixDatabaseSql(List<where> whereList) // Where string passed to this function
-        {
-            string strWhere = SqlStatic.sqlWhereString(whereList, true);
-            return returnFixDatabaseSql(strWhere);
-        }
-
-       public string returnFixDatabaseSql(string strWhere) // Where string passed to this function
-        {
-            return "SELECT " + SqlStatic.sqlFieldString(myFields) + " FROM " + sqlTableString() + " " + strWhere + " " + SqlStatic.sqlOrderByStr(myOrderBys) + " ";
         }
 
         private string sqlTableString()
@@ -571,8 +558,12 @@ namespace SqlDataGridViewEditor
         // Class in class to note the static methods - but not consistently applied to all static methods
        public static class SqlStatic
         {
-           public static string sqlWhereString(List<where> whereList, bool strict)
+            // strStaticWhereClause - use this where clause -- ignore the whereList
+            // strict -- A string must be an exact match (non-strict uses "Like")
+           public static string sqlWhereString(List<where> whereList, string strStaticWhereClause, bool strict)
             {
+                // Return the static string
+                if(strStaticWhereClause != string.Empty) { return strStaticWhereClause; }
                 // Make a list of the conditions
                 List<string> WhereStrList = new List<string>();
                 foreach (where ws in whereList)

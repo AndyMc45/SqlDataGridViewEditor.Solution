@@ -385,23 +385,23 @@ namespace SqlDataGridViewEditor
             return true;  // Not checking anything else - assuming it will be a string
         }
 
-        public static where GetWhereFromPrimaryKeyValue(string table, string PKvalue)
+        public static where GetMainFilterFromPrimaryKeyValue(string table, string PKvalue)
         {
             field pkField = getTablePrimaryKeyField(table);
             where newWhere = new where(pkField, PKvalue);
-            // Get display name 
+            // Next 10+ lines: Change display name to name used in main filter --> table : displayName
             SqlFactory sf = new SqlFactory(table, 0, 0);
             sf.myComboWheres.Add(newWhere);
+            // returnComboSql contains a "DisplayMember" column that is a comma seperated list of display fields.
             string strSql = sf.returnComboSql(pkField, comboValueType.PK_myTable);
             MsSqlWithDaDt dadt = new MsSqlWithDaDt(strSql);
-            string errorMsg = dadt.errorMsg;
             string displayMember = "Missing DK";  // Default - modified below
             if (dadt.dt.Rows.Count > 0)
             {
                 int colIndex = dadt.dt.Columns["DisplayMember"].Ordinal;
                 displayMember = dadt.dt.Rows[0][colIndex].ToString();
             }
-            displayMember = table + ": " + displayMember;
+            displayMember = table + ": " + displayMember;  // The entire point of the above 10+ lines
             newWhere.DisplayMember = displayMember;
             return newWhere;
         }
@@ -463,9 +463,11 @@ namespace SqlDataGridViewEditor
             setIntValueFieldsDT(tableName, columnName, "Width", width);
         }
 
-        public static int getStoredWidth(string tableName, string columnName)
+        public static int getStoredWidth(string tableName, string columnName, int defaultWidth)
         {
-            return getIntValueFieldsDT(tableName, columnName, "Width");
+            int x = getIntValueFieldsDT(tableName, columnName, "Width");
+            if (x == 0) {  x = defaultWidth; }  
+            return x;
         }
 
         public static field getFieldFromFieldsDT(string tableName, string columnName)

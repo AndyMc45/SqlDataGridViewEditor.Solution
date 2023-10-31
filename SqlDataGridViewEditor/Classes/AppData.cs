@@ -11,16 +11,14 @@ namespace SqlDataGridViewEditor
         public string user { get; set; }
         public string databaseName { get; set; } // MsSql, MySql 
         public string databaseType { get; set; } // MsSql, MySql 
-        public bool readOnly { get; set; }
 
-        public connectionString(string comboString, string server, string user, string databaseName, string databaseType, bool readOnly)
+        public connectionString(string comboString, string server, string user, string databaseName, string databaseType)
         {
             this.server = server;
             this.user = user;
             this.comboString = comboString;
             this.databaseName = databaseName;
             this.databaseType = databaseType;
-            this.readOnly = readOnly;
         }
     }
 
@@ -83,11 +81,14 @@ namespace SqlDataGridViewEditor
             }
             return csList;
         }
-
-        public static bool areEqual(connectionString value1, connectionString value2)
+        
+        public static bool sameConnectionString(connectionString value1, connectionString value2)
         {
             string v1 = JsonSerializer.Serialize<connectionString>(value1);
             string v2 = JsonSerializer.Serialize<connectionString>(value2);
+            // Connection strings are the same if they differ only by spaces before or after = or ;
+            v1 = v1.Replace(" ;", ";").Replace("; ", ";").Replace(" =", "=").Replace("= ", "=");
+            v2 = v2.Replace(" ;", ";").Replace("; ", ";").Replace(" =", "=").Replace("= ", "=");
             if (v1 == v2) { return true; }
             return false;
         }
