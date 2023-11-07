@@ -38,6 +38,7 @@ namespace SqlDataGridViewEditor
         public List<orderBy> myOrderBys = new List<orderBy>();
         public List<field> myFields = new List<field>();  // Table and field
         public List<where> myWheres = new List<where>();
+
         public List<where> myComboWheres = new List<where>();  // Must be redone for every combo call
         // PKs_OstensiveDictionary used to determine which rows to show user for any key.  (Keys is the PKs of all tables in this sql factory)  
         public Dictionary<Tuple<string,string, string>, List<field>> PKs_OstensiveDictionary = new Dictionary<Tuple<string, string, string>, List<field>>();
@@ -58,7 +59,7 @@ namespace SqlDataGridViewEditor
         }
        public SqlFactory(string table, int page, int pageSize)
         {
-            this.includeAllColumnsInAllTables = false;   // Normal case
+            this.includeAllColumnsInAllTables = false;   // Default to false
             myTable = table;
             myPage = page;
             myPageSize = pageSize;
@@ -69,7 +70,7 @@ namespace SqlDataGridViewEditor
 
        public void SqlFactoryFinishConstructor()
         {
-            errorMsg = addInnerJoins();
+            errorMsg = addInnerJoins();  // This does all the work
 
             // If there is no ostensive definition for PK or FK, add the primary key of myTable or refTable
             foreach (Tuple<string, string, string> key in PKs_OstensiveDictionary.Keys)
@@ -104,7 +105,6 @@ namespace SqlDataGridViewEditor
             // Logic: Set 
             int offset = (myPage - 1) * myPageSize;
             string sqlString = "";
-            //This exception only for combo's, and class must be immediately destroyed afterwards
             if (cmd == command.count)
             {
                 sqlString = "SELECT COUNT(1) FROM " + sqlTableString() + " " + SqlStatic.sqlWhereString(myWheres, strStaticWhereClause, strict);
@@ -244,7 +244,7 @@ namespace SqlDataGridViewEditor
             // 1. Get pkMyTable and key version of pkMyTable
             field pkMyTable = dataHelper.getTablePrimaryKeyField(myTable);
             Tuple<string, string, string> pkMyTableKey = Tuple.Create(pkMyTable.tableAlias, pkMyTable.table, pkMyTable.fieldName);
-            // 2, Set keyStack
+            // 2, Set keyStack - list of tables that this field descends from.  See field.keyStack definition for details.
             List<Tuple<string, string, string>> keyStack = new List<Tuple<string, string, string>>();
             keyStack.Add(pkMyTableKey);  // pkMyTableKey in stack - Used for non-FK fields 
             // 3, Put Primary key of main table in the first field of myFields, with keystack including itself
@@ -318,7 +318,7 @@ namespace SqlDataGridViewEditor
             if (msgStrings.Count > 0) { return String.Join(", ", msgStrings); } else { return string.Empty; } 
         }
 
-        private void addInnerJoins(Tuple<string, string, string> pkLowerTableofMyTableFk, field pkCurrentTable, List<Tuple<string, string, string>> keyStack, ref List<string> allTables, ref List<string> msgStrings)
+       private void addInnerJoins(Tuple<string, string, string> pkLowerTableofMyTableFk, field pkCurrentTable, List<Tuple<string, string, string>> keyStack, ref List<string> allTables, ref List<string> msgStrings)
         {
             // Loop through fields in adding to keystack, myInnerJoins, myFieldList, PK_OstensiveDefinitions, PK_InnerJoinMap plus allTables and msgStrings
             // pkLowerTableofMyTableFk is the PK of an FK in my table (i.e. the PK of the Reference table for some FK in myTable" - used for key in PK_InnerJoinMap 
@@ -455,24 +455,13 @@ namespace SqlDataGridViewEditor
             return false;
         }
 
-        // Find value with unknown Alias - use this form when there is only one such basefield in dr.
-       public string getStringValueFromDataRowBasefield(DataRow dr, field fieldToFind)
-        {
-            return getStringValueFromDataRowBasefield(dr, fieldToFind, defaultAncesterField(fieldToFind));
-        }
-
-        // Find value with unknown Alias - use this form when there are more than one such baseFields.
+       // Find value with unknown Alias - use this form when there are more than one such baseFields.
        public string getStringValueFromDataRowBasefield(DataRow dr, field fieldToFind, string ancesterTable)
         {
             // Get col and value
             int transFieldToFindColumnID = colIndexOfBaseField(fieldToFind, ancesterTable);
             string transFieldToFindValue = dr[transFieldToFindColumnID].ToString();
             return transFieldToFindValue;
-        }
-
-       public int getIntValueFromDataRowBasefield(DataRow dr, field fieldToFind)
-        {
-            return getIntValueFromDataRowBasefield(dr, fieldToFind, defaultAncesterField(fieldToFind));
         }
 
        public int getIntValueFromDataRowBasefield(DataRow dr, field fieldToFind, string ancesterTable)
@@ -483,13 +472,6 @@ namespace SqlDataGridViewEditor
         {
             return Boolean.Parse(getStringValueFromDataRowBasefield(dr, fieldToFind, ancesterTable));
         }
-
-
-       public Single getSingleValueFromDataRowBasefield(DataRow dr, field fieldToFind)
-        {
-            return getSingleValueFromDataRowBasefield(dr,fieldToFind,defaultAncesterField(fieldToFind));
-        }
-
        public Single getSingleValueFromDataRowBasefield(DataRow dr, field fieldToFind, string ancesterTable)
         {
             return Single.Parse(getStringValueFromDataRowBasefield(dr, fieldToFind, ancesterTable));
@@ -499,7 +481,7 @@ namespace SqlDataGridViewEditor
         // But the keyStack for a FK that is not a display key starts with the pk of the Reference table.
         private string defaultAncesterField(field fld)
         {
-            if (dataHelper.isForeignKeyField(fld))
+            if (dataHelper.isForeignKeyField(fld))  // ?? why not include !.isDisplayKey(fld)
             {
                 field pkRefField = dataHelper.getForeignKeyRefField(fld);
                 return pkRefField.table;
@@ -516,7 +498,7 @@ namespace SqlDataGridViewEditor
                 return colIndexOfBaseField(fld, defaultAncesterField(fld));    
         }
 
-        // Find index with unknown Alias - Use this method if thee may be more than one
+        // Find index with unknown Alias - Use this method if there may be more than one field with same name.
        public int colIndexOfBaseField(field fld, string ancesterTable)
         {
             // Get ancesterKey from this ancesterTable - this must be in the keyStack of the field.
@@ -655,14 +637,8 @@ namespace SqlDataGridViewEditor
                 // Return string constructed by list of order by clauses
                 return " ORDER BY " + String.Join(",", orderByStrList);
             }
-
         }
-
-
-
-
     }
-
 }
 
 

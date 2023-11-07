@@ -428,7 +428,6 @@ namespace SqlDataGridViewEditor
             // Add Primary key at end
             field pkField = dataHelper.getTablePrimaryKeyField(currentSql.myTable);
             filterFields.Add(pkField);
-
             // Then Bind combo to filterFields bindingList
             if (filterFields.Count > 0)
             {
@@ -468,9 +467,9 @@ namespace SqlDataGridViewEditor
 
 
             //6.  Enable or disable menu items
-            GridContextMenu_FindInAncestor.Enabled = tableOptions.tableHasForeignKeys;
+            GridContextMenu_FindInParent.Enabled = tableOptions.tableHasForeignKeys;
             DataRow[] drs2 = dataHelper.fieldsDT.Select(String.Format("RefTable = '{0}'", currentSql.myTable));
-            GridContextMenu_FindInDescendent.Enabled = (drs2.Count() > 0);
+            GridContextMenu_FindInChild.Enabled = (drs2.Count() > 0);
             mnuForeignKeyMissing.Enabled = true;
 
             if (formOptions.runTimer)
@@ -975,38 +974,47 @@ namespace SqlDataGridViewEditor
 
         private void SetAllFiltersByMode()
         {
-            switch (programMode)
+            if (currentSql != null && currentSql.strStaticWhereClause != String.Empty)
             {
-                case ProgramMode.none:
-                    EnableMainFilter(false);
-                    EnableGridFiltersAndSetStyle(false);
-                    EnableComboFilters(false);
-                    break;
-                case ProgramMode.view:
-                    EnableMainFilter(true);
-                    EnableGridFiltersAndSetStyle(true);
-                    EnableComboFilters(true);
-                    break;
-                case ProgramMode.edit:
-                    EnableMainFilter(true);
-                    EnableGridFiltersAndSetStyle(true);
-                    EnableComboFilters(true);
-                    break;
-                case ProgramMode.delete:
-                    EnableMainFilter(true);
-                    EnableGridFiltersAndSetStyle(true);
-                    EnableComboFilters(true);
-                    break;
-                case ProgramMode.add:
-                    EnableMainFilter(true);
-                    EnableGridFiltersAndSetStyle(true);
-                    EnableComboFilters(true);
-                    break;
-                case ProgramMode.merge:
-                    EnableMainFilter(true);
-                    EnableGridFiltersAndSetStyle(true);
-                    EnableComboFilters(true);
-                    break;
+                EnableMainFilter(false);
+                EnableGridFiltersAndSetStyle(false);
+                EnableComboFilters(false);
+            }
+            else
+            {
+                switch (programMode)
+                {
+                    case ProgramMode.none:
+                        EnableMainFilter(false);
+                        EnableGridFiltersAndSetStyle(false);
+                        EnableComboFilters(false);
+                        break;
+                    case ProgramMode.view:
+                        EnableMainFilter(true);
+                        EnableGridFiltersAndSetStyle(true);
+                        EnableComboFilters(true);
+                        break;
+                    case ProgramMode.edit:
+                        EnableMainFilter(true);
+                        EnableGridFiltersAndSetStyle(true);
+                        EnableComboFilters(true);
+                        break;
+                    case ProgramMode.delete:
+                        EnableMainFilter(true);
+                        EnableGridFiltersAndSetStyle(true);
+                        EnableComboFilters(true);
+                        break;
+                    case ProgramMode.add:
+                        EnableMainFilter(true);
+                        EnableGridFiltersAndSetStyle(true);
+                        EnableComboFilters(true);
+                        break;
+                    case ProgramMode.merge:
+                        EnableMainFilter(true);
+                        EnableGridFiltersAndSetStyle(true);
+                        EnableComboFilters(true);
+                        break;
+                }
             }
             // All modes
             SetColumnsReadOnlyProperty();
@@ -1311,7 +1319,7 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        private void GridContextMenu_FindInDescendent_Click(object sender, EventArgs e)
+        private void GridContextMenu_FindInChild_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 1)
             {
@@ -1326,13 +1334,13 @@ namespace SqlDataGridViewEditor
                     }
 
                     // Get user choice if more than one
-                    frmListItems DescendentTablesForm = new frmListItems();
-                    DescendentTablesForm.myList = tableList;
-                    DescendentTablesForm.myJob = frmListItems.job.SelectString;
-                    DescendentTablesForm.Text = "Select Table";
-                    DescendentTablesForm.ShowDialog();
-                    string selectedTable = DescendentTablesForm.returnString;
-                    DescendentTablesForm = null;
+                    frmListItems ChildTablesForm = new frmListItems();
+                    ChildTablesForm.myList = tableList;
+                    ChildTablesForm.myJob = frmListItems.job.SelectString;
+                    ChildTablesForm.Text = "Select Table";
+                    ChildTablesForm.ShowDialog();
+                    string selectedTable = ChildTablesForm.returnString;
+                    ChildTablesForm = null;
                     if (!String.IsNullOrEmpty(selectedTable))
                     {
                         // 1. Define mainFilter (Type: where).
@@ -1360,7 +1368,7 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        private void GridContextMenu_FindInAncestor_Click(object sender, EventArgs e)
+        private void GridContextMenu_FindInParent_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 1)
             {
@@ -1384,17 +1392,17 @@ namespace SqlDataGridViewEditor
                     }
 
                     // Get user choice
-                    frmListItems AncestorTablesForm = new frmListItems();
-                    AncestorTablesForm.myList = tableList;
-                    AncestorTablesForm.myJob = frmListItems.job.SelectString;
-                    AncestorTablesForm.Text = "Select Table";
-                    AncestorTablesForm.ShowDialog();
-                    string selectedTable = AncestorTablesForm.returnString;
-                    int selectedTableIndex = AncestorTablesForm.returnIndex;
-                    AncestorTablesForm = null;
+                    frmListItems ParentTablesForm = new frmListItems();
+                    ParentTablesForm.myList = tableList;
+                    ParentTablesForm.myJob = frmListItems.job.SelectString;
+                    ParentTablesForm.Text = "Select Table";
+                    ParentTablesForm.ShowDialog();
+                    string selectedTable = ParentTablesForm.returnString;
+                    int selectedTableIndex = ParentTablesForm.returnIndex;
+                    ParentTablesForm = null;
                     if (selectedTableIndex > -1 && !String.IsNullOrEmpty(selectedTable))
                     {
-                        // 1.  Get Where for ancestor table 
+                        // 1.  Get Where for Parent table 
                         field fieldInCurrentTable = foreignKeys[selectedTableIndex];
                         int dgColumnIndex = currentSql.colIndexOfBaseField(fieldInCurrentTable);
                         if (dgColumnIndex > -1)  // A needless check
@@ -1416,7 +1424,7 @@ namespace SqlDataGridViewEditor
                         }
                         else
                         {
-                            InformationBox.Show("Unusual error in Find in Ancester table", "Error", InformationBoxIcon.Error);
+                            InformationBox.Show("Unusual error in Find in Parent table", "Error", InformationBoxIcon.Error);
                         }
                     }
                 }
@@ -1443,8 +1451,8 @@ namespace SqlDataGridViewEditor
                     int firstPKCount = 0;
                     foreach (DataRow drInner in drs)    // Only 1 dr with "Courses" main table, and that is the CourseTerm table.
                     {
-                        string FKColumnName = dataHelper.getStringValueFromFieldsDT(drInner, "ColumnName");
-                        string TableWithFK = dataHelper.getStringValueFromFieldsDT(drInner, "TableName");
+                        string FKColumnName = dataHelper.getStringValueFromColumnInDR(drInner, "ColumnName");
+                        string TableWithFK = dataHelper.getStringValueFromColumnInDR(drInner, "TableName");
                         string strSql = String.Format("SELECT COUNT(1) FROM {0} where {1} = '{2}'", TableWithFK, FKColumnName, drPKValue);
                         firstPKCount = firstPKCount + MsSql.GetRecordCount(strSql);
                     }
@@ -1489,8 +1497,8 @@ namespace SqlDataGridViewEditor
                 int firstPKCount = 0;
                 foreach (DataRow drInner in drs)    // Only 1 dr with "Courses" main table, and that is the CourseTerm table.
                 {
-                    string FKColumnName = dataHelper.getStringValueFromFieldsDT(drInner, "ColumnName");
-                    string TableWithFK = dataHelper.getStringValueFromFieldsDT(drInner, "TableName");
+                    string FKColumnName = dataHelper.getStringValueFromColumnInDR(drInner, "ColumnName");
+                    string TableWithFK = dataHelper.getStringValueFromColumnInDR(drInner, "TableName");
                     string strSql = String.Format("SELECT COUNT(1) FROM {0} where {1} = '{2}'", TableWithFK, FKColumnName, intValue);
                     firstPKCount = firstPKCount + MsSql.GetRecordCount(strSql);
                 }
@@ -1809,7 +1817,7 @@ namespace SqlDataGridViewEditor
         private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             System.Windows.Forms.SortOrder newSortOrder = System.Windows.Forms.SortOrder.Ascending;   // default
-                                                                                                      // Check for same column ascending and change to descending  
+            // Check for same column ascending and change to descending  
             if (currentSql.myOrderBys.Count > 0)
             {
                 if (currentSql.myOrderBys[0].fld == currentSql.myFields[e.ColumnIndex])  // New column is the same as the old.
@@ -1880,7 +1888,7 @@ namespace SqlDataGridViewEditor
         {
             int i = cmbMainFilter.SelectedIndex;
             // Load_Form adds dummy item and binds (so Count = 1)
-            // Find in Descendent / Ancester add filter, sets mainfilter to 0 and then calls Write_NewTable
+            // Find in Child / Parent add filter, sets mainfilter to 0 and then calls Write_NewTable
             // So in either case, don't call WriteGrid here.
             if (cmbMainFilter.Items.Count > 1 && !formOptions.loadingMainFilter)
             {
@@ -2374,8 +2382,8 @@ namespace SqlDataGridViewEditor
             int secondPKCount = 0;
             foreach (DataRow dr in drs)    // Only 1 dr with "Courses" main table, and that is the CourseTerm table.
             {
-                string FKColumnName = dataHelper.getStringValueFromFieldsDT(dr, "ColumnName");
-                string TableWithFK = dataHelper.getStringValueFromFieldsDT(dr, "TableName");
+                string FKColumnName = dataHelper.getStringValueFromColumnInDR(dr, "ColumnName");
+                string TableWithFK = dataHelper.getStringValueFromColumnInDR(dr, "TableName");
 
                 string strSql = String.Format("SELECT COUNT(1) FROM {0} where {1} = '{2}'", TableWithFK, FKColumnName, pk1);
                 firstPKCount = firstPKCount + MsSql.GetRecordCount(strSql);
@@ -2412,8 +2420,8 @@ namespace SqlDataGridViewEditor
                 {
                     foreach (DataRow dr in drs)
                     {
-                        string FKColumnName = dataHelper.getStringValueFromFieldsDT(dr, "ColumnName");
-                        string TableWithFK = dataHelper.getStringValueFromFieldsDT(dr, "TableName");
+                        string FKColumnName = dataHelper.getStringValueFromColumnInDR(dr, "ColumnName");
+                        string TableWithFK = dataHelper.getStringValueFromColumnInDR(dr, "TableName");
                         field fld = new field(TableWithFK, FKColumnName, DbType.Int32, 4);
                         // 1. Put the rows to be updated into extraDT  (i.e. select rows where FK value in firstPK)
                         string sqlString = String.Format("Select * from {0} where {1} = '{2}'", TableWithFK, FKColumnName, pk1);

@@ -75,8 +75,8 @@
             rbMerge = new RadioButton();
             btnDeleteAddMerge = new Button();
             GridContextMenu = new ContextMenuStrip(components);
-            GridContextMenu_FindInDescendent = new ToolStripMenuItem();
-            GridContextMenu_FindInAncestor = new ToolStripMenuItem();
+            GridContextMenu_FindInChild = new ToolStripMenuItem();
+            GridContextMenu_FindInParent = new ToolStripMenuItem();
             GridContextMenu_TimesUsedAsFK = new ToolStripMenuItem();
             deleteUnusedForeignKeysToolStripMenuItem = new ToolStripMenuItem();
             correctDuplicateDKsToolStripMenuItem = new ToolStripMenuItem();
@@ -691,24 +691,24 @@
             // GridContextMenu
             // 
             GridContextMenu.ImageScalingSize = new Size(20, 20);
-            GridContextMenu.Items.AddRange(new ToolStripItem[] { GridContextMenu_FindInDescendent, GridContextMenu_FindInAncestor, GridContextMenu_TimesUsedAsFK, deleteUnusedForeignKeysToolStripMenuItem, correctDuplicateDKsToolStripMenuItem });
+            GridContextMenu.Items.AddRange(new ToolStripItem[] { GridContextMenu_FindInChild, GridContextMenu_FindInParent, GridContextMenu_TimesUsedAsFK, deleteUnusedForeignKeysToolStripMenuItem, correctDuplicateDKsToolStripMenuItem });
             GridContextMenu.Name = "contextMenuStrip1";
             GridContextMenu.Size = new Size(248, 124);
             // 
-            // GridContextMenu_FindInDescendent
+            // GridContextMenu_FindInChild
             // 
-            GridContextMenu_FindInDescendent.Name = "GridContextMenu_FindInDescendent";
-            GridContextMenu_FindInDescendent.Size = new Size(247, 24);
-            GridContextMenu_FindInDescendent.Text = "Find in Descendent table";
-            GridContextMenu_FindInDescendent.Click += GridContextMenu_FindInDescendent_Click;
+            GridContextMenu_FindInChild.Name = "GridContextMenu_FindInChild";
+            GridContextMenu_FindInChild.Size = new Size(247, 24);
+            GridContextMenu_FindInChild.Text = "Find in Child table";
+            GridContextMenu_FindInChild.Click += GridContextMenu_FindInChild_Click;
             // 
-            // GridContextMenu_FindInAncestor
+            // GridContextMenu_FindInParent
             // 
-            GridContextMenu_FindInAncestor.DoubleClickEnabled = true;
-            GridContextMenu_FindInAncestor.Name = "GridContextMenu_FindInAncestor";
-            GridContextMenu_FindInAncestor.Size = new Size(247, 24);
-            GridContextMenu_FindInAncestor.Text = "Find in Ancestor table";
-            GridContextMenu_FindInAncestor.Click += GridContextMenu_FindInAncestor_Click;
+            GridContextMenu_FindInParent.DoubleClickEnabled = true;
+            GridContextMenu_FindInParent.Name = "GridContextMenu_FindInParent";
+            GridContextMenu_FindInParent.Size = new Size(247, 24);
+            GridContextMenu_FindInParent.Text = "Find in Parent table";
+            GridContextMenu_FindInParent.Click += GridContextMenu_FindInParent_Click;
             // 
             // GridContextMenu_TimesUsedAsFK
             // 
@@ -1212,7 +1212,7 @@
         private Label lblMainFilter;
         private ToolStripLabel toolStripMsg;
         private ContextMenuStrip GridContextMenu;
-        private ToolStripMenuItem GridContextMenu_FindInDescendent;
+        private ToolStripMenuItem GridContextMenu_FindInChild;
         private ComboBox cmbMainFilter;
         private RadioButton rbAdd;
         private RadioButton rbEdit;
@@ -1251,7 +1251,7 @@
         private ComboBox cmbComboFilterValue_3;
         private ComboBox cmbComboFilterValue_4;
         private ComboBox cmbComboFilterValue_5;
-        private ToolStripMenuItem GridContextMenu_FindInAncestor;
+        private ToolStripMenuItem GridContextMenu_FindInParent;
         private ToolStripMenuItem mnuDuplicateDisplayKeys;
         private ToolStripMenuItem mnuForeignKeyMissing;
         private ToolStripMenuItem mnuViewLog;

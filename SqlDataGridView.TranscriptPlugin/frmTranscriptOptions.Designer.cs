@@ -184,13 +184,13 @@
             // 
             // dgvTranscript
             // 
+            dgvTranscript.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvTranscript.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvTranscript.Dock = DockStyle.Fill;
             dgvTranscript.Location = new Point(0, 0);
             dgvTranscript.Name = "dgvTranscript";
             dgvTranscript.RowHeadersWidth = 51;
             dgvTranscript.RowTemplate.Height = 29;
-            dgvTranscript.Size = new Size(1174, 720);
+            dgvTranscript.Size = new Size(1174, 694);
             dgvTranscript.TabIndex = 0;
             // 
             // tabRequirements

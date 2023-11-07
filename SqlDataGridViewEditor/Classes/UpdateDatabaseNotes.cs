@@ -228,6 +228,8 @@ Other things to do
         GO
 
     M. Create table "RequirementNames" and fill it with the following - 34 rows
+        2023.10 - Skip Requirement Names - include name and eName in requirements
+        2023.10 - RequirementMap is between Requirements
         (Could do this earlier.)
         USE [CrtsTranscript_2007_Test]
         GO
@@ -296,8 +298,40 @@ Other things to do
         SET  [handbookID] = 
         (Select Handbooks.handbookID From Handbooks Where HandBooks.handbook = StudentDegrees.yearbook)
 
-    o.  Add "deliveryMethodID" to degrees - for each degree, update by hand in SqlEditor
-        Add online degrees to degree table - Ask school to switch studentdegree to these for all online students 
+    o.  Add "deliveryMethodID" to degrees - and make 3 degrees for every one
+    o1.        INSERT INTO [dbo].[Degrees]
+                   ([degreeName]
+                   ,[degreeNameLong]
+                   ,[eDegreeName]
+                   ,[eDegreeNameLong]
+                   ,[degreeLevelID]
+                   ,[deliveryMethodID]
+                   ,[note])
+                   Select 
+                   [Degrees].[degreeName]
+                   ,[Degrees].[degreeNameLong]
+                   ,[Degrees].[eDegreeName]
+                   ,[Degrees].[eDegreeNameLong]
+                   ,[Degrees].[degreeLevelID]
+                   ,'2'
+                   ,[note]
+                From Degrees
+                Where Degrees.deliveryMethodID = 1
+                GO
+    o2. Repeat the above with "2" as delivery method.
+    o3. Update the names
+        USE [CrtsTranscript_2007_Test]
+        GO
+        UPDATE [dbo].[Degrees]
+        SET 
+	        [degreeName] = '遠距' + degreeName
+            ,[degreeNameLong] = '遠距' + degreeNameLong
+            ,[eDegreeName] = 'Online ' + eDegreeName
+            ,[eDegreeNameLong] = 'Online ' + eDegreeNameLong
+	    WHERE Degrees.deliveryMethodID = 2 OR Degrees.deliveryMethodID = 3
+        GO
+
+    o4. Ask school to switch studentdegree to these for all online students 
 
     p.  Transfer credits
         1.  Delete "FulfillsGradRequirements from Grades table

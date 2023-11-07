@@ -73,6 +73,18 @@ namespace SqlDataGridViewEditor
             }
         }  // Used to display where in combo
 
+        // Fields contain a keyStack - this is the list of 3-tuplics describing the ancestor tables primary keys
+        // Non-FK in main table just has the primary key of the main table itself
+        // FK, Non-DK in main table just has the primary key of the reference table
+        // FK, DK has 2 in the stack - Key of both the main table and the referenc table
+        // A picture worth 1000 words
+        //   courseID -   {(Courses00, Courses, courseID)}  
+        //   courseName - {(Courses00, Courses, courseID)}
+        //   departmentID - {(Departments00, Departments, DepartmentID)}
+        //   requirementNameID: {(Courses00, Courses, courseID)}, {(RequirementName00, RequirementName, requirementNameID)}
+        //   reqName:  Same 2 elements as above
+        // A deeper inner join has the same rules but with 1 extra element in all stacks
+        //   This is used when a table has the fields with the same name (perhaps degreeLevel) in 2 fields
         public List<Tuple<string, string, string>> keyStack { get; set; }
 
         public bool isSameFieldAs(field fl)
@@ -285,6 +297,43 @@ namespace SqlDataGridViewEditor
             return dbType;
         }
 
+        public static System.Type ConvertDbTypeToType(DbType dbType)
+        {
+            switch (dbType)
+            {
+                case DbType.Boolean:
+                    return typeof(bool);
+
+                case DbType.Byte:
+                    return typeof(byte);
+
+                case DbType.StringFixedLength:
+                    return typeof(char);
+
+                case DbType.DateTime:
+                    return typeof(DateTime);
+                case DbType.Decimal:
+                    return typeof(decimal);
+                case DbType.Double:
+                    return typeof(double);
+                case DbType.Int16:
+                    return typeof(short);
+                case DbType.Int32:
+                    return typeof(int);
+                case DbType.Int64:
+                    return typeof(long);
+                case DbType.Object:
+                    return typeof(object);
+                case DbType.SByte:
+                    return typeof(sbyte);
+                case DbType.Single:
+                    return typeof(Single);
+                case DbType.String:
+                    return typeof(string);
+                default:
+                    return typeof(string);
+            }
+        }
         public static DbTypeType GetDbTypeType(DbType dbType)
         {
             switch (dbType)
@@ -437,8 +486,8 @@ namespace SqlDataGridViewEditor
         public static field getForeignKeyRefField(field foreignKey)
         {   // Assumes we have checked that this row in the FieldsDT is a foreignkey
             DataRow dr = getDataRowFromFieldsDT(foreignKey.table, foreignKey.fieldName);
-            string FkRefTable = getStringValueFromFieldsDT(dr, "RefTable");
-            string FkRefCol = getStringValueFromFieldsDT(dr, "RefPkColumn");
+            string FkRefTable = getStringValueFromColumnInDR(dr, "RefTable");
+            string FkRefCol = getStringValueFromColumnInDR(dr, "RefPkColumn");
             return getFieldFromFieldsDT(FkRefTable, FkRefCol);
             //            return getFieldFromTableAndColumnName(FkRefTable, FkRefCol);
         }
@@ -478,18 +527,77 @@ namespace SqlDataGridViewEditor
         
         public static field getFieldFromFieldsDT(DataRow dr)
         {
-            string tableName = getStringValueFromFieldsDT(dr, "TableName");
-            string columnName = getStringValueFromFieldsDT(dr, "ColumnName");
-            int size = getIntValueFromFieldsDT(dr, "MaxLength"); ;
-            string strDbType = getStringValueFromFieldsDT(dr, "DataType");
+            string tableName = getStringValueFromColumnInDR(dr, "TableName");
+            string columnName = getStringValueFromColumnInDR(dr, "ColumnName");
+            int size = getIntValueFromColumnInDR(dr, "MaxLength"); ;
+            string strDbType = getStringValueFromColumnInDR(dr, "DataType");
             DbType dbType = dataHelper.ConvertStringToDbType(strDbType);
             return new field(tableName, columnName, dbType, size);
         }
 
-        public static string getStringValueFromFieldsDT(DataRow dr, string fieldToReturn)
+        public static string getStringValueFromColumnInDR(DataRow dr, string columnName)
         {
-            // This will actually work on non FieldsDT datarows, but may return null or have alias problems
-            return Convert.ToString(dr[dr.Table.Columns.IndexOf(fieldToReturn)]);
+            return Convert.ToString(dr[dr.Table.Columns.IndexOf(columnName)]);
+        }
+
+        public static int getIntValueFromColumnInDR (DataRow dr, string column)
+        {
+            return Convert.ToInt32(dr[dr.Table.Columns.IndexOf(column)]);
+        }
+
+        public static decimal getDecimalValueFromColumnInDR(DataRow dr, string column)
+        {
+            return Convert.ToDecimal(dr[dr.Table.Columns.IndexOf(column)]);
+        }
+
+        public static bool getBoolValueFromColumnInDR(DataRow dr, string column)
+        {
+            int returnField = dr.Table.Columns.IndexOf(column);
+            return Convert.ToBoolean(dr[returnField]);
+        }
+
+        public static void setStringValueFromColumnInDR(DataRow dr, string columnName, string newValue)
+        {
+            dr[dr.Table.Columns.IndexOf(columnName)]= newValue;
+        }
+
+        public static void setIntValueFromColumnInDR(DataRow dr, string columnName, int newValue)
+        {
+            dr[dr.Table.Columns.IndexOf(columnName)] = newValue;
+        }
+
+        public static void setDecimalValueFromColumnInDR(DataRow dr, string columnName, decimal newValue)
+        {
+            dr[dr.Table.Columns.IndexOf(columnName)] = newValue;
+        }
+
+        public static void setBoolValueFromColumnInDR(DataRow dr, string columnName, bool newValue)
+        {
+            dr[dr.Table.Columns.IndexOf(columnName)] = newValue;
+        }
+
+
+        public static void AddRowToFieldsDT( string TableName, int ColNum, string ColumnName, string ColumnDisplayName
+            , string DataType, bool Nullable, bool _identity, bool is_PK, bool is_FK, bool is_DK, short MaxLength
+            , string RefTable, string RefPkColumn, string displayFields, int Width )
+        { 
+           DataRow newRow = fieldsDT.NewRow();
+            newRow[0] = TableName;
+            newRow[1] = ColNum;
+            newRow[2] = ColumnName;
+            newRow[3] = ColumnDisplayName;
+            newRow[4] = DataType;
+            newRow[5] = Nullable;
+            newRow[6] = _identity;
+            newRow[7] = is_PK;
+            newRow[8] = is_FK;
+            newRow[9] = is_DK;
+            newRow[10] = MaxLength;
+            newRow[11] = RefTable;
+            newRow[12] = RefPkColumn;
+            newRow[13] = displayFields;
+            newRow[14] = Width;
+           fieldsDT.Rows.Add(newRow);
         }
 
         #endregion
@@ -505,7 +613,7 @@ namespace SqlDataGridViewEditor
         private static int getIntValueFieldsDT(string tableName, string columnName, string columnToReturn)
         {
             DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
-            return getIntValueFromFieldsDT(dr, columnToReturn);
+            return getIntValueFromColumnInDR(dr, columnToReturn);
         }
 
         private static void setIntValueFieldsDT(string tableName, string columnName, string columnToReturn, int value)
@@ -517,24 +625,12 @@ namespace SqlDataGridViewEditor
         private static string getStringValueFieldsDT(string tableName, string columnName, string columnToReturn)
         {
             DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
-            return getStringValueFromFieldsDT(dr, columnToReturn);
+            return getStringValueFromColumnInDR(dr, columnToReturn);
         }
-
-        private static int getIntValueFromFieldsDT(DataRow dr, string fieldToReturn)
-        {
-            return Convert.ToInt32(dr[dr.Table.Columns.IndexOf(fieldToReturn)]);
-        }
-
         private static bool getBoolValueFieldsDT(string tableName, string columnName, string columnToReturn)
         {
             DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
-            return getBoolValueFieldsDT(dr, columnToReturn);
-        }
-
-        private static bool getBoolValueFieldsDT(DataRow dr, string fieldToReturn)
-        {
-            int returnField = dr.Table.Columns.IndexOf(fieldToReturn);
-            return Convert.ToBoolean(dr[returnField]);
+            return getBoolValueFromColumnInDR(dr, columnToReturn);
         }
 
         #endregion
