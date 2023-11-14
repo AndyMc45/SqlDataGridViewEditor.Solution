@@ -2,6 +2,8 @@
 using Microsoft.VisualBasic;
 using System.Data;
 using System.Diagnostics.Eventing.Reader;
+using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Web;
 
@@ -32,17 +34,23 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        // Four lists to build, and SQL will be built from these
-        // myInnerJoins and myFields remain the same for a given table & job		
-        public List<innerJoin> myInnerJoins = new List<innerJoin>();
+        // SQL will be built from these three lists
+        // myFields never changes (once it is constructed by the constructor)		
+        public List<field> myFields = new List<field>();  // a field contains a .tableAlias, a .table, and a .fieldName
         public List<orderBy> myOrderBys = new List<orderBy>();
-        public List<field> myFields = new List<field>();  // Table and field
         public List<where> myWheres = new List<where>();
+        // Used to get the sql for a combo box dropdown items 
+        public List<where> myComboWheres = new List<where>();  
 
-        public List<where> myComboWheres = new List<where>();  // Must be redone for every combo call
-        // PKs_OstensiveDictionary used to determine which rows to show user for any key.  (Keys is the PKs of all tables in this sql factory)  
-        public Dictionary<Tuple<string,string, string>, List<field>> PKs_OstensiveDictionary = new Dictionary<Tuple<string, string, string>, List<field>>();
-        // Pks_InnerjoinMap - map pkRefTable of all FK's in myTable to all ijs below it (include grandkids).  Used to get table string. (Program never requires Table string for lower tables) 
+        // PKs_OstensiveDictionary - the fields that the table will show in the main grid or the combos.
+        // "OstensiveDictionary" means the human understandable fields that identify the PK.
+        // For example the OstensiveDefinition of "StudentDegreeID" = 32  might be the Student name field and the degree name field
+        // There should be unique index on the table for the OstensiveDefinition fields.
+        public Dictionary<Tuple<string,string,string>, List<field>> PKs_OstensiveDictionary = new Dictionary<Tuple<string, string, string>, List<field>>();
+
+        // Pks_InnerjoinMap - map from and PK_SomeTable.key to all innerJoins in SomeTable.
+        // Each inner join is an FK in the table and the reference table it refers to.
+        // Used to get the table string for any table and whenever we need to find the innerjoins of a table.
         public Dictionary<Tuple<string, string, string>, List<innerJoin>> PKs_InnerjoinMap = new Dictionary<Tuple<string, string, string>, List<innerJoin>>();
 
         #endregion
@@ -70,27 +78,137 @@ namespace SqlDataGridViewEditor
 
        public void SqlFactoryFinishConstructor()
         {
-            errorMsg = addInnerJoins();  // This does all the work
+            errorMsg = addFieldsAndInnerJoins();
 
-            // If there is no ostensive definition for PK or FK, add the primary key of myTable or refTable
-            foreach (Tuple<string, string, string> key in PKs_OstensiveDictionary.Keys)
+            // If there is no ostensive definition for any PK or FK, add the primary key of myTable or refTable
+            foreach (Tuple<string, string, string> pk in PKs_OstensiveDictionary.Keys)
             {
-                if (PKs_OstensiveDictionary[key].Count == 0)
+                if (PKs_OstensiveDictionary[pk].Count == 0)
                 {
-                    field check = new field(key.Item2, key.Item3, DbType.Int32, 4);
                     field PK_myTable = dataHelper.getTablePrimaryKeyField(myTable);
-                    if (check.isSameFieldAs(PK_myTable))
+                    if (pk.Equals(PK_myTable.key))  // Comparing to Tuples - ? worked with ==
                     {
-                        PKs_OstensiveDictionary[key].Add(PK_myTable);
+                        PKs_OstensiveDictionary[pk].Add(PK_myTable);
                     }
                     else  // primary key of ref table - only PK's added to PK_Ostensive - either of myTable or RefTable of FKs
-                    {
-                        field PK_RefTable = dataHelper.getFieldFromFieldsDT(key.Item2, key.Item3);
-                        PK_RefTable.tableAlias = key.Item1;
-                        PKs_OstensiveDictionary[key].Add(PK_RefTable);
+                    {   // pk = <tableAlias, table, fieldName>
+                        field PK_RefTable = dataHelper.getFieldFromFieldsDT(pk.Item2, pk.Item3);
+                        PK_RefTable.tableAlias = pk.Item1;
+                        PKs_OstensiveDictionary[pk].Add(PK_RefTable);
                     }
                 }
             }
+        
+        }
+
+        // addInnerJoin is complex - it stores somewhere everything about the table that the program needs to know 
+        // Go through table and adds to myInnerJoins and myFields lists
+        // Also, add map from every primary key to all ForeignKeys.  (PKs_InnerjoinMap[PK] --> list of FK inner joins)
+        // Also, add map from every primary key to all its displayFields (PKs_OstensiveDictionary[PK] --> list of display fields)
+        // Finally, keep a list of errors. After returning from the constructor, datagridview1 reports these to the user.
+        // These things never change for an sqlFactory object.
+        private string addFieldsAndInnerJoins()
+        {
+            List<field> displayKeys = new List<field>();  // By reference, because these are in lower tables (i.e. recursive calls add some) 
+            List<string> allTables = new List<string>();  // By reference, use to set tableAlias for each table 
+            List<string> errMsgs = new List<string>();
+            List<field> ancestorFields = new List<field>();  // By value, because these are sent down to lower tables
+            // Begin the program
+            field pkMyTable = dataHelper.getTablePrimaryKeyField(myTable);
+            myFields.Add(pkMyTable);  // Always want this first
+            addFieldsAndInnerJoins(pkMyTable, true, ancestorFields, ref displayKeys, ref allTables, ref errMsgs);  // This does all the work
+            return String.Join(", ", errMsgs);  // errMsgs is a public List<string> variable which the above function can add to
+        }
+
+        private void addFieldsAndInnerJoins(field pkCurrentTable, bool seekingDisplayKeys, List<field> ancestorFields, ref List<field> displayKeys, ref List<string> allTables, ref List<string> errMsgs)
+        {
+            // Circular table inner join check
+            bool circular = false;
+            // Cicular if the table is in its own ancestor fields
+            foreach (field f in ancestorFields)
+            {
+                if (f.table == pkCurrentTable.table) { circular = true; }
+
+            }
+            // Store the error and skip this table.
+            if (circular)
+            {
+                errMsgs.Append("Skipping circular table foreign key: (" + pkCurrentTable.table + ")");
+            }
+            else
+            {
+                // New list of innerJoins for this table - starts with empty list
+                List<innerJoin> currentTableInnerJoins = new List<innerJoin>();
+
+                // New Allias for current table if needed
+                int i = allTables.Count(e => e.Equals(pkCurrentTable.table));
+                if (i > 0)
+                {
+                    pkCurrentTable.tableAlias = pkCurrentTable.table + dataHelper.twoDigitNumber(i);
+                }
+                allTables.Add(pkCurrentTable.table);  // Prepare for tableAlias of next use of refTable if any
+
+                // Loop through rows of current table
+                DataRow[] drs = dataHelper.fieldsDT.Select("TableName = '" + pkCurrentTable.table + "'", "ColNum ASC");
+                foreach (DataRow dr in drs)
+                {
+                    // Get the field for this row 
+                    field drField = dataHelper.getFieldFromFieldsDT(dr); // This field may or may not be added to myFields
+                    // Same tableAlias and ancestorFields used for all fields in current Table
+                    drField.tableAlias = pkCurrentTable.tableAlias;
+                    drField.FKancestors = ancestorFields;
+
+                    // Divide cases - a foreign key - recursive call
+                    if (dataHelper.isForeignKeyField(drField))
+                    {
+                        // Decide whether this inner join is included / shown - if not do nothing
+                        if (includeAllColumnsInAllTables || pkCurrentTable.table == myTable || (seekingDisplayKeys && dataHelper.isDisplayKey(drField)))
+                        {
+                            myFields.Add(drField);
+                            // drField is a foreign key, so we can get the Primary Key of the Reference (Child) table
+                            field pkRefTable = dataHelper.getForeignKeyRefField(drField);                           
+                            bool stillSeekingDisplayKey = seekingDisplayKeys && dataHelper.isDisplayKey(drField);
+                            // Add inner join to this tables inner joins
+                            innerJoin new_ij = new innerJoin(drField, pkRefTable);
+                            currentTableInnerJoins.Add(new_ij);
+                            // Prepare variables for recursive call
+                            // Start with empty newDisplayKeys and add them after returning from recursive call.
+                            List<field> newDisplayKeys = new List<field>();
+                            // AncestorFields are the original ancestors with this foreign key added as first element.
+                            List<field> myAncestorFields = new List<field>();
+                            myAncestorFields.Add(drField);
+                            myAncestorFields.AddRange(ancestorFields);
+                            addFieldsAndInnerJoins(pkRefTable, stillSeekingDisplayKey, myAncestorFields, ref newDisplayKeys, ref allTables, ref errMsgs);
+                            displayKeys.AddRange(newDisplayKeys);
+                        }
+                    }
+                    else if (dataHelper.isTablePrimaryKeyField(drField))
+                    {
+                        // Primary Key of main table added to myFields in addFieldsAndInnerJoins()
+                        // Foreign keys are added as field in myFields -  So no need to add primary key of ref tables
+                        // So there is no need to add any primary keys to myFields here
+                    }
+                    else  // drField is neither a PK nor an FK
+                    {
+                        // Add drField to myFields if we are including all tables, this is myTable, or drField is a displaykey of this table
+                        // If it is a displayKey, add it to this tables displaykeys.
+                        if (includeAllColumnsInAllTables || pkCurrentTable.table == myTable || dataHelper.isDisplayKey(drField))
+                        {
+                            myFields.Add(drField);
+                            if (dataHelper.isDisplayKey(drField))
+                            {
+                                displayKeys.Add(drField);
+                            }
+                        }
+                    }
+                }
+                // Once all rows are processed, map the pk of the CurrentTable to its inner joins and its display keys
+                // pkCurrentTable.key is a Tuple<pkCurrentTable.tableAlias, pkCurrentTable.table, pkCurrentTable.fieldName)
+                // We use this because c# knows when to Tuple's are equal. THis allows us to check if a list of keys includes this key, etc.
+                PKs_InnerjoinMap.Add(pkCurrentTable.key, currentTableInnerJoins);
+                PKs_OstensiveDictionary.Add(pkCurrentTable.key, displayKeys);
+            }
+
         }
 
         // The primary function of this class - 1 overload
@@ -132,8 +250,7 @@ namespace SqlDataGridViewEditor
             { 
                 StringBuilder sqlFieldStringSB = new StringBuilder();
                 // Put the cmbField as first field
-                Tuple<string, string, string> key = Tuple.Create(cmbField.tableAlias, cmbField.table, cmbField.fieldName);
-                List<field> fls = PKs_OstensiveDictionary[key];  // Error if not present
+                List<field> fls = PKs_OstensiveDictionary[cmbField.key];  // Error if not present
                 // If myTable has no display keys, make the primary field the display key
                 if (fls.Count == 0)
                 {
@@ -154,7 +271,7 @@ namespace SqlDataGridViewEditor
                 // Add primary key of table as ValueField (May not need to add this twice but O.K. with Alias) 
                 sqlFieldStringSB.Append(dataHelper.QualifiedAliasFieldName(cmbField));
                 sqlFieldStringSB.Append(" as ValueMember");
-                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + sqlTableString(cmbField, key) + " " + SqlStatic.sqlWhereString(myComboWheres, strStaticWhereClause, false) + " Order by DisplayMember";
+                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + sqlTableString(cmbField) + " " + SqlStatic.sqlWhereString(myComboWheres, strStaticWhereClause, false) + " Order by DisplayMember";
             }
             // For text fields return distinct values - used in combo boxes 
             else if (cmbValueType == comboValueType.textField_myTable || cmbValueType == comboValueType.textField_refTable)  // no distinction between these two
@@ -169,8 +286,7 @@ namespace SqlDataGridViewEditor
                 sqlFieldStringSB.Append(" as ValueMember");
                 field PkField = dataHelper.getTablePrimaryKeyField(cmbField.table);
                 PkField.tableAlias = cmbField.tableAlias;
-                Tuple<string, string, string> key = Tuple.Create(PkField.tableAlias, PkField.table, PkField.fieldName);
-                string tableString = sqlTableString(PkField, key);
+                string tableString = sqlTableString(PkField);
                 //if (dataHelper.isForeignKeyField(cmbField))
                 //{
                 //    ijList = PKs_InnerjoinMap[Keyfield.fieldName];
@@ -191,17 +307,16 @@ namespace SqlDataGridViewEditor
         private string sqlTableString()
         {
             field myPK = dataHelper.getTablePrimaryKeyField(myTable);
-            Tuple<string,string,string> key = Tuple.Create(myPK.tableAlias, myPK.table, myPK.fieldName); // Should find all innerjoins
-            string ts = sqlTableString(myPK, key);
+            string ts = sqlTableString(myPK);
             return ts;
         }
 
-        private string sqlTableString(field PkField, Tuple<string,string,string> key)
+        private string sqlTableString(field PkField)
         {
             string ts = PkField.table + " AS " + PkField.tableAlias;
-            if (PKs_InnerjoinMap.Keys.Contains(key))
+            if (PKs_InnerjoinMap.ContainsKey(PkField.key))  // Should always be true, I think
             {
-                List<innerJoin> ijList = PKs_InnerjoinMap[key];
+                List<innerJoin> ijList = PKs_InnerjoinMap[PkField.key];
                 return sqlExtendTableStringByInnerJoins(ijList, ts);
             }
             else
@@ -216,200 +331,16 @@ namespace SqlDataGridViewEditor
             {
                 string condition = string.Format(" {0} = {1} ", dataHelper.QualifiedAliasFieldName(ij.fkFld), dataHelper.QualifiedAliasFieldName(ij.pkRefFld));
                 ts = "([" + ij.pkRefFld.table + "] AS " + ij.pkRefFld.tableAlias + " INNER JOIN " + ts + " ON " + condition + ")";
-                // Recursive step
-                Tuple<string, string, string> RefTableKey 
-                    = Tuple.Create(ij.pkRefFld.tableAlias, ij.pkRefFld.table, ij.pkRefFld.fieldName);
-                // This will only go 1 deep - will handle all FK's of myTable, but these may have many inner joins below them
-                if (PKs_InnerjoinMap.Keys.Contains(RefTableKey))
+                // Recursive step - loop through innerjoins of the pkRefFld 
+                if (PKs_InnerjoinMap.Keys.Contains(ij.pkRefFld.key))
                 { 
-                    List<innerJoin> RefTable_ijs = PKs_InnerjoinMap[RefTableKey];
+                    List<innerJoin> RefTable_ijs = PKs_InnerjoinMap[ij.pkRefFld.key];
                     ts = sqlExtendTableStringByInnerJoins(RefTable_ijs, ts);
                 }
             }
             return ts;
         }
-
-        // addInnerJoin is very complex - it must store somewhere everything about the table that the program needs to know 
-        // Go through table and adds to myInnerJoins and myFields lists
-        // Also, for every table in the sql, add map from its primary key to all its ForeignKeys.  (PKs_InnerjoinMap[PK] --> list of FK inner joins)
-        // Also, for every table in the sql, add map from its primary key to all its displayFields (PKs_OstensiveDictionary[PK] --> list of display fields)
-        // addInnerJoin() loops through the main table.  The second version of the function loops through subtables that are display keys for this table
-        private string addInnerJoins()
-        {
-            List<string> msgStrings = new List<string>();  // List of error messages.
-            List<string> allTables = new List<string>();   // List of tables
-            allTables.Add(myTable);  // So next use of myTable will myTable01
-
-            // Primary key of myTable
-            // 1. Get pkMyTable and key version of pkMyTable
-            field pkMyTable = dataHelper.getTablePrimaryKeyField(myTable);
-            Tuple<string, string, string> pkMyTableKey = Tuple.Create(pkMyTable.tableAlias, pkMyTable.table, pkMyTable.fieldName);
-            // 2, Set keyStack - list of tables that this field descends from.  See field.keyStack definition for details.
-            List<Tuple<string, string, string>> keyStack = new List<Tuple<string, string, string>>();
-            keyStack.Add(pkMyTableKey);  // pkMyTableKey in stack - Used for non-FK fields 
-            // 3, Put Primary key of main table in the first field of myFields, with keystack including itself
-            pkMyTable.keyStack = keyStack; 
-            myFields.Add(pkMyTable);
-            // 4. Create pk keys for 2 dictionaries - pointing to empty lists
-            List<field> myTableDisplayFields = new List<field>();
-            PKs_OstensiveDictionary.Add(pkMyTableKey, myTableDisplayFields); 
-            List<innerJoin> myTableInnerJoins = new List<innerJoin>();
-            PKs_InnerjoinMap.Add(pkMyTableKey, myTableInnerJoins);  
-
-            // Loop through myTable
-            DataRow[] drs = dataHelper.fieldsDT.Select("TableName = '" + myTable + "'", "ColNum ASC");
-            foreach (DataRow dr in drs)
-            {
-                // Get the field for this row - the same table and tableAlias is used for all columns/fields in this table
-                field drField = dataHelper.getFieldFromFieldsDT(dr);
-                drField.keyStack = keyStack;  // 1 element added above - modified for FK below
-                if (dataHelper.isForeignKeyField(drField))
-                {
-                    //0. Get keyStack for Foreign key - drField.tableAlias will be 00, and so no need to change  
-                    List<Tuple<string, string, string>> newKeyStack = new List<Tuple<string, string, string>>();
-                    if (dataHelper.isDisplayKey(drField) || includeAllColumnsInAllTables)  // if includeAll... is true, all rows treated as DKs
-                    {
-                        // For display keys, start with pkMyTableKey
-                        newKeyStack.Add(pkMyTableKey);
-                    }
-                    drField.keyStack = newKeyStack;
-
-                    // 1. Add to myFields
-                    myFields.Add(drField);
-
-                    // 2. Create Inner Join and add to PKs_InnerJoinMap for pkMyTableKey.
-                    // Primary key of ref table - already 2 steps down from myTable
-                    field pkLowerTable = dataHelper.getForeignKeyRefField(drField);  
-                    // 2a. This pkLowerTable may need an alias (as in _map tables) - keyStack handled in recursive step
-                    int i = allTables.Count(e => e.Equals(pkLowerTable.table));
-                    if (i > 0)
-                    {
-                        pkLowerTable.tableAlias = pkLowerTable.table + dataHelper.twoDigitNumber(i);
-                    }
-                    innerJoin new_ij = new innerJoin(drField, pkLowerTable);
-                    myInnerJoins.Add(new_ij);
-                    //// Add all innerjoins in table to pkMyTableKey
-                    PKs_InnerjoinMap[pkMyTableKey].Add(new_ij);
-
-                    //3a. Create dictionary key for inner join map - PKs_OstensiveDefinitions key added in recursive step
-                    Tuple<string, string, string> pkLowerTableKey
-                        = Tuple.Create(pkLowerTable.tableAlias, pkLowerTable.table, pkLowerTable.fieldName);
-                    List<innerJoin> pkLowerTableInnerJoins = new List<innerJoin>();
-                    PKs_InnerjoinMap.Add(pkLowerTableKey, pkLowerTableInnerJoins);
-
-                    addInnerJoins(pkLowerTableKey, pkLowerTable, newKeyStack, ref allTables, ref msgStrings);
-                }
-                else if (dataHelper.isTablePrimaryKeyField(drField))
-                {
-                    // Primary key added above as first field
-                }
-                else  // Neither PK or FK
-                {
-                    // Add all myTable fields - keystack is myTable pk added above
-                    myFields.Add(drField);
-                    if (dataHelper.isDisplayKey(drField))
-                    {
-                            PKs_OstensiveDictionary[pkMyTableKey].Add(drField);
-                    }
-                }
-            }
-
-            // Return error messages if any
-            if (msgStrings.Count > 0) { return String.Join(", ", msgStrings); } else { return string.Empty; } 
-        }
-
-       private void addInnerJoins(Tuple<string, string, string> pkLowerTableofMyTableFk, field pkCurrentTable, List<Tuple<string, string, string>> keyStack, ref List<string> allTables, ref List<string> msgStrings)
-        {
-            // Loop through fields in adding to keystack, myInnerJoins, myFieldList, PK_OstensiveDefinitions, PK_InnerJoinMap plus allTables and msgStrings
-            // pkLowerTableofMyTableFk is the PK of an FK in my table (i.e. the PK of the Reference table for some FK in myTable" - used for key in PK_InnerJoinMap 
-            // pkCurrentTable is the PK of the table we are looping through - may be 1 or more tables down from myTable
-            // keyStack is the stack of keys - one for each recursive call -  It traces a path back to myTable
-            // All tables in the keyStack will get a lower text DisplayKey in their ostensive definition.
-            // keyStack is also used to check for circular display keys - i.e. a vicious circle
-            // keyStack also added to the field to help us know where the field come from (used in transcripts.cs)
-            // allTables is all tables that have been added - used to do an allias when table added 2 or more times
-            // msgStrings returns error messages
-
-            // New Allias for current table
-            int i = allTables.Count(e => e.Equals(pkCurrentTable.table));
-            if (i > 0)
-            {
-                pkCurrentTable.tableAlias = pkCurrentTable.table + dataHelper.twoDigitNumber(i);
-            }
-            // Get the key version of pkCurrentTable
-            Tuple<string, string, string> pkCurrentTableKey = Tuple.Create(pkCurrentTable.tableAlias, pkCurrentTable.table, pkCurrentTable.fieldName);
-
-            // Circular check
-            if (!keyStack.Contains(pkCurrentTableKey))  // Eror Check : if table already in myTableStack, skip this foreign key
-            {
-                allTables.Add(pkCurrentTable.table);  // Prepare for tableAlias of next use of refTable if any
-                // Add key to PKs_OstensiveDictionary for pkCurrentTableKey and map to an empty list
-                List<field> odList = new List<field>();
-                PKs_OstensiveDictionary.Add(pkCurrentTableKey, odList);
-
-                // Loop through rows
-                keyStack.Add(pkCurrentTableKey);  // Same key stack used for all rows including FKs - to trace the keystack
-                DataRow[] drs = dataHelper.fieldsDT.Select("TableName = '" + pkCurrentTable.table + "'", "ColNum ASC");
-                foreach (DataRow dr in drs)
-                {
-                    // Get the field for this row - the same tableAlias and key stack used for all fields in current Table
-                    field drField = dataHelper.getFieldFromFieldsDT(dr); // This field may or may not be added to myFields
-                    drField.tableAlias = pkCurrentTable.tableAlias;
-                    drField.keyStack = keyStack;
-
-                    if (dataHelper.isForeignKeyField(drField))
-                    {
-                        if (dataHelper.isDisplayKey(drField) || includeAllColumnsInAllTables)
-                        {
-                            // 0. Only add highest level fk fields.
-                            if (keyStack.Count == 1 || includeAllColumnsInAllTables)  //Highest level fk that is not a dk
-                            {
-                                myFields.Add(drField);
-                            }
-                            else if (keyStack.Count == 2 && keyStack[0].Item2 == myTable)   //Highest level fk that is a dk
-                            {
-                                myFields.Add(drField);
-                            }
-                    
-                            // 1. Create Inner Join and add to myInnerjoins and PKs_InnerJoinMap. 
-                            field pkLowerField = dataHelper.getForeignKeyRefField(drField);  // Primary key of ref table
-                            innerJoin new_ij = new innerJoin(drField, pkLowerField);
-                            myInnerJoins.Add(new_ij);
-                            PKs_InnerjoinMap[pkLowerTableofMyTableFk].Add(new_ij);  // Only used to get tables 'under' myTableKey
-
-                            // 2. Recursive step - Lists are by Reference, but we want this list by value - so make a copy and use the copy
-                            List<Tuple<string, string, string>> keyStackByValue = new List<Tuple<string, string, string>>(keyStack);
-                            addInnerJoins(pkLowerTableofMyTableFk, pkLowerField, keyStackByValue, ref allTables, ref msgStrings);
-                        }
-                    }
-                    else if (dataHelper.isTablePrimaryKeyField(drField))
-                    {
-                        // Foreign keys are added as field in myFields - so no need to add primary key of ref tables
-                    }
-                    else  // Neither PK or FK
-                    {
-                        // Add if myTable and all lower table displaykeys
-                        if (dataHelper.isDisplayKey(drField) || includeAllColumnsInAllTables)
-                        {
-                            myFields.Add(drField);
-                            if (dataHelper.isDisplayKey(drField))
-                            {
-                                // Add to PKs_OstensiveDictionary to each key in keyStack
-                                foreach (Tuple<string, string, string> key in keyStack)
-                                {
-                                    PKs_OstensiveDictionary[key].Add(drField);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                msgStrings.Append("Skipping circular foreignkey: (" + dataHelper.QualifiedAliasFieldName(pkCurrentTable) + ")");
-            }
-        }
-
+  
        public bool TableIsInMyInnerJoins(field PkField, string tableAliasName)
         {
             if (tableAliasName == PkField.tableAlias)  // Table can be filtered on itself 
@@ -434,7 +365,7 @@ namespace SqlDataGridViewEditor
        public bool MainFilterTableIsInSql(where mainFilter, field PkField, out string tableAlias)
         {
             // Same logic as "TableIsInMyInnerJoin" but will return a tableAlias that matches the mainFilter field
-            if (mainFilter.fl.isSameBaseFieldAs(PkField))  // Table itself is the first table in the Sql table string
+            if (mainFilter.fl.baseKey.Equals(PkField.baseKey))  // Table itself is the first table in the Sql table string
             { 
                 tableAlias = PkField.tableAlias;  
                 return true; 
@@ -455,87 +386,65 @@ namespace SqlDataGridViewEditor
             return false;
         }
 
-       // Find value with unknown Alias - use this form when there are more than one such baseFields.
-       public string getStringValueFromDataRowBasefield(DataRow dr, field fieldToFind, string ancesterTable)
+        // This function is used in transcript plugin
+        // Find index of field with unknown Alias - Use this method if you are certain there is only one
+
+        public int getColumn(field fld)
         {
-            // Get col and value
-            int transFieldToFindColumnID = colIndexOfBaseField(fieldToFind, ancesterTable);
-            string transFieldToFindValue = dr[transFieldToFindColumnID].ToString();
-            return transFieldToFindValue;
+            List<field> inAncestors = new List<field>();
+            List<field> notInAncestors = new List<field>();
+            return getColumn(fld,inAncestors, notInAncestors);    
         }
 
-       public int getIntValueFromDataRowBasefield(DataRow dr, field fieldToFind, string ancesterTable)
+        // Find index with unknown Alias - Use this method if there may be more than one field with same table and fieldName.
+        public int getColumn(field fld, List<field> inAncestors, List<field> notInAncestors)
         {
-            return Int32.Parse(getStringValueFromDataRowBasefield(dr, fieldToFind, ancesterTable));
-        }
-       public bool getBoolValueFromDataRowBasefield(DataRow dr, field fieldToFind, string ancesterTable)
-        {
-            return Boolean.Parse(getStringValueFromDataRowBasefield(dr, fieldToFind, ancesterTable));
-        }
-       public Single getSingleValueFromDataRowBasefield(DataRow dr, field fieldToFind, string ancesterTable)
-        {
-            return Single.Parse(getStringValueFromDataRowBasefield(dr, fieldToFind, ancesterTable));
-        }
-
-        // Most flds have their own table PK in the keyStack
-        // But the keyStack for a FK that is not a display key starts with the pk of the Reference table.
-        private string defaultAncesterField(field fld)
-        {
-            if (dataHelper.isForeignKeyField(fld))  // ?? why not include !.isDisplayKey(fld)
-            {
-                field pkRefField = dataHelper.getForeignKeyRefField(fld);
-                return pkRefField.table;
-            }
-            else
-            {
-                return fld.table;
-            }
-        }
-
-        // Find index with unknown Alias - Use this method if you are certain there is only one
-       public int colIndexOfBaseField(field fld)
-        {
-                return colIndexOfBaseField(fld, defaultAncesterField(fld));    
-        }
-
-        // Find index with unknown Alias - Use this method if there may be more than one field with same name.
-       public int colIndexOfBaseField(field fld, string ancesterTable)
-        {
-            // Get ancesterKey from this ancesterTable - this must be in the keyStack of the field.
-            // Ex: transcript Grade column (perhaps A-) keystack will be the pk tuples of transcript and grade tables
-            // Ex: transcript ReqName column keyStack will be pk tuples of transcript, courseterm, course, requirement, requirement names tables
-            // Ex: 
-            field pkAncesterTable = dataHelper.getTablePrimaryKeyField(ancesterTable);
-            Tuple<string, string, string> ancestorKey = Tuple.Create(pkAncesterTable.tableAlias, pkAncesterTable.table, pkAncesterTable.fieldName);
-
-            int intToReturn = -1;
-            // Use stepsFromFld when one keyStack is a subStack of another - in this case return the shortest keyStack
-            int stepsFromFld = 2222;  
             for (int i = 0; i < myFields.Count; i++)
             {
-                if (myFields[i].isSameBaseFieldAs(fld))  // No AncestorKey given - use this if certain there is only one matching field
+                // Convert inAncestor and notInAncestor to lists of tuple<string,string> - easier to compare
+                List<Tuple<string, string>> inAncestorTuples = new List<Tuple<string, string>>();
+                foreach (field f in inAncestors) { inAncestorTuples.Add(f.baseKey); }
+                List<Tuple<string, string>> notInAncestorTuples = new List<Tuple<string, string>>();
+                foreach (field f in notInAncestors) { notInAncestorTuples.Add(f.baseKey); }
+
+                //If i is a candidate, then check carry out two check and return i
+                if (myFields[i].baseKey.Equals(fld.baseKey))
                 {
-                    if (myFields[i].keyStack != null)  // pkMyTable.keyStack == null - no longer true 
+                    // I doubt this is ever true, but just in case 
+                    if (myFields[i].FKancestors == null) { return i; }
+                    // Assume true and do two checks
+                    bool ancestorCheck = true; // default
+                    // Create FKancestor tuple list from myFields[i].FKancestors
+                    List<Tuple<string, string>> ancestorTuples = new List<Tuple<string, string>>();
+                    foreach (field f in myFields[i].FKancestors) { ancestorTuples.Add(f.baseKey); }
+                    // Do the 1st check
+                    foreach (Tuple<string,string> t in inAncestorTuples)
                     {
-                        int count = 0;
-                        foreach (Tuple<string, string, string> key in myFields[i].keyStack)
+                        if (!ancestorTuples.Contains(t)) { ancestorCheck = false; break; }
+                    }
+                    // Do 2nd check
+                    if (ancestorCheck)
+                    {
+                        foreach (Tuple<string, string> t in notInAncestorTuples)
                         {
-                            if (key.Item2 == ancestorKey.Item2 && key.Item3 == ancestorKey.Item3)
-                            {
-                                // If we use myTable as the ancester field, count will be 0 and the stepsFromFld = keyStack.count
-                                if (myFields[i].keyStack.Count - count < stepsFromFld)
-                                { 
-                                    stepsFromFld = myFields[i].keyStack.Count - count; 
-                                    intToReturn = i;
-                                }
-                            }
-                            count++;
+                            if (ancestorTuples.Contains(t)) { ancestorCheck = false; break; }
                         }
+                        if (ancestorCheck){ return i; }
                     }
                 }
             }
-            return intToReturn;
+             return 0;  // An error
         }
+
+        public int getColumn(field fld, field fkToCheck, bool inAncestorCheck)
+        { 
+            List<field> emptyList = new List<field>();
+            List<field> checkFields = new List<field>();
+            checkFields.Add(fkToCheck);
+            if (inAncestorCheck) { return getColumn(fld, checkFields, emptyList); }
+            else { return getColumn(fld, emptyList, checkFields); }
+        }
+        
 
         // Class in class to note the static methods - but not consistently applied to all static methods
        public static class SqlStatic
@@ -562,7 +471,7 @@ namespace SqlDataGridViewEditor
                                 condition = dataHelper.QualifiedAliasFieldName(ws.fl) + " = " + ws.whereValue;
                                 break;
                             case DbTypeType.isDateTime:
-                                condition = dataHelper.QualifiedAliasFieldName(ws.fl) + "= #" + ws.whereValue + "#";
+                                condition = dataHelper.QualifiedAliasFieldName(ws.fl) + "= '" + ws.whereValue + "'";
                                 break;
                             case DbTypeType.isString:
                                 if (strict)

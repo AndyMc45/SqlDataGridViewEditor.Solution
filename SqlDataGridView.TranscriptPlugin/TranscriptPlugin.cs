@@ -87,27 +87,27 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             // Try to get Student ID
             if (dgvForm.dataGridView1.SelectedRows.Count == 1)
             {
-                if (dgvForm.currentSql.myTable == TableName.transcriptTable)
+                if (dgvForm.currentSql.myTable == TableName.transcript)
                 {
                     //Get studentDegreeID column
-                    field fld = dataHelper.getForeignKeyFromRefTableName(dgvForm.currentSql.myTable, TableName.studentDegreesTable);
+                    field fld = dataHelper.getForeignKeyFromRefTableName(dgvForm.currentSql.myTable, TableName.studentDegrees);
                     int colNum = dgvForm.getDGVcolumn(fld);
                     studentDegreeID = (Int32)dgvForm.dataGridView1.SelectedRows[0].Cells[colNum].Value;
                 }
-                else if (dgvForm.currentSql.myTable == TableName.studentDegreesTable)
+                else if (dgvForm.currentSql.myTable == TableName.studentDegrees)
                 {
-                    field fld = dataHelper.getTablePrimaryKeyField(TableName.studentDegreesTable);
+                    field fld = dataHelper.getTablePrimaryKeyField(TableName.studentDegrees);
                     int colNum = dgvForm.getDGVcolumn(fld);
                     studentDegreeID = (Int32)dgvForm.dataGridView1.SelectedRows[0].Cells[colNum].Value;
                 }
-                else if (dgvForm.currentSql.myTable == TableName.studentsTable)
+                else if (dgvForm.currentSql.myTable == TableName.students)
                 {
-                    string err = String.Format("Select Student in {0} table (a descendant of the {1} table)", TableName.studentDegreesTable, TableName.studentsTable);
+                    string err = String.Format("Select Student in {0} table (a descendant of the {1} table)", TableName.studentDegrees, TableName.students);
                     sbError.AppendLine(err);
                 }
                 else
                 {
-                    string err = String.Format("Please select 1 row in the {0} table or {1} table", TableName.transcriptTable, TableName.studentDegreesTable);
+                    string err = String.Format("Please select 1 row in the {0} table or {1} table", TableName.transcript, TableName.studentDegrees);
                     sbError.AppendLine(err);
                 }
             }

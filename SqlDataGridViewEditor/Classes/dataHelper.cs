@@ -21,9 +21,9 @@ namespace SqlDataGridViewEditor
             this.fType = fType;
             this.displayMember = fieldName;  // Default
         }
-
-        public field(string table, string fieldName, DbType dbType, int size):
-            this(table, fieldName, dbType, size, fieldType.regular){  }
+        public field(string table, string fieldName, DbType dbType, int size) :
+            this(table, fieldName, dbType, size, fieldType.regular)
+        { }
 
         public string fieldName { get; set; }
         public string table { get; set; }
@@ -31,13 +31,14 @@ namespace SqlDataGridViewEditor
         public DbType dbType { get; set; }
         public int size { get; set; }
         public fieldType fType { get; set; }
-
-        public field ValueMember { get { return this; }}  //Field itself - ValueMember used when binding Combos to fields
-
-        private string displayMember;
-        public string DisplayMember { 
-            set { displayMember = value; } 
-            get {
+        public field ValueMember { get { return this; } }  //Field itself - ValueMember used when binding Combos to fields
+        public List<field> FKancestors { get { return fkAncestors; } set { fkAncestors = value; } }
+        private List<field> fkAncestors = new List<field>();
+        public string DisplayMember
+        {
+            set { displayMember = value; }
+            get
+            {
                 string lastTwoDigetOfTableAlias = tableAlias.Substring(tableAlias.Length - 2);
                 if (fType == fieldType.pseudo)
                 {
@@ -72,34 +73,13 @@ namespace SqlDataGridViewEditor
                 }
             }
         }  // Used to display where in combo
+        private string displayMember;
 
-        // Fields contain a keyStack - this is the list of 3-tuplics describing the ancestor tables primary keys
-        // Non-FK in main table just has the primary key of the main table itself
-        // FK, Non-DK in main table just has the primary key of the reference table
-        // FK, DK has 2 in the stack - Key of both the main table and the referenc table
-        // A picture worth 1000 words
-        //   courseID -   {(Courses00, Courses, courseID)}  
-        //   courseName - {(Courses00, Courses, courseID)}
-        //   departmentID - {(Departments00, Departments, DepartmentID)}
-        //   requirementNameID: {(Courses00, Courses, courseID)}, {(RequirementName00, RequirementName, requirementNameID)}
-        //   reqName:  Same 2 elements as above
-        // A deeper inner join has the same rules but with 1 extra element in all stacks
-        //   This is used when a table has the fields with the same name (perhaps degreeLevel) in 2 fields
-        public List<Tuple<string, string, string>> keyStack { get; set; }
-
-        public bool isSameFieldAs(field fl)
-        {   
-            if(fl == null) { return false; }
-            if (this.fieldName == fl.fieldName && this.table == fl.table && this.tableAlias == fl.tableAlias) { return true; } else { return false; }  
-        }
-
-        public bool isSameBaseFieldAs(field fl)
-        {
-            if (fl == null) { return false; }
-            if (this.fieldName == fl.fieldName && this.table == fl.table) { return true; } else { return false; }
-
-        }
+        // Key used to avoid needing to implement EqualityComparer<field> class - Used in dictionaries in sqlFactory
+        public Tuple<string, string, string> key { get { return Tuple.Create(this.tableAlias, this.table, this.fieldName); } }
+        public Tuple<string, string> baseKey { get { return Tuple.Create(this.table, this.fieldName); } }
     }
+
 
     public class where
     {
@@ -125,7 +105,7 @@ namespace SqlDataGridViewEditor
         public bool isSameWhereAs(where wh)
         {
             if (wh == null) { return false; }
-            if (this.fl.isSameFieldAs(wh.fl) && this.whereValue == wh.whereValue) 
+            if (this.fl.key.Equals(wh.fl.key) && this.whereValue == wh.whereValue) 
             { return true; } else { return false; }
         }
     }
@@ -486,25 +466,27 @@ namespace SqlDataGridViewEditor
         public static field getForeignKeyRefField(field foreignKey)
         {   // Assumes we have checked that this row in the FieldsDT is a foreignkey
             DataRow dr = getDataRowFromFieldsDT(foreignKey.table, foreignKey.fieldName);
-            string FkRefTable = getStringValueFromColumnInDR(dr, "RefTable");
-            string FkRefCol = getStringValueFromColumnInDR(dr, "RefPkColumn");
+            string FkRefTable = getColumnValueinDR(dr, "RefTable");
+            string FkRefCol = getColumnValueinDR(dr, "RefPkColumn");
             return getFieldFromFieldsDT(FkRefTable, FkRefCol);
-            //            return getFieldFromTableAndColumnName(FkRefTable, FkRefCol);
         }
 
         public static bool isDisplayKey(field fi)
         {
-            return dataHelper.getBoolValueFieldsDT(fi.table, fi.fieldName, "is_DK");
+            DataRow dr = getDataRowFromFieldsDT(fi.table, fi.fieldName);
+            return bool.Parse(getColumnValueinDR(dr, "is_DK"));
         }
 
-        public static bool isTablePrimaryKeyField(field columnField)
+        public static bool isTablePrimaryKeyField(field fi)
         {
-            return getBoolValueFieldsDT(columnField.table, columnField.fieldName, "is_PK");
+            DataRow dr = getDataRowFromFieldsDT(fi.table, fi.fieldName);
+            return bool.Parse(getColumnValueinDR(dr, "is_PK"));
         }
 
-        public static bool isForeignKeyField(field columnField)
+        public static bool isForeignKeyField(field fi)
         {
-            return getBoolValueFieldsDT(columnField.table, columnField.fieldName, "is_FK");
+            DataRow dr = getDataRowFromFieldsDT(fi.table, fi.fieldName);
+            return bool.Parse(getColumnValueinDR(dr, "is_FK"));
         }
 
         public static void storeColumnWidth(string tableName, string columnName, int width)
@@ -514,7 +496,8 @@ namespace SqlDataGridViewEditor
 
         public static int getStoredWidth(string tableName, string columnName, int defaultWidth)
         {
-            int x = getIntValueFieldsDT(tableName, columnName, "Width");
+            DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
+             int x = Int32.Parse(getColumnValueinDR(dr, "Width"));
             if (x == 0) {  x = defaultWidth; }  
             return x;
         }
@@ -527,53 +510,22 @@ namespace SqlDataGridViewEditor
         
         public static field getFieldFromFieldsDT(DataRow dr)
         {
-            string tableName = getStringValueFromColumnInDR(dr, "TableName");
-            string columnName = getStringValueFromColumnInDR(dr, "ColumnName");
-            int size = getIntValueFromColumnInDR(dr, "MaxLength"); ;
-            string strDbType = getStringValueFromColumnInDR(dr, "DataType");
+            string tableName = getColumnValueinDR(dr, "TableName");
+            string columnName = getColumnValueinDR(dr, "ColumnName");
+            int size = Int32.Parse(getColumnValueinDR(dr, "MaxLength"));
+            string strDbType = getColumnValueinDR(dr, "DataType");
             DbType dbType = dataHelper.ConvertStringToDbType(strDbType);
             return new field(tableName, columnName, dbType, size);
         }
 
-        public static string getStringValueFromColumnInDR(DataRow dr, string columnName)
+        public static string getColumnValueinDR(DataRow dr, string columnName)
         {
             return Convert.ToString(dr[dr.Table.Columns.IndexOf(columnName)]);
         }
 
-        public static int getIntValueFromColumnInDR (DataRow dr, string column)
-        {
-            return Convert.ToInt32(dr[dr.Table.Columns.IndexOf(column)]);
-        }
-
-        public static decimal getDecimalValueFromColumnInDR(DataRow dr, string column)
-        {
-            return Convert.ToDecimal(dr[dr.Table.Columns.IndexOf(column)]);
-        }
-
-        public static bool getBoolValueFromColumnInDR(DataRow dr, string column)
-        {
-            int returnField = dr.Table.Columns.IndexOf(column);
-            return Convert.ToBoolean(dr[returnField]);
-        }
-
-        public static void setStringValueFromColumnInDR(DataRow dr, string columnName, string newValue)
+        public static void setColumnValueInDR(DataRow dr, string columnName, object newValue)
         {
             dr[dr.Table.Columns.IndexOf(columnName)]= newValue;
-        }
-
-        public static void setIntValueFromColumnInDR(DataRow dr, string columnName, int newValue)
-        {
-            dr[dr.Table.Columns.IndexOf(columnName)] = newValue;
-        }
-
-        public static void setDecimalValueFromColumnInDR(DataRow dr, string columnName, decimal newValue)
-        {
-            dr[dr.Table.Columns.IndexOf(columnName)] = newValue;
-        }
-
-        public static void setBoolValueFromColumnInDR(DataRow dr, string columnName, bool newValue)
-        {
-            dr[dr.Table.Columns.IndexOf(columnName)] = newValue;
         }
 
 
@@ -610,27 +562,10 @@ namespace SqlDataGridViewEditor
             return dr;
         }
 
-        private static int getIntValueFieldsDT(string tableName, string columnName, string columnToReturn)
-        {
-            DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
-            return getIntValueFromColumnInDR(dr, columnToReturn);
-        }
-
         private static void setIntValueFieldsDT(string tableName, string columnName, string columnToReturn, int value)
         {
             DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
             dr[columnToReturn] = value;
-        }
-
-        private static string getStringValueFieldsDT(string tableName, string columnName, string columnToReturn)
-        {
-            DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
-            return getStringValueFromColumnInDR(dr, columnToReturn);
-        }
-        private static bool getBoolValueFieldsDT(string tableName, string columnName, string columnToReturn)
-        {
-            DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
-            return getBoolValueFromColumnInDR(dr, columnToReturn);
         }
 
         #endregion

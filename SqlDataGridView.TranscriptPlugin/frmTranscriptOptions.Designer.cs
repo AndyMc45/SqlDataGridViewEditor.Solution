@@ -67,7 +67,7 @@
             tabControl1.Location = new Point(0, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1182, 753);
+            tabControl1.Size = new Size(1582, 753);
             tabControl1.TabIndex = 7;
             tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
@@ -83,7 +83,7 @@
             tabOptions.Location = new Point(4, 29);
             tabOptions.Name = "tabOptions";
             tabOptions.Padding = new Padding(3);
-            tabOptions.Size = new Size(1174, 720);
+            tabOptions.Size = new Size(1574, 720);
             tabOptions.TabIndex = 0;
             tabOptions.Text = "Options";
             tabOptions.UseVisualStyleBackColor = true;
@@ -223,7 +223,7 @@
             toolStripBottom.Items.AddRange(new ToolStripItem[] { toolStripBtnNarrow });
             toolStripBottom.Location = new Point(0, 726);
             toolStripBottom.Name = "toolStripBottom";
-            toolStripBottom.Size = new Size(1182, 27);
+            toolStripBottom.Size = new Size(1582, 27);
             toolStripBottom.TabIndex = 15;
             toolStripBottom.Text = "toolStrip1";
             // 
@@ -247,7 +247,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1182, 753);
+            ClientSize = new Size(1582, 753);
             Controls.Add(toolStripBottom);
             Controls.Add(tabControl1);
             Name = "frmTranscriptOptions";

@@ -9,118 +9,70 @@ using SqlDataGridViewEditor;
 
 namespace SqlDataGridViewEditor.TranscriptPlugin
 {
-    internal static class transcriptHelper
+    internal static class TranscriptHelper
     {
-        internal static void UpdateStuGradReqDR(DataRow sgrDR, int sdDegreeLevel, int tDegreeLevel, int sdDeliveryLevel, int tDeliveryLevel,
-                    Single grade_QP, bool grade_EarnedCredits, bool grade_creditsInQPA, Single credits, bool xTimes)
+        internal static DataTable GetOneRowDataTable(string tableName, int PkValue, ref List<string> errorMsgs)
         {
-            if (sdDegreeLevel! == tDeliveryLevel)
-            {
-                // errorMsgs.Add("Error");
-            }
-        }
-
-        // Get list of requirements fulfilled by this requirement
-        internal static void getlistOfRequirementsFulfilledBy(int reqID, ref List<int> returnList)
-        {
-            if (!returnList.Contains(reqID))
-            {
-                returnList.Add(reqID); // Fulfills itself
-            }
-            SqlFactory requirementMapSql = new SqlFactory(TableName.requirmentNameMapTable, 0, 0);
-            field ancestorFld = TranscriptField.ReqName_Ancestors;
-            where wh = new where(ancestorFld, reqID.ToString());
-            requirementMapSql.myWheres.Add(wh);
-            string sqlString = requirementMapSql.returnSql(command.selectAll);
+            SqlFactory sqlFactory = new SqlFactory(tableName, 0, 0, false);
+            field fld = dataHelper.getTablePrimaryKeyField(tableName);
+            where wh = new where(fld, PkValue.ToString());
+            sqlFactory.myWheres.Add(wh);
+            // Get data row
+            string sqlString = sqlFactory.returnSql(command.selectAll);
             DataTable dt = new DataTable();
-            MsSql.FillDataTable(dt, sqlString);
-            //foreach (DataRow dr in dt.Rows)
-            //{
-            //    int descendantReqCol = dr.Table.Columns.IndexOf(TranscriptField.RequirementsMap_req_DescendantID.fieldName);
-            //    int descendantReq = Int32.Parse(dr[descendantReqCol].ToString());
-            //    if (!returnList.Contains(descendantReq))
-            //    {
-            //        getlistOfRequirementsFulfilledBy(descendantReq, ref returnList);
-            //    }
-            //}
+            string strError = MsSql.FillDataTable(dt, sqlString);
+            if(strError != string.Empty) { errorMsgs.Add(strError); }
+            return dt;
         }
-
-
-
+        internal static Dictionary<string, string> GetPkRowColumnValues(string tableName, int pkValue, List<string> columnNames, ref List<string> errorMsgs)
+        {
+            var columnValues = new Dictionary<string, string>();
+            DataTable dt = GetOneRowDataTable(tableName, pkValue, ref errorMsgs);                 
+            SqlFactory sqlFactory = new SqlFactory(tableName, 0, 0);
+            // Should be exactly one row in requirementNameDaDt.dt
+            if(dt.Rows.Count != 1) { errorMsgs.Add(String.Format("Error: {0} rows in {1} with primary {2}", dt.Rows.Count.ToString(), tableName, pkValue.ToString()));}
+            if (dt.Rows.Count > 0)
+            {
+                foreach( string colName in  columnNames )
+                {
+                    string colValue = dataHelper.getColumnValueinDR(dt.Rows[0], colName);
+                    columnValues.Add(colName, colValue);
+                }
+            }
+            return columnValues;
+        }
     }
-
     internal static class TableName
     {
         // Names of the tables <string>
-        internal static string coursesTable { get => "Courses"; }
-        internal static string courseTermsTable { get =>  "CourseTerms";}
-        internal static string degreeLevelTable { get =>  "DegreeLevel";}
-internal static string degreesTable { get =>  "Degrees";}
-        internal static string deliveryMethodTable { get =>  "DeliveryMethod";}
-        internal static string departmentsTable { get =>  "Departments";}
-        internal static string facultyTable { get =>  "Faculty";}
-        internal static string gradesTable { get =>  "Grades";}
-        internal static string gradesStatus { get =>   "GradesStadus";}
-    internal static string gradReqDelivMethTable { get => "GradReqDelivMeth"; }
-        internal static string gradRequirementsTable { get =>   "GradRequirements";}
-        internal static string handbooksTable { get =>   "Handbooks";}
-        internal static string requirmentNameTable { get =>   "RequirementName";}
-        internal static string requirmentNameMapTable { get =>   "RequirementNameMap";}
-        internal static string studentDegreesTable { get =>   "StudentDegrees";}
-        internal static string studentGradReqTable { get =>   "StudentGradReq";}   
-        internal static string studentsTable { get =>   "Students";}
-        internal static string termsTable { get =>   "Terms";}
-        internal static string transcriptTable { get =>   "Transcript";}
-        internal static string transferCreditsTable { get =>   "TransferCredits";}
+        internal static string courses { get => "Courses"; }
+        internal static string courseTerms { get =>  "CourseTerms";}
+        internal static string degreeLevel { get =>  "DegreeLevel";}
+        internal static string degrees { get =>  "Degrees";}
+        internal static string deliveryMethod { get =>  "DeliveryMethod";}
+        internal static string departments { get =>  "Departments";}
+        internal static string faculty { get =>  "Faculty";}
+        internal static string grades { get =>  "Grades";}
+        internal static string gradeStatus { get =>   "GradeStatus";}
+        internal static string gradReqDelivMeth { get => "GradReqDelivMeth"; }
+        internal static string gradRequirements { get =>   "GradRequirements";}
+        internal static string handbooks { get =>   "Handbooks";}
+        internal static string requirementName { get =>   "RequirementName";}
+        internal static string requirementType { get => "RequirementType"; }
+        internal static string studentDegrees { get =>   "StudentDegrees";}
+        internal static string studentGradReq { get =>   "StudentGradReq";}   
+        internal static string students { get =>   "Students";}
+        internal static string terms { get =>   "Terms";}
+        internal static string transcript { get =>   "Transcript";}
+        internal static string transferCredits { get =>   "TransferCredits";}
 
 
     }
-    internal static class TranscriptField
+    internal static class TableField
     {
-
-        // Non-FK Columns in tables that are used -  (field has table, column, dbType, size)
-        internal static field Student_StudentName { get => dataHelper.getFieldFromFieldsDT(TableName.studentsTable, "studentName");}
-        internal static field StudentDegrees_HandbookID { get => dataHelper.getFieldFromFieldsDT(TableName.studentDegreesTable, "handbookID"); }
-        internal static field StudentDegrees_DegreeID { get => dataHelper.getFieldFromFieldsDT(TableName.studentDegreesTable, "degreeID"); }
-        internal static field Degrees_DegreeName { get =>   dataHelper.getFieldFromFieldsDT(TableName.degreesTable, "degreeName");}
-
-        // Needed in filling studentGradReqTable
-        internal static field CourseTerms_Credits { get =>   dataHelper.getFieldFromFieldsDT(TableName.courseTermsTable, "credits");}
-
-        internal static field Courses_degreeLevelID { get =>   dataHelper.getFieldFromFieldsDT(TableName.coursesTable, "degeeLevelID");}
-
-        internal static field DegreeLevel_DegreeLevel { get =>   dataHelper.getFieldFromFieldsDT(TableName.degreeLevelTable, "degreeLevel");}
-        internal static field DeliveryMethod_level { get =>   dataHelper.getFieldFromFieldsDT(TableName.deliveryMethodTable, "deliveryLevel");}
-
-        internal static field ReqName_reqName { get =>   dataHelper.getFieldFromFieldsDT(TableName.requirmentNameTable, "reqName");}
-        internal static field ReqName_Ancestors { get =>   dataHelper.getFieldFromFieldsDT(TableName.requirmentNameTable, "Ancestors");}
-
-        internal static field Grades_QP { get =>   dataHelper.getFieldFromFieldsDT(TableName.gradesTable, "QP");}
-        internal static field Grades_earnedCredits { get =>   dataHelper.getFieldFromFieldsDT(TableName.gradesTable, "earnedCredits");}
-        internal static field Grades_creditsInQPA { get =>   dataHelper.getFieldFromFieldsDT(TableName.gradesTable, "creditsInQPA");}
-
-        internal static field GradRequirements_handbookID { get =>   dataHelper.getFieldFromFieldsDT(TableName.gradRequirementsTable, "handbookID");}
-        internal static field GradRequirements_reqCredits { get =>   dataHelper.getFieldFromFieldsDT(TableName.gradRequirementsTable, "reqCredits");}
-        internal static field GradRequirements_reqTimes { get =>   dataHelper.getFieldFromFieldsDT(TableName.gradRequirementsTable, "reqTimes");}
-        internal static field GradRequirements_reqEqDmCredits { get =>   dataHelper.getFieldFromFieldsDT(TableName.gradRequirementsTable, "reqEqDmCredits");}
-        internal static field GradRequirements_creditLimit { get =>   dataHelper.getFieldFromFieldsDT(TableName.gradRequirementsTable, "creditLimit");}
-        internal static field GradRequirements_DegreeID { get => dataHelper.getFieldFromFieldsDT(TableName.gradRequirementsTable, "degreeID"); }
-
-
-
-        // Columns that are Updated
-        internal static field SGRT_crReq = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "crReq");
-        internal static field SGRT_crEarned = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "crEarned");
-        internal static field SGRT_crInProgress = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "crInProgress");
-        internal static field SGRT_crLimit = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "crLimit");
-        internal static field SGRT_crUnused = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "crUnused");
-        internal static field SGRT_crDelMethReq = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "crDelMethReq");
-        internal static field SGRT_crDelMethErnd = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "crDelMethErnd");
-        internal static field SGRT_crDelMethInPro = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "crDelMethInPro");
-        internal static field SGRT_QP_total = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "QP_total");
-        internal static field SGRT_QP_credits = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "QP_credits");
-        internal static field SGRT_QP_average = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "QP_average");
-        internal static field SGRT_Fulfilled = dataHelper.getFieldFromFieldsDT(TableName.studentGradReqTable, "Fulfilled");
+        // Fields used in where statement
+        internal static field GradRequirements_DegreeID { get => dataHelper.getFieldFromFieldsDT(TableName.gradRequirements, "degreeID"); }
+        internal static field GradRequirements_handbookID { get => dataHelper.getFieldFromFieldsDT(TableName.gradRequirements, "handbookID"); }
     }
 
 }

@@ -19,7 +19,7 @@ namespace SqlDataGridViewEditor
             int dkNumber = -1;
             bool currentArrayIsDkColors = false;
             string lastTable = myTable;
-            for (int i = 0; i < dgv.ColumnCount; i++)
+            for (int i = 0; i < myFields.Count; i++)
             {
                 // Display keys and foreignkeys
                 field fieldi = myFields[i];
@@ -84,7 +84,7 @@ namespace SqlDataGridViewEditor
         {
             // Starting with autosize when the table is first loaded takes too much time; don't do it. 
             // Also, this function takes 10 seconds for transcript table - so don't run it in loading page
-            for (int i = 0; i < dgv.Columns.Count; i++)
+            for (int i = 0; i < myFields.Count; i++)   // Using myFields.Count and not dgv.Columns becauser use may add a column to dgv
             {
                 field fl = myFields[i];
                 string headerText = myFields[i].fieldName;  // Default headerText = Original header text
@@ -98,27 +98,36 @@ namespace SqlDataGridViewEditor
                 // Defaults
                 dgv.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft; // default Alignment
                 int nextWidth = dataHelper.getStoredWidth(fl.table, fl.fieldName, currentWidth);  // Default 
-                bool shortenHeaderText = false;  // default
                 // Set 'shortenHeaderText', and nextWidth with switch
                 DbType dbType = fl.dbType;
                 switch (dbType)
                 {
                     case DbType.Int32:
                     case DbType.Int16:
-                    case DbType.Decimal:
-                    case DbType.Int64:
+                    //case DbType.Decimal:
+                    //case DbType.Int64:
                     case DbType.Byte:
                     case DbType.SByte:   // -127 to 127 - signed byte
-                    case DbType.Double:
-                    case DbType.Single:
-                        if (narrowColumns)
+                    // case DbType.Double:
+                    // case DbType.Single:
+                    dgv.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    if (narrowColumns)
                         {
-                            shortenHeaderText = true;
-                            nextWidth = 62;
+                            if (dataHelper.isTablePrimaryKeyField(myFields[i]) || dataHelper.isForeignKeyField(myFields[i]))
+                            {
+                                nextWidth = 3;
+                                dgv.Columns[i].DefaultCellStyle.ForeColor = Color.White;
+                            }
+                            else
+                            {
+                                nextWidth = Math.Max(62, headerWidth);
+                                dgv.Columns[i].DefaultCellStyle.ForeColor = Color.Navy;
+                            }
                         }
                         else
                         {
                             nextWidth = Math.Max(62, headerWidth);
+                            dgv.Columns[i].DefaultCellStyle.ForeColor = Color.Navy;
                         }
                         break;
                     default:
@@ -140,11 +149,7 @@ namespace SqlDataGridViewEditor
                         }
                         if (narrowColumns)
                         {
-                            nextWidth = Math.Min(300, Math.Min(headerWidth, longestWidth));
-                            if (headerWidth > longestWidth + 20)
-                            {
-                                shortenHeaderText = false; // Easier to guess from first few letters
-                            }
+                            nextWidth = Math.Max(headerWidth, longestWidth);
                         }
                         else
                         {
@@ -152,33 +157,7 @@ namespace SqlDataGridViewEditor
                         }
                         break;
                 }  // End switch
-                // Shorten the header text if set to true above and set Alignment = MiddleCenter
-                if (shortenHeaderText)
-                {
-                    dgv.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    if (headerText.Length > 6)  // Can 6 letters fit in 62 ?
-                    {
-                        String newHeaderText = string.Empty;
-                        string prefix = headerText.Substring(0, 1);
-                        for (int j = 1; j < headerText.Length - 2; j++)  // Skip last two letters at end
-                        {
-                            if (prefix.Length < 3)
-                            {
-                                if (Char.IsUpper(headerText[j]) || headerText[j - 1] == '_')
-                                {
-                                    prefix = prefix + headerText[j];
-                                }
-                            }
-                        }
-                        if (prefix.Length == 1)
-                        {
-                            prefix = headerText.Substring(0, 2);
-                        }
-                        // prefix = prefix.ToUpper();
-                        headerText = prefix + "_" + headerText.Substring(headerText.Length - 2, 2);
-                    }
-                }
-                dgv.Columns[i].HeaderText = headerText;
+                // dgv.Columns[i].HeaderText = headerText;
                 dgv.Columns[i].Width = nextWidth;
                 // Prepare for next load of table before program closed - every column must be at least 62
                 dataHelper.storeColumnWidth(fl.table, fl.fieldName, nextWidth);

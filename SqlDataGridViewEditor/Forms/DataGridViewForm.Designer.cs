@@ -699,7 +699,7 @@
             // 
             GridContextMenu_FindInChild.Name = "GridContextMenu_FindInChild";
             GridContextMenu_FindInChild.Size = new Size(247, 24);
-            GridContextMenu_FindInChild.Text = "Find in Child table";
+            GridContextMenu_FindInChild.Text = "Find PK in Child table";
             GridContextMenu_FindInChild.Click += GridContextMenu_FindInChild_Click;
             // 
             // GridContextMenu_FindInParent
@@ -707,7 +707,7 @@
             GridContextMenu_FindInParent.DoubleClickEnabled = true;
             GridContextMenu_FindInParent.Name = "GridContextMenu_FindInParent";
             GridContextMenu_FindInParent.Size = new Size(247, 24);
-            GridContextMenu_FindInParent.Text = "Find in Parent table";
+            GridContextMenu_FindInParent.Text = "Find an FK in Parent table";
             GridContextMenu_FindInParent.Click += GridContextMenu_FindInParent_Click;
             // 
             // GridContextMenu_TimesUsedAsFK

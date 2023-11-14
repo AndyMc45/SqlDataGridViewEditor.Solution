@@ -679,119 +679,6 @@ namespace SqlDataGridViewEditor
         //----------------------------------------------------------------------------------------------------------------------
 
         #region Setting up Filters, Colors, TablePanel
-
-        private void SetOldColumnWidths()
-        {
-            // 3. Resize all columns by stored width - Must be done on every reload
-            for (int i = 0; i < dataGridView1.Columns.Count; i++)
-            {
-                field fl = currentSql.myFields[i];
-                int currentWidth = dataGridView1.Columns[i].Width;
-                dataGridView1.Columns[i].Width = dataHelper.getStoredWidth(fl.table, fl.fieldName, currentWidth);
-            }
-        }
-        private void SetNewColumnWidths()
-        {
-            // Starting with autosize when the table is first loaded takes too much time; don't do it. 
-            // Also, this function takes 10 seconds for transcript table - so don't run it in loading page
-            for (int i = 0; i < dataGridView1.Columns.Count; i++)
-            {
-                field fl = currentSql.myFields[i];
-                string headerText = currentSql.myFields[i].fieldName;  // Default headerText = Original header text
-                int headerWidth;  // No default
-                System.Drawing.Font font = dataGridView1.Font;
-                using (Graphics g = dataGridView1.CreateGraphics())
-                {
-                    headerWidth = Math.Max(62, (int)g.MeasureString(headerText, font).Width);  // 62 the shortest
-                }
-                int currentWidth = dataGridView1.Columns[i].Width;
-                // Defaults
-                dataGridView1.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft; // default Alignment
-                int nextWidth = dataHelper.getStoredWidth(fl.table, fl.fieldName, currentWidth);  // Default 
-                bool shortenHeaderText = false;  // default
-                // Set 'shortenHeaderText', and nextWidth with switch
-                DbType dbType = fl.dbType;
-                switch (dbType)
-                {
-                    case DbType.Int32:
-                    case DbType.Int16:
-                    case DbType.Decimal:
-                    case DbType.Int64:
-                    case DbType.Byte:
-                    case DbType.SByte:   // -127 to 127 - signed byte
-                    case DbType.Double:
-                    case DbType.Single:
-                        if (formOptions.narrowColumns)
-                        {
-                            shortenHeaderText = true;
-                            nextWidth = 62;
-                        }
-                        else
-                        {
-                            nextWidth = Math.Max(62, headerWidth);
-                        }
-                        break;
-                    default:
-                        // Get the longest of the first 40 items
-                        int r = 0;
-                        int longestWidth = 62; // default
-                        using (Graphics g = dataGridView1.CreateGraphics())
-                        {
-                            foreach (DataGridViewRow row in dataGridView1.Rows)
-                            {
-                                r = r + 1;
-                                if (r > 40) { break; }
-                                int thisItemWidth = (int)g.MeasureString(row.Cells[i].Value.ToString(), font).Width;
-                                longestWidth = Math.Max(thisItemWidth, longestWidth);
-                            }
-                        }
-                        if (formOptions.narrowColumns)
-                        {
-                            nextWidth = Math.Min(300, Math.Min(headerWidth, longestWidth));
-                            if (headerWidth > longestWidth + 20)
-                            {
-                                shortenHeaderText = false; // Easier to guess from first few letters
-                            }
-                        }
-                        else
-                        {
-                            nextWidth = Math.Max(headerWidth, longestWidth);
-                        }
-                        break;
-                }  // End switch
-                // Shorten the header text if set to true above and set Alignment = MiddleCenter
-                if (shortenHeaderText)
-                {
-                    dataGridView1.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    if (headerText.Length > 6)  // Can 6 letters fit in 62 ?
-                    {
-                        String newHeaderText = string.Empty;
-                        string prefix = headerText.Substring(0, 1);
-                        for (int j = 1; j < headerText.Length - 2; j++)  // Skip last two letters at end
-                        {
-                            if (prefix.Length < 3)
-                            {
-                                if (Char.IsUpper(headerText[j]) || headerText[j - 1] == '_')
-                                {
-                                    prefix = prefix + headerText[j];
-                                }
-                            }
-                        }
-                        if (prefix.Length == 1)
-                        {
-                            prefix = headerText.Substring(0, 2);
-                        }
-                        // prefix = prefix.ToUpper();
-                        headerText = prefix + "_" + headerText.Substring(headerText.Length - 2, 2);
-                    }
-                }
-                dataGridView1.Columns[i].HeaderText = headerText;
-                dataGridView1.Columns[i].Width = nextWidth;
-                // Prepare for next load of table before program closed - every column must be at least 62
-                dataHelper.storeColumnWidth(fl.table, fl.fieldName, nextWidth);
-            }
-        }
-
         private void SetTableLayoutPanelHeight()
         {
             int height = 2;
@@ -864,7 +751,7 @@ namespace SqlDataGridViewEditor
                     for (int j = 0; j < currentSql.myFields.Count; j++)
                     {
                         field colField = currentSql.myFields[j];
-                        if (selectedField.isSameFieldAs(colField))
+                        if (selectedField.key.Equals(colField.key))
                         {
                             if (dataGridView1.Columns.Count > 0)
                             {
@@ -886,7 +773,7 @@ namespace SqlDataGridViewEditor
                     for (int j = 0; j < currentSql.myFields.Count; j++)
                     {
                         field colField = currentSql.myFields[j];
-                        if (selectedField.isSameFieldAs(colField))
+                        if (selectedField.key.Equals(colField.key))
                         {
                             if (dataGridView1.Columns.Count > 0)
                             {
@@ -1381,35 +1268,33 @@ namespace SqlDataGridViewEditor
                         foreignKeys.Add(currentSql.myFields[i]);
                     }
                 }
-                //                DataRow[] drs = dataHelper.fieldsDT.Select(String.Format("TableName = '{0}' AND is_FK = 'True'", currentSql.myTable));
                 if (foreignKeys.Count() > 0)  // always true because we only enable the event if true;
                 {
                     List<string> tableList = new List<string>();
                     foreach (field fld in foreignKeys)
                     {
-                        field pkRefTable = dataHelper.getForeignKeyRefField(fld);
-                        tableList.Add(pkRefTable.table);
+                        tableList.Add(fld.fieldName);
                     }
 
                     // Get user choice
                     frmListItems ParentTablesForm = new frmListItems();
                     ParentTablesForm.myList = tableList;
                     ParentTablesForm.myJob = frmListItems.job.SelectString;
-                    ParentTablesForm.Text = "Select Table";
+                    ParentTablesForm.Text = "Select Foreign Key";
                     ParentTablesForm.ShowDialog();
-                    string selectedTable = ParentTablesForm.returnString;
-                    int selectedTableIndex = ParentTablesForm.returnIndex;
+                    string selectedFK = ParentTablesForm.returnString;
+                    int selectedFKindex = ParentTablesForm.returnIndex;
                     ParentTablesForm = null;
-                    if (selectedTableIndex > -1 && !String.IsNullOrEmpty(selectedTable))
+                    if (selectedFKindex > -1 && !String.IsNullOrEmpty(selectedFK))
                     {
                         // 1.  Get Where for Parent table 
-                        field fieldInCurrentTable = foreignKeys[selectedTableIndex];
-                        int dgColumnIndex = currentSql.colIndexOfBaseField(fieldInCurrentTable);
+                        field fieldInCurrentTable = foreignKeys[selectedFKindex];
+                        string refTableOfSelectedFK = dataHelper.getForeignKeyRefField(fieldInCurrentTable).table;
+                        int dgColumnIndex = currentSql.getColumn(fieldInCurrentTable);
                         if (dgColumnIndex > -1)  // A needless check
                         {
                             string whereValue = dataGridView1.SelectedRows[0].Cells[dgColumnIndex].Value.ToString();
-
-                            where newMainFilter = dataHelper.GetMainFilterFromPrimaryKeyValue(selectedTable, whereValue);
+                            where newMainFilter = dataHelper.GetMainFilterFromPrimaryKeyValue(refTableOfSelectedFK, whereValue);
                             foreach (where wh in MainFilterList)
                             {
                                 if (wh.isSameWhereAs(newMainFilter)) { MainFilterList.Remove(wh); break; }
@@ -1420,7 +1305,7 @@ namespace SqlDataGridViewEditor
                             cmbMainFilter.SelectedIndex = 0;
                             cmbMainFilter.Enabled = true;
                             formOptions.loadingMainFilter = false;
-                            writeGrid_NewTable(selectedTable);
+                            writeGrid_NewTable(refTableOfSelectedFK);
                         }
                         else
                         {
@@ -1451,8 +1336,8 @@ namespace SqlDataGridViewEditor
                     int firstPKCount = 0;
                     foreach (DataRow drInner in drs)    // Only 1 dr with "Courses" main table, and that is the CourseTerm table.
                     {
-                        string FKColumnName = dataHelper.getStringValueFromColumnInDR(drInner, "ColumnName");
-                        string TableWithFK = dataHelper.getStringValueFromColumnInDR(drInner, "TableName");
+                        string FKColumnName = dataHelper.getColumnValueinDR(drInner, "ColumnName");
+                        string TableWithFK = dataHelper.getColumnValueinDR(drInner, "TableName");
                         string strSql = String.Format("SELECT COUNT(1) FROM {0} where {1} = '{2}'", TableWithFK, FKColumnName, drPKValue);
                         firstPKCount = firstPKCount + MsSql.GetRecordCount(strSql);
                     }
@@ -1497,8 +1382,8 @@ namespace SqlDataGridViewEditor
                 int firstPKCount = 0;
                 foreach (DataRow drInner in drs)    // Only 1 dr with "Courses" main table, and that is the CourseTerm table.
                 {
-                    string FKColumnName = dataHelper.getStringValueFromColumnInDR(drInner, "ColumnName");
-                    string TableWithFK = dataHelper.getStringValueFromColumnInDR(drInner, "TableName");
+                    string FKColumnName = dataHelper.getColumnValueinDR(drInner, "ColumnName");
+                    string TableWithFK = dataHelper.getColumnValueinDR(drInner, "TableName");
                     string strSql = String.Format("SELECT COUNT(1) FROM {0} where {1} = '{2}'", TableWithFK, FKColumnName, intValue);
                     firstPKCount = firstPKCount + MsSql.GetRecordCount(strSql);
                 }
@@ -1637,16 +1522,19 @@ namespace SqlDataGridViewEditor
                 if (Fkcol != null)  // Will be null for non-foreign key row
                 {
                     // Get from inner joins because we need the correct table alias
-                    foreach (innerJoin ij in currentSql.myInnerJoins)
-                    {
-                        if (ij.fkFld.isSameFieldAs(colField))
-                        {
-                            // Fill Data table (datahelper.extraDT)
-                            field PK_refTable = ij.pkRefFld;
-                            FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
-                            break;
-                        }
-                    }
+                    //foreach (innerJoin ij in currentSql.myInnerJoins)
+                    //{
+                    //    if (ij.fkFld.isSameFieldAs(colField))
+                    //    {
+                    //        // Fill Data table (datahelper.extraDT)
+                    //        field PK_refTable = ij.pkRefFld;
+                    //        FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
+                    //        break;
+                    //    }
+                    //}
+                    field PK_refTable = dataHelper.getForeignKeyRefField(colField);
+                    FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
+
                     // Assign datatable to each cell in FK column
                     int index = dataHelper.currentDT.Columns.IndexOf(col.Name);
                     for (int j = 0; j < dataHelper.currentDT.Rows.Count; j++)
@@ -2036,16 +1924,28 @@ namespace SqlDataGridViewEditor
                 {
                     // Get primary key of the Ref table from innerJoins
                     // Get from inner joins because we need the correct table alias
-                    foreach (innerJoin ij in currentSql.myInnerJoins)
-                    {
-                        if (ij.fkFld.isSameFieldAs(selectedField))
-                        {
-                            // Fill Data table (datahelper.extraDT)
-                            field PK_refTable = ij.pkRefFld;
-                            FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
-                            break;
-                        }
-                    }
+                    //foreach (innerJoin ij in currentSql.myInnerJoins)
+                    //{
+                    //    if (ij.fkFld.isSameFieldAs(selectedField))
+                    //    {
+                    //        // Fill Data table (datahelper.extraDT)
+                    //        field PK_refTable = ij.pkRefFld;
+                    //        FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
+                    //        break;
+                    //    }
+                    //}
+                    field PK_refTable = dataHelper.getForeignKeyRefField(selectedField);
+                    //foreach (innerJoin ij in currentSql.PKs_InnerjoinMap[PK_RefTable.key])
+                    //{
+                    //if (ij.fkFld.isSameFieldAs(selectedField))
+                    //{
+                    // Fill Data table (datahelper.extraDT)
+                    //field PK_refTable = ij.pkRefFld;
+                    FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
+                    // break;
+                    //}
+                    //}
+
                 }
                 else
                 {
@@ -2119,14 +2019,25 @@ namespace SqlDataGridViewEditor
                 bool oneOrMoreComboFVRebound = false;
                 // Main work of this method - rebind all ComboFVcombos
                 field PkRefTable = dataHelper.getForeignKeyRefField(selectedFK);
-                foreach (innerJoin ij in currentSql.myInnerJoins)
+                field PkMyTable = dataHelper.getTablePrimaryKeyField(currentSql.myTable);
+                // Get correct table allias
+                foreach (innerJoin ij in currentSql.PKs_InnerjoinMap[PkMyTable.key])
                 {
-                    if (ij.fkFld.isSameBaseFieldAs(selectedFK))
+                    if (ij.fkFld.baseKey.Equals(selectedFK.baseKey))
                     {
                         PkRefTable.tableAlias = ij.pkRefFld.tableAlias;
                         break;
                     }
                 }
+
+                //foreach (innerJoin ij in currentSql.myInnerJoins)
+                //{
+                //    if (ij.fkFld.isSameBaseFieldAs(selectedFK))
+                //    {
+                //        PkRefTable.tableAlias = ij.pkRefFld.tableAlias;
+                //        break;
+                //    }
+                //}
                 Tuple<string, string, string> key = Tuple.Create(PkRefTable.tableAlias, PkRefTable.table, PkRefTable.fieldName);
                 foreach (field fi in currentSql.PKs_OstensiveDictionary[key])
                 {
@@ -2146,7 +2057,7 @@ namespace SqlDataGridViewEditor
                         oneOrMoreComboFVRebound = true;
 
                         // Set color of combo
-                        int colIndex = currentSql.colIndexOfBaseField(fi);
+                        int colIndex = currentSql.getColumn(fi);
                         // I added primary key if there is no display-key -  O.K. if this is the PK of this table.  But . . .
                         // If this is the primary key of a FK of this table, It will not be in table and colIndex will be -1
                         // I arbitrarily set this to .BackColor = formOptions.DkColorArray[0]
@@ -2255,6 +2166,9 @@ namespace SqlDataGridViewEditor
                 int firstPK = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
                 int secondPK = Convert.ToInt32(dataGridView1.SelectedRows[1].Cells[0].Value);
                 merge(currentSql.myTable, dataHelper.currentDT, firstPK, secondPK);
+                currentSql.strStaticWhereClause = string.Empty;
+                rbView.Checked = true;
+                writeGrid_NewFilter();
             }
 
             else if (programMode == ProgramMode.delete)
@@ -2276,6 +2190,16 @@ namespace SqlDataGridViewEditor
                 field PKField = dataHelper.getTablePrimaryKeyField(currentSql.myTable);
                 where wh = new where(PKField, PKvalue.ToString());
                 string errorMsg = MsSql.DeleteRowsFromDT(dataHelper.currentDT, wh);
+                if (errorMsg != string.Empty)
+                {
+                    InformationBox.Show(String.Format("Error deleting row: {0}", errorMsg), "Delete Error", InformationBoxIcon.Error);
+                }
+                else
+                {
+                    currentSql.strStaticWhereClause = string.Empty;
+                    rbView.Checked = true;
+                    writeGrid_NewFilter();
+                }
             }
 
             else if (programMode == ProgramMode.add)
@@ -2342,16 +2266,24 @@ namespace SqlDataGridViewEditor
                 // Defective table has no display keys, but can add an item
                 if (dkWhere.Count > 0)
                 {
-                    string staticWhereClause = SqlFactory.SqlStatic.sqlWhereString(dkWhere, string.Empty, true);  // Only display keys enabled so filtered
+                    string newWhereClause = SqlFactory.SqlStatic.sqlWhereString(dkWhere, string.Empty, true);  // Only display keys enabled so filtered
+                    currentSql.strStaticWhereClause = newWhereClause; // Causes the following to search on this where only
                     string strSql = currentSql.returnSql(command.selectAll);
                     MsSqlWithDaDt dadt = new MsSqlWithDaDt(strSql);
                     string errorMsg = dadt.errorMsg;
-                    if (errorMsg != string.Empty) { InformationBox.Show(errorMsg, "ERROR in btnDeleteAddMerge_Click (Add)", InformationBoxIcon.Error); }
+                    if (errorMsg != string.Empty)
+                    {
+                        InformationBox.Show(errorMsg, "ERROR in btnDeleteAddMerge_Click (Add)", InformationBoxIcon.Error);
+                        currentSql.strStaticWhereClause = string.Empty;
+                        return;
+                    }
 
                     if (dadt.dt.Rows.Count > 0)
                     {
                         InformationBox.Show(String.Format("You already have this object in your database!"), "Display key value array must be unique.", InformationBoxIcon.Error);
-                        return;
+                        currentSql.strStaticWhereClause = string.Empty;
+                        rbView.Checked = true;
+                        writeGrid_NewFilter(); return;
                     }
                 }
 
@@ -2360,7 +2292,9 @@ namespace SqlDataGridViewEditor
                 {
                     MsSql.SetInsertCommand(currentSql.myTable, whereList, dataHelper.currentDT);  // knows to use currentDA
                     MsSql.currentDA.InsertCommand.ExecuteNonQuery();
-                    writeGrid_NewPage();
+                    currentSql.strStaticWhereClause = string.Empty;
+                    rbView.Checked = true;
+                    writeGrid_NewFilter();
                 }
                 catch (Exception ex)
                 {
@@ -2382,8 +2316,8 @@ namespace SqlDataGridViewEditor
             int secondPKCount = 0;
             foreach (DataRow dr in drs)    // Only 1 dr with "Courses" main table, and that is the CourseTerm table.
             {
-                string FKColumnName = dataHelper.getStringValueFromColumnInDR(dr, "ColumnName");
-                string TableWithFK = dataHelper.getStringValueFromColumnInDR(dr, "TableName");
+                string FKColumnName = dataHelper.getColumnValueinDR(dr, "ColumnName");
+                string TableWithFK = dataHelper.getColumnValueinDR(dr, "TableName");
 
                 string strSql = String.Format("SELECT COUNT(1) FROM {0} where {1} = '{2}'", TableWithFK, FKColumnName, pk1);
                 firstPKCount = firstPKCount + MsSql.GetRecordCount(strSql);
@@ -2420,8 +2354,8 @@ namespace SqlDataGridViewEditor
                 {
                     foreach (DataRow dr in drs)
                     {
-                        string FKColumnName = dataHelper.getStringValueFromColumnInDR(dr, "ColumnName");
-                        string TableWithFK = dataHelper.getStringValueFromColumnInDR(dr, "TableName");
+                        string FKColumnName = dataHelper.getColumnValueinDR(dr, "ColumnName");
+                        string TableWithFK = dataHelper.getColumnValueinDR(dr, "TableName");
                         field fld = new field(TableWithFK, FKColumnName, DbType.Int32, 4);
                         // 1. Put the rows to be updated into extraDT  (i.e. select rows where FK value in firstPK)
                         string sqlString = String.Format("Select * from {0} where {1} = '{2}'", TableWithFK, FKColumnName, pk1);
@@ -2722,7 +2656,7 @@ namespace SqlDataGridViewEditor
         {
             for (int i = 0; i < dataGridView1.Columns.Count; i++)
             {
-                if (fld.isSameBaseFieldAs(currentSql.myFields[i]))
+                if (fld.baseKey.Equals(currentSql.myFields[i].baseKey))
                 {
                     return i;
                 }
