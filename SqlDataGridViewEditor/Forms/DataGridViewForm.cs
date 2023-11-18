@@ -31,7 +31,6 @@ namespace SqlDataGridViewEditor
     //          -- User clicks on an edit column - textbox appears for non-keys, drop-down appears for FK.
     //          -- When user exits the cell, call currentDA.Update()
 
-
     public partial class DataGridViewForm : Form
     {
         #region Variables
@@ -66,6 +65,12 @@ namespace SqlDataGridViewEditor
         {
             //Required by windows forms
             InitializeComponent();
+            // Some setting to speed up datagridview
+            dataGridView1.AutoGenerateColumns = false;
+            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.None);
+            dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dataGridView1.RowHeadersVisible = false;
+
             // Define delegate
             dgvMainFormDelegate = Plugins.ExportForm;  // The way to put this method into the delegate
             // This loads plugins into Plugins.loadedPlugins AND return pluginMenus
@@ -81,7 +86,7 @@ namespace SqlDataGridViewEditor
         private void DataGridViewForm_Load(object sender, EventArgs e)
         {
             formOptions = AppData.GetFormOptions();  // Sets initial option values
-            formOptions.runTimer = false;  // Used when debugging to check what is slow
+            formOptions.runTimer = false;  // Set to true when debugging to check what is slow
 
             // Set things that don't change even if connection changes
             // 0.  Main filter datasource always a list of wheres and 'last' element always the same (i.e. "No Reasearch object")
@@ -383,7 +388,6 @@ namespace SqlDataGridViewEditor
             ComboBox[] cmbGridFilterValue = { cmbGridFilterValue_0, cmbGridFilterValue_1, cmbGridFilterValue_2, cmbGridFilterValue_3, cmbGridFilterValue_4, cmbGridFilterValue_5, cmbGridFilterValue_6, cmbGridFilterValue_7, cmbGridFilterValue_8 };
 
             Stopwatch watch = new Stopwatch();
-            // formOptions.runTimer = true;
             if (formOptions.runTimer)
             {
                 watch.Start();
@@ -475,7 +479,7 @@ namespace SqlDataGridViewEditor
             if (formOptions.runTimer)
             {
                 watch.Stop();
-                msgTextAdd(" NewTable: " + watch.Elapsed.TotalMilliseconds.ToString() + ". ");
+                msgTextAdd(" NewTable: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
             }
 
             //7. WriteGrid - next step
@@ -507,6 +511,7 @@ namespace SqlDataGridViewEditor
             Stopwatch watch = new Stopwatch();
             if (formOptions.runTimer)
             {
+                msgText("New Page. ");
                 watch.Start();
             }
 
@@ -514,11 +519,6 @@ namespace SqlDataGridViewEditor
             // 1. Get the Sql command for grid
             // CENTRAL and Only USE OF sqlCurrent.returnSql IN PROGRAM
             string strSql = currentSql.returnSql(command.select);
-            // Can be deleted later - used to fix non-unique values I want to use as display values 
-            // if (tableOptions.fixingDatabase)
-            // {
-            //    strSql = tableOptions.strStaticWhereClause;
-            // }
 
             //2. Clear the grid 
             if (dataGridView1.DataSource != null)
@@ -528,42 +528,90 @@ namespace SqlDataGridViewEditor
                 tableOptions.writingTable = false;
             }
             dataGridView1.Columns.Clear();  // Deleting this results in FK fields not being colored
-            dataGridView1.AutoGenerateColumns = true;
+            // dataGridView1.AutoGenerateColumns = true;
+            if (formOptions.runTimer)
+            {
+                // watch.Stop();
+                msgTextAdd(" NewPage0: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
+            }
 
             // 3. Fill currentDT and Bind the Grid to it.
             dataHelper.currentDT = new DataTable();
             string errorMsg = MsSql.FillDataTable(dataHelper.currentDT, strSql);
             if (errorMsg != string.Empty) { InformationBox.Show(errorMsg, "ERROR in WriteGrid_NewPage", InformationBoxIcon.Error); return; }
+            // Bind Grid
+            // dataGridView1.AutoGenerateColumns = false;
             tableOptions.writingTable = true;
+            // Add all the columns - doing this manually because it is faster
+            for (int i = 0; i < dataHelper.currentDT.Columns.Count; i++)  // currentDT already bound
+            {
+                DataGridViewColumn column = new DataGridViewTextBoxColumn();
+                DataColumn dc = dataHelper.currentDT.Columns[i];
+                field fl = currentSql.myFields[i];
+                if (dataHelper.isTablePrimaryKeyField(fl) || dataHelper.isForeignKeyField(fl))
+                {
+                    column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                    // These have a width of 3 in narrow columns; 
+                    if (formOptions.narrowColumns)
+                    {
+                        column.DefaultCellStyle.ForeColor = Color.White;
+                    }
+                }
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                //Change to default width if set in afdFieldData
+                int savedWidth = dataHelper.getStoredWidth(fl.table, fl.fieldName, 0);
+                if (savedWidth == 0)
+                {
+                    column.Width = 90;
+                }
+                else
+                {
+                    column.Width = savedWidth;
+                }
+                column.DataPropertyName = dc.ColumnName;
+                column.Name = dc.ColumnName;
+                column.HeaderText = dc.ColumnName;
+                dataGridView1.Columns.Add(column);
+            }
             dataGridView1.DataSource = dataHelper.currentDT;
             tableOptions.writingTable = false;
 
+
             // 4. Replace foreign key colums with FkComboColumn**
-            dataGridView1.AutoGenerateColumns = false;
-            int intCols = dataGridView1.ColumnCount;
-            for (int i = 0; i < intCols; i++)
+            //    This takes about .2 seconds a column - so only do this if editing
+            if (programMode == ProgramMode.edit)
             {
-                if (dataHelper.isForeignKeyField(currentSql.myFields[i]))
+                // dataGridView1.AutoGenerateColumns = false;
+                int intCols = dataGridView1.ColumnCount;
+                for (int i = 0; i < intCols; i++)
                 {
-                    DataGridViewColumn dgvCol = dataGridView1.Columns[i];
-                    string dpn = dgvCol.DataPropertyName;
-                    int index = dgvCol.Index;
-                    dataGridView1.Columns.Remove(dgvCol);
-                    FkComboColumn col = new FkComboColumn();
-                    col.ValueType = typeof(Int32);
-                    col.DataPropertyName = dpn;
-                    col.Name = dpn;
-                    col.HeaderText = dpn;
-                    tableOptions.writingTable = true;
-                    dataGridView1.Columns.Insert(index, col);
-                    tableOptions.writingTable = false;
+                    if (dataHelper.isForeignKeyField(currentSql.myFields[i]))
+                    {
+                        DataGridViewColumn dgvCol = dataGridView1.Columns[i];
+                        string dpn = dgvCol.DataPropertyName;
+                        int index = dgvCol.Index;
+                        if (formOptions.runTimer)
+                        {
+                            // watch.Stop();
+                            msgTextAdd("Np" + i.ToString() + " :" + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
+                        }
+
+                        dataGridView1.Columns.Remove(dgvCol);
+                        FkComboColumn col = new FkComboColumn();
+                        col.ValueType = typeof(Int32);
+                        col.DataPropertyName = dpn;
+                        col.Name = dpn;
+                        col.HeaderText = dpn;
+                        tableOptions.writingTable = true;
+                        dataGridView1.Columns.Insert(index, col);
+                        tableOptions.writingTable = false;
+                    }
                 }
             }
-
             if (formOptions.runTimer)
             {
                 // watch.Stop();
-                msgTextAdd(" NewPage1: " + watch.Elapsed.TotalMilliseconds.ToString() + ". ");
+                msgTextAdd(" NewPage1: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
             }
 
             //5. On first load, Bind the cmbComboTableList with Primary keys of Reference Tables
@@ -592,7 +640,7 @@ namespace SqlDataGridViewEditor
             if (formOptions.runTimer)
             {
                 // watch.Stop();
-                msgTextAdd(" NewPage2: " + watch.Elapsed.TotalMilliseconds.ToString() + ". ");
+                msgTextAdd(" NewPage2: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
             }
 
             //6. Format controls
@@ -605,26 +653,7 @@ namespace SqlDataGridViewEditor
             sb.Append("    -     " + currentSql.RecordCount.ToString() + " rows");
             sb.Append(", Page: " + currentSql.myPage.ToString());
             this.Text = sb.ToString();
-            // c. Set column widths
-            dataGridView1.RowHeadersWidth = 27; //default
-            for (int i = 0; i <= dataGridView1.ColumnCount - 1; i++)
-            {
-                string fldAlias = dataGridView1.Columns[i].Name;
-                string fld = currentSql.myFields[i].fieldName;
-                string baseTable = currentSql.myFields[i].table; // Convert.ToString(currentDR.GetField(fld).getProperties().Item("BASETABLENAME").getValue());
-                //Change to default width if set in afdFieldData
-                int currentWidth = dataGridView1.Columns[i].Width;
-                int savedWidth = dataHelper.getStoredWidth(baseTable, fld, currentWidth);
-                //if (savedWidth > (47 * 15))
-                //{
-                //    dataGridView1.Columns[i].Width = savedWidth / 15;
-                //}
-                if (savedWidth != currentWidth)
-                {
-                    dataGridView1.Columns[i].Width = savedWidth;
-                }
-            }
-            // d. Show correct orderby glyph
+            // c. Show correct orderby glyph
             if (currentSql.myOrderBys.Count > 0)
             {
                 field fldob = currentSql.myOrderBys[0].fld;
@@ -641,7 +670,7 @@ namespace SqlDataGridViewEditor
             if (formOptions.runTimer)
             {
                 // watch.Stop();
-                msgTextAdd(" NewPage3: " + watch.Elapsed.TotalMilliseconds.ToString() + ". ");
+                msgTextAdd(" NewPage3: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
             }
 
             SetAllFiltersByMode();   // Because Write_NewPage may require changes
@@ -657,18 +686,38 @@ namespace SqlDataGridViewEditor
             }
             if (formOptions.runTimer)
             {
-                msgTextAdd(" NewPage5: " + watch.Elapsed.TotalMilliseconds.ToString() + ". ");
+                msgTextAdd(" NewPage5: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
             }
 
+            // e. Set Column widths  - done when adding columns above
             tableOptions.writingTable = true;
-            // SetColumnWidths();  // Takes too long for transcripts
+            // SetToStoredColumnWidths();  // Takes too long for transcripts
             tableOptions.writingTable = false;
             tableOptions.firstTimeWritingTable = false;
 
             if (formOptions.runTimer)
             {
                 watch.Stop();
-                msgTextAdd(" NewPage6: " + watch.Elapsed.TotalMilliseconds.ToString() + ". ");
+                msgTextAdd(" NewPage6: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
+            }
+
+        }
+
+        internal void SetToStoredColumnWidths()
+        {
+            // dataGridView1.RowHeadersWidth = 27; //default
+            for (int i = 0; i <= dataGridView1.ColumnCount - 1; i++)
+            {
+                string fld = currentSql.myFields[i].fieldName;
+                string baseTable = currentSql.myFields[i].table;
+                //Change to default width if set in afdFieldData
+                int currentWidth = dataGridView1.Columns[i].Width;
+                int savedWidth = dataHelper.getStoredWidth(baseTable, fld, currentWidth);
+                // Time consuming for transcript - so seek to avoid
+                if (savedWidth != currentWidth)
+                {
+                    dataGridView1.Columns[i].Width = savedWidth;
+                }
             }
 
         }
@@ -791,73 +840,6 @@ namespace SqlDataGridViewEditor
         {
             dgvHelper.SetHeaderColorsOnWritePage(dataGridView1, currentSql.myTable, currentSql.myFields);
         }
-
-        //private void SetHeaderColorsOnWritePage()
-        //{
-        //    int nonDkNumber = -1;
-        //    int dkNumber = -1;
-        //    bool currentArrayIsDkColors = false;
-        //    string lastTable = currentSql.myTable;
-        //    for (int i = 0; i < dataGridView1.ColumnCount; i++)
-        //    {
-        //        // Display keys and foreignkeys
-        //        field fieldi = currentSql.myFields[i];
-        //        bool myDisplayKey = dataHelper.isDisplayKey(fieldi) && fieldi.table == currentSql.myTable;
-        //        bool myForeignKey = dataHelper.isForeignKeyField(fieldi) && fieldi.table == currentSql.myTable;
-        //        bool myPrimaryKey = dataHelper.isTablePrimaryKeyField(fieldi); // Only myPrimaryKey in fields
-        //        // Primary Key - easy
-        //        if (myPrimaryKey)
-        //        {
-        //            dataGridView1.Columns[i].HeaderCell.Style.BackColor = formOptions.PrimaryKeyColor;
-        //            dataGridView1.Columns[i].HeaderCell.Style.SelectionBackColor = formOptions.PrimaryKeyColor;
-        //        }
-        //        // Display Key - might be a typical display key or a foreign key - not yet handling a displaykey of foreign key
-        //        else if (myDisplayKey)
-        //        {
-        //            dkNumber++;  // Increase dkNumber
-        //            dataGridView1.Columns[i].HeaderCell.Style.BackColor = formOptions.DkColorArray[dkNumber];
-        //            dataGridView1.Columns[i].HeaderCell.Style.SelectionBackColor = formOptions.DkColorArray[dkNumber];
-        //            // Next two used below to handle a displaykey of foreign key
-        //            currentArrayIsDkColors = true;  // Tells me which array to use
-        //            if (myForeignKey)
-        //            {
-        //                lastTable = dataHelper.getForeignKeyRefField(fieldi).table;  // tells me we are handling a foreign key
-        //            }
-        //            else
-        //            {
-        //                lastTable = currentSql.myTable;
-        //            }
-        //        }
-        //        else if (myForeignKey)  // A typical (non display-key) foreign key
-        //        {
-        //            nonDkNumber++;
-        //            dataGridView1.Columns[i].HeaderCell.Style.BackColor = formOptions.nonDkColorArray[nonDkNumber];
-        //            dataGridView1.Columns[i].HeaderCell.Style.SelectionBackColor = formOptions.nonDkColorArray[nonDkNumber];
-        //            currentArrayIsDkColors = false;
-        //            lastTable = dataHelper.getForeignKeyRefField(fieldi).table;
-        //        }
-        //        // We are handling a display key of a foreign key - this assumes these occur after the foreign key
-        //        else if (lastTable != currentSql.myTable & fieldi.table != currentSql.myTable)
-        //        {
-        //            if (currentArrayIsDkColors)  // the foreign key is a disiplay key
-        //            {
-        //                dataGridView1.Columns[i].HeaderCell.Style.BackColor = formOptions.DkColorArray[dkNumber];
-        //                dataGridView1.Columns[i].HeaderCell.Style.SelectionBackColor = formOptions.DkColorArray[dkNumber];
-        //            }
-        //            else  // The foreign key is not a display key
-        //            {
-        //                dataGridView1.Columns[i].HeaderCell.Style.BackColor = formOptions.nonDkColorArray[nonDkNumber];
-        //                dataGridView1.Columns[i].HeaderCell.Style.SelectionBackColor = formOptions.nonDkColorArray[nonDkNumber];
-        //            }
-        //        }
-        //        else  // All other columns are yellow
-        //        {
-        //            dataGridView1.Columns[i].HeaderCell.Style.BackColor = formOptions.DefaultColumnColor;
-        //            dataGridView1.Columns[i].HeaderCell.Style.SelectionBackColor = formOptions.DefaultColumnColor;
-        //            lastTable = currentSql.myTable;
-        //        }
-        //    }
-        //}
 
         private void SetAllFiltersByMode()
         {
@@ -1693,7 +1675,6 @@ namespace SqlDataGridViewEditor
                 }
                 else if (programMode == ProgramMode.edit)
                 {
-
                     {
                         SetSelectedCellsColor();
                     }
@@ -2445,6 +2426,7 @@ namespace SqlDataGridViewEditor
                 }
                 btnDeleteAddMerge.Enabled = false;
                 SetAllFiltersByMode();
+                writeGrid_NewPage();  // Needed to add FK_cols
             }
         }
 
@@ -2865,23 +2847,19 @@ namespace SqlDataGridViewEditor
         {
             string msg = text;
             txtMessages.Text = msg;
-            toolStripMsg.Text = msg;
         }
 
         private void msgTextError(string text)
         {
             txtMessages.ForeColor = Color.Red;
-            toolStripMsg.ForeColor = Color.Red;
             msgText(text);
             txtMessages.ForeColor = Color.Navy;
-            toolStripMsg.ForeColor = Color.Navy;
         }
 
         private void msgTextAdd(string text)
         {
             string msg = text;
             txtMessages.Text += msg;
-            toolStripMsg.Text += msg;
         }
 
         #endregion
@@ -2897,7 +2875,6 @@ namespace SqlDataGridViewEditor
             {
                 string msg = text;
                 txtMessages.Text += msg;
-                toolStripMsg.Text += msg;
             }
         }
 
@@ -2957,6 +2934,11 @@ namespace SqlDataGridViewEditor
         private void toolStripBottom_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
+        }
+
+        private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            // SetToStoredColumnWidths();  // Takes too long for transcripts
         }
     }
 }

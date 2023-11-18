@@ -30,39 +30,47 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTranscriptOptions));
             tabControl1 = new TabControl();
-            tabOptions = new TabPage();
+            tabActions = new TabPage();
             btnPrintEnglishTranscript = new Button();
-            btnPrintTransscript = new Button();
-            lblCourseRoleTemplateEnglish = new Label();
-            lblCourseRoleTemplate = new Label();
-            lblTranscriptTemplateEnglish = new Label();
-            lblTranscriptTemplate = new Label();
-            lblTemplateFolder = new Label();
             tabStudent = new TabPage();
             dgvStudent = new DataGridView();
             tabTranscript = new TabPage();
             dgvTranscript = new DataGridView();
             tabRequirements = new TabPage();
             dgvRequirements = new DataGridView();
+            tabOptions = new TabPage();
+            lblPathTemplateFolder = new Label();
+            lblPathTemplate = new Label();
+            lblTemplateFolder = new LinkLabel();
+            lblEnglishCourseRoleTemplate = new LinkLabel();
+            lblCourseRoleTemplate = new LinkLabel();
+            lblEnglishTranscriptTemplate = new LinkLabel();
+            lblTranscriptTemplate = new LinkLabel();
+            lblOptions = new Label();
             toolStripBottom = new ToolStrip();
             toolStripBtnNarrow = new ToolStripButton();
+            folderBrowserDialog1 = new FolderBrowserDialog();
+            openFileDialog1 = new OpenFileDialog();
+            saveFileDialog1 = new SaveFileDialog();
             tabControl1.SuspendLayout();
-            tabOptions.SuspendLayout();
+            tabActions.SuspendLayout();
             tabStudent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvStudent).BeginInit();
             tabTranscript.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTranscript).BeginInit();
             tabRequirements.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvRequirements).BeginInit();
+            tabOptions.SuspendLayout();
             toolStripBottom.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
             // 
-            tabControl1.Controls.Add(tabOptions);
+            tabControl1.Controls.Add(tabActions);
             tabControl1.Controls.Add(tabStudent);
             tabControl1.Controls.Add(tabTranscript);
             tabControl1.Controls.Add(tabRequirements);
+            tabControl1.Controls.Add(tabOptions);
             tabControl1.Dock = DockStyle.Fill;
             tabControl1.Location = new Point(0, 0);
             tabControl1.Name = "tabControl1";
@@ -71,92 +79,32 @@
             tabControl1.TabIndex = 7;
             tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
-            // tabOptions
+            // tabActions
             // 
-            tabOptions.Controls.Add(btnPrintEnglishTranscript);
-            tabOptions.Controls.Add(btnPrintTransscript);
-            tabOptions.Controls.Add(lblCourseRoleTemplateEnglish);
-            tabOptions.Controls.Add(lblCourseRoleTemplate);
-            tabOptions.Controls.Add(lblTranscriptTemplateEnglish);
-            tabOptions.Controls.Add(lblTranscriptTemplate);
-            tabOptions.Controls.Add(lblTemplateFolder);
-            tabOptions.Location = new Point(4, 29);
-            tabOptions.Name = "tabOptions";
-            tabOptions.Padding = new Padding(3);
-            tabOptions.Size = new Size(1574, 720);
-            tabOptions.TabIndex = 0;
-            tabOptions.Text = "Options";
-            tabOptions.UseVisualStyleBackColor = true;
+            tabActions.Controls.Add(btnPrintEnglishTranscript);
+            tabActions.Location = new Point(4, 29);
+            tabActions.Name = "tabActions";
+            tabActions.Size = new Size(1574, 720);
+            tabActions.TabIndex = 4;
+            tabActions.Text = "Actions";
+            tabActions.UseVisualStyleBackColor = true;
             // 
             // btnPrintEnglishTranscript
             // 
-            btnPrintEnglishTranscript.Location = new Point(32, 124);
+            btnPrintEnglishTranscript.Location = new Point(296, 31);
             btnPrintEnglishTranscript.Name = "btnPrintEnglishTranscript";
             btnPrintEnglishTranscript.Size = new Size(200, 29);
-            btnPrintEnglishTranscript.TabIndex = 13;
+            btnPrintEnglishTranscript.TabIndex = 14;
             btnPrintEnglishTranscript.Text = "Print English Transcript";
             btnPrintEnglishTranscript.UseVisualStyleBackColor = true;
-            // 
-            // btnPrintTransscript
-            // 
-            btnPrintTransscript.Location = new Point(32, 71);
-            btnPrintTransscript.Name = "btnPrintTransscript";
-            btnPrintTransscript.Size = new Size(200, 29);
-            btnPrintTransscript.TabIndex = 12;
-            btnPrintTransscript.Text = "Print Chinese Transcript";
-            btnPrintTransscript.UseVisualStyleBackColor = true;
-            // 
-            // lblCourseRoleTemplateEnglish
-            // 
-            lblCourseRoleTemplateEnglish.AutoSize = true;
-            lblCourseRoleTemplateEnglish.Location = new Point(245, 240);
-            lblCourseRoleTemplateEnglish.Name = "lblCourseRoleTemplateEnglish";
-            lblCourseRoleTemplateEnglish.Size = new Size(215, 20);
-            lblCourseRoleTemplateEnglish.TabIndex = 9;
-            lblCourseRoleTemplateEnglish.Text = "Course Role Template - English";
-            // 
-            // lblCourseRoleTemplate
-            // 
-            lblCourseRoleTemplate.AutoSize = true;
-            lblCourseRoleTemplate.Location = new Point(245, 179);
-            lblCourseRoleTemplate.Name = "lblCourseRoleTemplate";
-            lblCourseRoleTemplate.Size = new Size(154, 20);
-            lblCourseRoleTemplate.TabIndex = 8;
-            lblCourseRoleTemplate.Text = "Course Role Template";
-            // 
-            // lblTranscriptTemplateEnglish
-            // 
-            lblTranscriptTemplateEnglish.AutoSize = true;
-            lblTranscriptTemplateEnglish.Location = new Point(245, 128);
-            lblTranscriptTemplateEnglish.Name = "lblTranscriptTemplateEnglish";
-            lblTranscriptTemplateEnglish.Size = new Size(200, 20);
-            lblTranscriptTemplateEnglish.TabIndex = 7;
-            lblTranscriptTemplateEnglish.Text = "Transcript Template - English";
-            // 
-            // lblTranscriptTemplate
-            // 
-            lblTranscriptTemplate.AutoSize = true;
-            lblTranscriptTemplate.Location = new Point(245, 80);
-            lblTranscriptTemplate.Name = "lblTranscriptTemplate";
-            lblTranscriptTemplate.Size = new Size(139, 20);
-            lblTranscriptTemplate.TabIndex = 6;
-            lblTranscriptTemplate.Text = "Transcript Template";
-            // 
-            // lblTemplateFolder
-            // 
-            lblTemplateFolder.AutoSize = true;
-            lblTemplateFolder.Location = new Point(32, 28);
-            lblTemplateFolder.Name = "lblTemplateFolder";
-            lblTemplateFolder.Size = new Size(117, 20);
-            lblTemplateFolder.TabIndex = 5;
-            lblTemplateFolder.Text = "Template Folder";
+            btnPrintEnglishTranscript.Click += btnPrintEnglishTranscript_Click;
             // 
             // tabStudent
             // 
             tabStudent.Controls.Add(dgvStudent);
             tabStudent.Location = new Point(4, 29);
             tabStudent.Name = "tabStudent";
-            tabStudent.Size = new Size(1174, 720);
+            tabStudent.Size = new Size(1574, 720);
             tabStudent.TabIndex = 3;
             tabStudent.Text = "Student";
             tabStudent.UseVisualStyleBackColor = true;
@@ -169,7 +117,7 @@
             dgvStudent.Name = "dgvStudent";
             dgvStudent.RowHeadersWidth = 51;
             dgvStudent.RowTemplate.Height = 29;
-            dgvStudent.Size = new Size(1174, 209);
+            dgvStudent.Size = new Size(1574, 209);
             dgvStudent.TabIndex = 0;
             // 
             // tabTranscript
@@ -177,7 +125,7 @@
             tabTranscript.Controls.Add(dgvTranscript);
             tabTranscript.Location = new Point(4, 29);
             tabTranscript.Name = "tabTranscript";
-            tabTranscript.Size = new Size(1174, 720);
+            tabTranscript.Size = new Size(1574, 720);
             tabTranscript.TabIndex = 2;
             tabTranscript.Text = "Transcript";
             tabTranscript.UseVisualStyleBackColor = true;
@@ -200,7 +148,7 @@
             tabRequirements.Location = new Point(4, 29);
             tabRequirements.Name = "tabRequirements";
             tabRequirements.Padding = new Padding(3);
-            tabRequirements.Size = new Size(1174, 720);
+            tabRequirements.Size = new Size(1574, 720);
             tabRequirements.TabIndex = 1;
             tabRequirements.Text = "Requirements";
             tabRequirements.UseVisualStyleBackColor = true;
@@ -213,8 +161,113 @@
             dgvRequirements.Name = "dgvRequirements";
             dgvRequirements.RowHeadersWidth = 51;
             dgvRequirements.RowTemplate.Height = 29;
-            dgvRequirements.Size = new Size(1168, 714);
+            dgvRequirements.Size = new Size(1568, 714);
             dgvRequirements.TabIndex = 0;
+            // 
+            // tabOptions
+            // 
+            tabOptions.Controls.Add(lblPathTemplateFolder);
+            tabOptions.Controls.Add(lblPathTemplate);
+            tabOptions.Controls.Add(lblTemplateFolder);
+            tabOptions.Controls.Add(lblEnglishCourseRoleTemplate);
+            tabOptions.Controls.Add(lblCourseRoleTemplate);
+            tabOptions.Controls.Add(lblEnglishTranscriptTemplate);
+            tabOptions.Controls.Add(lblTranscriptTemplate);
+            tabOptions.Controls.Add(lblOptions);
+            tabOptions.Location = new Point(4, 29);
+            tabOptions.Name = "tabOptions";
+            tabOptions.Padding = new Padding(3);
+            tabOptions.Size = new Size(1574, 720);
+            tabOptions.TabIndex = 0;
+            tabOptions.Text = "Options";
+            tabOptions.UseVisualStyleBackColor = true;
+            // 
+            // lblPathTemplateFolder
+            // 
+            lblPathTemplateFolder.AutoSize = true;
+            lblPathTemplateFolder.BorderStyle = BorderStyle.FixedSingle;
+            lblPathTemplateFolder.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            lblPathTemplateFolder.Location = new Point(280, 283);
+            lblPathTemplateFolder.Name = "lblPathTemplateFolder";
+            lblPathTemplateFolder.Size = new Size(136, 19);
+            lblPathTemplateFolder.TabIndex = 21;
+            lblPathTemplateFolder.Text = "Template Folder Path";
+            // 
+            // lblPathTemplate
+            // 
+            lblPathTemplate.AutoSize = true;
+            lblPathTemplate.BorderStyle = BorderStyle.FixedSingle;
+            lblPathTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            lblPathTemplate.Location = new Point(280, 83);
+            lblPathTemplate.Name = "lblPathTemplate";
+            lblPathTemplate.Size = new Size(158, 19);
+            lblPathTemplate.TabIndex = 20;
+            lblPathTemplate.Text = "Transcript Template Path";
+            // 
+            // lblTemplateFolder
+            // 
+            lblTemplateFolder.AutoSize = true;
+            lblTemplateFolder.Location = new Point(30, 280);
+            lblTemplateFolder.Name = "lblTemplateFolder";
+            lblTemplateFolder.Size = new Size(124, 20);
+            lblTemplateFolder.TabIndex = 19;
+            lblTemplateFolder.TabStop = true;
+            lblTemplateFolder.Text = "Template Folder :";
+            lblTemplateFolder.LinkClicked += lblTemplateFolder_LinkClicked_1;
+            // 
+            // lblEnglishCourseRoleTemplate
+            // 
+            lblEnglishCourseRoleTemplate.AutoSize = true;
+            lblEnglishCourseRoleTemplate.Location = new Point(30, 230);
+            lblEnglishCourseRoleTemplate.Name = "lblEnglishCourseRoleTemplate";
+            lblEnglishCourseRoleTemplate.Size = new Size(161, 20);
+            lblEnglishCourseRoleTemplate.TabIndex = 18;
+            lblEnglishCourseRoleTemplate.TabStop = true;
+            lblEnglishCourseRoleTemplate.Text = "Course Role Template :";
+            // 
+            // lblCourseRoleTemplate
+            // 
+            lblCourseRoleTemplate.AutoSize = true;
+            lblCourseRoleTemplate.Location = new Point(30, 180);
+            lblCourseRoleTemplate.Name = "lblCourseRoleTemplate";
+            lblCourseRoleTemplate.Size = new Size(161, 20);
+            lblCourseRoleTemplate.TabIndex = 17;
+            lblCourseRoleTemplate.TabStop = true;
+            lblCourseRoleTemplate.Text = "Course Role Template :";
+            // 
+            // lblEnglishTranscriptTemplate
+            // 
+            lblEnglishTranscriptTemplate.AutoSize = true;
+            lblEnglishTranscriptTemplate.Location = new Point(30, 130);
+            lblEnglishTranscriptTemplate.Name = "lblEnglishTranscriptTemplate";
+            lblEnglishTranscriptTemplate.Size = new Size(197, 20);
+            lblEnglishTranscriptTemplate.TabIndex = 16;
+            lblEnglishTranscriptTemplate.TabStop = true;
+            lblEnglishTranscriptTemplate.Text = "English Transcript Template :";
+            // 
+            // lblTranscriptTemplate
+            // 
+            lblTranscriptTemplate.AutoSize = true;
+            lblTranscriptTemplate.Location = new Point(30, 80);
+            lblTranscriptTemplate.Name = "lblTranscriptTemplate";
+            lblTranscriptTemplate.Size = new Size(146, 20);
+            lblTranscriptTemplate.TabIndex = 15;
+            lblTranscriptTemplate.TabStop = true;
+            lblTranscriptTemplate.Text = "Transcript Template :";
+            lblTranscriptTemplate.LinkClicked += lblTranscriptTemplate_LinkClicked;
+            // 
+            // lblOptions
+            // 
+            lblOptions.AutoSize = true;
+            lblOptions.BackColor = Color.Transparent;
+            lblOptions.FlatStyle = FlatStyle.Flat;
+            lblOptions.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point);
+            lblOptions.Location = new Point(30, 40);
+            lblOptions.Margin = new Padding(3);
+            lblOptions.Name = "lblOptions";
+            lblOptions.Size = new Size(166, 20);
+            lblOptions.TabIndex = 6;
+            lblOptions.Text = "Folders and Templates";
             // 
             // toolStripBottom
             // 
@@ -243,6 +296,10 @@
             toolStripBtnNarrow.Text = "Narrow";
             toolStripBtnNarrow.Click += toolStripBtnNarrow_Click;
             // 
+            // openFileDialog1
+            // 
+            openFileDialog1.FileName = "openFileDialog1";
+            // 
             // frmTranscriptOptions
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -254,14 +311,15 @@
             Text = "frmOptions";
             Load += frmTranscriptOptions_Load;
             tabControl1.ResumeLayout(false);
-            tabOptions.ResumeLayout(false);
-            tabOptions.PerformLayout();
+            tabActions.ResumeLayout(false);
             tabStudent.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvStudent).EndInit();
             tabTranscript.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvTranscript).EndInit();
             tabRequirements.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvRequirements).EndInit();
+            tabOptions.ResumeLayout(false);
+            tabOptions.PerformLayout();
             toolStripBottom.ResumeLayout(false);
             toolStripBottom.PerformLayout();
             ResumeLayout(false);
@@ -271,21 +329,29 @@
         #endregion
 
         public TabControl tabControl1;
-        private Label lblCourseRoleTemplateEnglish;
-        private Label lblCourseRoleTemplate;
-        private Label lblTranscriptTemplateEnglish;
-        private Label lblTranscriptTemplate;
-        private Label lblTemplateFolder;
+        private Label lblOptions;
         public TabPage tabOptions;
         public TabPage tabRequirements;
         public DataGridView dgvRequirements;
-        private Button btnPrintTransscript;
         private TabPage tabTranscript;
-        private Button btnPrintEnglishTranscript;
         private DataGridView dgvTranscript;
         private TabPage tabStudent;
         private DataGridView dgvStudent;
         private ToolStrip toolStripBottom;
         private ToolStripButton toolStripBtnNarrow;
+        private FolderBrowserDialog folderBrowserDialog1;
+        private OpenFileDialog openFileDialog1;
+        private SaveFileDialog saveFileDialog1;
+        private Label lblSaveDocuments;
+        private LinkLabel lblTranscriptTemplate;
+        private TabPage tabActions;
+        private Button btnPrintEnglishTranscript;
+        private LinkLabel lblT;
+        private LinkLabel lblEnglishCourseRoleTemplate;
+        private LinkLabel lblCourseRoleTemplate;
+        private LinkLabel lblEnglishTranscriptTemplate;
+        private Label lblPathTemplate;
+        private LinkLabel lblTemplateFolder;
+        private Label lblPathTemplateFolder;
     }
 }

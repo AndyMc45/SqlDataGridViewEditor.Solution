@@ -50,7 +50,6 @@
             mnuHelp = new ToolStripMenuItem();
             mnuHelpFile = new ToolStripMenuItem();
             toolStripBottom = new ToolStrip();
-            toolStripMsg = new ToolStripLabel();
             txtRecordsPerPage = new ToolStripTextBox();
             toolStripButton4 = new ToolStripButton();
             toolStripButton3 = new ToolStripButton();
@@ -256,7 +255,7 @@
             toolStripBottom.AutoSize = false;
             toolStripBottom.Dock = DockStyle.Bottom;
             toolStripBottom.ImageScalingSize = new Size(20, 20);
-            toolStripBottom.Items.AddRange(new ToolStripItem[] { toolStripMsg, txtRecordsPerPage, toolStripButton4, toolStripButton3, toolStripButton2, toolStripButtonColumnWidth });
+            toolStripBottom.Items.AddRange(new ToolStripItem[] { txtRecordsPerPage, toolStripButton4, toolStripButton3, toolStripButton2, toolStripButtonColumnWidth });
             toolStripBottom.Location = new Point(0, 768);
             toolStripBottom.Name = "toolStripBottom";
             toolStripBottom.ShowItemToolTips = false;
@@ -264,13 +263,6 @@
             toolStripBottom.TabIndex = 75;
             toolStripBottom.Text = "toolStrip1";
             toolStripBottom.ItemClicked += toolStripBottom_ItemClicked;
-            // 
-            // toolStripMsg
-            // 
-            toolStripMsg.ForeColor = Color.Red;
-            toolStripMsg.Name = "toolStripMsg";
-            toolStripMsg.Size = new Size(73, 24);
-            toolStripMsg.Text = "Messages";
             // 
             // txtRecordsPerPage
             // 
@@ -1147,6 +1139,7 @@
             dataGridView1.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
             dataGridView1.ColumnWidthChanged += dataGridView1_ColumnWidthChanged;
             dataGridView1.CurrentCellDirtyStateChanged += dataGridView1_CurrentCellDirtyStateChanged;
+            dataGridView1.DataBindingComplete += dataGridView1_DataBindingComplete;
             dataGridView1.DataError += dataGridView1_DataError;
             dataGridView1.EditingControlShowing += dataGridView1_EditingControlShowing;
             dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
@@ -1210,7 +1203,6 @@
         private SplitContainer splitContainer1;
         private TableLayoutPanel tableLayoutPanel;
         private Label lblMainFilter;
-        private ToolStripLabel toolStripMsg;
         private ContextMenuStrip GridContextMenu;
         private ToolStripMenuItem GridContextMenu_FindInChild;
         private ComboBox cmbMainFilter;

@@ -82,7 +82,7 @@ namespace SqlDataGridViewEditor
 
         public static void SetNewColumnWidths(DataGridView dgv, List<field> myFields, bool narrowColumns)
         {
-            // Starting with autosize when the table is first loaded takes too much time; don't do it. 
+            // Time consuming in transcript table - so only call this routine when really needed
             // Also, this function takes 10 seconds for transcript table - so don't run it in loading page
             for (int i = 0; i < myFields.Count; i++)   // Using myFields.Count and not dgv.Columns becauser use may add a column to dgv
             {
@@ -163,8 +163,6 @@ namespace SqlDataGridViewEditor
                 dataHelper.storeColumnWidth(fl.table, fl.fieldName, nextWidth);
             }
         }
-
-
 
 
     }

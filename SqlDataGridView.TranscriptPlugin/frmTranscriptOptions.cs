@@ -1,14 +1,7 @@
 ﻿using InfoBox;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+
+
 
 namespace SqlDataGridViewEditor.TranscriptPlugin
 {
@@ -20,32 +13,19 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             // Execute the loading
         }
 
-        #region variables
-        // main variable
-        internal Job myJob { get; set; }   // Must be loaded to do anything
-        public int studentDegreeID { get; set; }
-        public List<string> errorMsgs = new List<string>();
-
-        // There are 3 dgv's and 3 sql's in three different tabs
-        public DataTable studentDegreeInfoDT { get; set; } // No editing - 1 data row only for this studentDegree 
-        private SqlFactory sqlStudentDegrees { get; set; }
-
-        public DataTable transcriptDT { get; set; }  // No editing. Transcripts filtered on this studentDegree
-        private SqlFactory sqlTranscript { get; set; }
-        // StudentReqDT is created from scrath - but added to data dataHelper.fieldDT
-        // This allows us to format the dgv with sqlStudentReq
-
-        public DataTable studentReqDT { get; set; } // No editing.  
-        private SqlFactory sqlStudentReq { get; set; }
-
-        // Following two set to the dgv and sql that are showing in the options tab
-        private DataGridView dgvCurrentlyViewing { get; set; }
-        private SqlFactory sqlCurrentlyViewing { get; set; }
-
-        #endregion
-
+        public void SetPathLabel(string keyValue, Label label)
+        {
+            if (keyValue != string.Empty)
+            {
+                label.Text = keyValue;
+            }
+        }
         private void frmTranscriptOptions_Load(object sender, EventArgs e)
         {
+            // Load options
+            SetPathLabel(AppData.GetKeyValue("templateFolder"), lblPathTemplateFolder);
+            SetPathLabel(AppData.GetKeyValue("TranscriptTemplate"), lblPathTemplate);
+
             toolStripBtnNarrow.Enabled = false;  // Viewing options
             if (myJob == Job.options)
             {
@@ -59,12 +39,36 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 fillTranscriptTable();
                 //Fill frmOptions - Requirements DataGridView with Student Grad requirements table
                 fillGradRequirementsDT();
-                if(errorMsgs.Count > 0) 
+                if (errorMsgs.Count > 0)
                 {
                     InformationBox.Show(String.Join(Environment.NewLine, Environment.NewLine), "Warnings", InformationBoxIcon.Warning);
                 }
             }
         }
+
+        #region variables
+        // main variable
+        internal Job myJob { get; set; }   // Must be loaded to do anything
+        public int studentDegreeID { get; set; }
+        public List<string> errorMsgs = new List<string>();
+
+        // There are 3 dgv's and 3 sql's in three different tabs
+        public System.Data.DataTable studentDegreeInfoDT { get; set; } // No editing - 1 data row only for this studentDegree 
+        private SqlFactory sqlStudentDegrees { get; set; }
+
+        public System.Data.DataTable transcriptDT { get; set; }  // No editing. Transcripts filtered on this studentDegree
+        private SqlFactory sqlTranscript { get; set; }
+        // StudentReqDT is created from scrath - but added to data dataHelper.fieldDT
+        // This allows us to format the dgv with sqlStudentReq
+
+        public System.Data.DataTable studentReqDT { get; set; } // No editing.  
+        private SqlFactory sqlStudentReq { get; set; }
+
+        // Following two set to the dgv and sql that are showing in the options tab
+        private DataGridView dgvCurrentlyViewing { get; set; }
+        private SqlFactory sqlCurrentlyViewing { get; set; }
+
+        #endregion
 
         private void fillStudentDegreeDataRow() // Also sets studentDegreeID if not set
         {
@@ -93,7 +97,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 where wh = new where(fkStudentDegreeID, studentDegreeID.ToString());
                 sqlTranscript.myWheres.Add(wh);
                 string sqlString = sqlTranscript.returnSql(command.selectAll);
-                transcriptDT = new DataTable();
+                transcriptDT = new System.Data.DataTable();
                 // I fill the transcript table into a datatable, and show it in the "transcript" tab
                 string strError = MsSql.FillDataTable(transcriptDT, sqlString);
                 if (strError != string.Empty)
@@ -135,6 +139,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 dataHelper.AddRowToFieldsDT("StudentReq", 10, "Earned", "Earned", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
                 dataHelper.AddRowToFieldsDT("StudentReq", 11, "Needed", "Needed", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
                 dataHelper.AddRowToFieldsDT("StudentReq", 12, "InProgress", "InProgress", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 13, "Icredits", "Icredits", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
             }
 
             // 2. Get Grad Requirements for this degree and handbook
@@ -175,7 +180,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
             // 5. Create studentReqDT and add a column for each field.
             //    We will add a row to this table for each requirement and fill it. 
-            studentReqDT = new DataTable();
+            studentReqDT = new System.Data.DataTable();
             foreach (field f in sqlStudentReq.myFields)
             {
                 DataColumn dc = new DataColumn(f.fieldName, dataHelper.ConvertDbTypeToType(f.dbType));
@@ -227,6 +232,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 dataHelper.setColumnValueInDR(dr, "Earned", 0);
                 dataHelper.setColumnValueInDR(dr, "InProgress", 0);
                 dataHelper.setColumnValueInDR(dr, "Needed", 0);
+                dataHelper.setColumnValueInDR(dr, "Icredits", 0);
 
                 // Finally
                 studentReqDT.Rows.Add(dr);
@@ -366,7 +372,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             // Load dgv
             dgvRequirements.DataSource = studentReqDT;
             dgvHelper.SetHeaderColorsOnWritePage(dgvRequirements, sqlStudentReq.myTable, sqlStudentReq.myFields);
-            dgvHelper.SetNewColumnWidths(dgvRequirements,sqlStudentReq.myFields,true);
+            dgvHelper.SetNewColumnWidths(dgvRequirements, sqlStudentReq.myFields, true);
         }
 
         private void toolStripBtnNarrow_Click(object sender, EventArgs e)
@@ -394,8 +400,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             if (tabControl1.SelectedTab == tabOptions)
             {
                 toolStripBtnNarrow.Enabled = false;
-                btnPrintEnglishTranscript.Enabled = false;
-                btnPrintTransscript.Enabled = false;
+                btnPrintEnglishTranscript.Enabled = true;  // Testing
+//                btnPrintTranscript.Enabled = true;
             }
             else if (tabControl1.SelectedTab == tabStudent)
             {
@@ -443,6 +449,45 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 sqlCurrentlyViewing = null;
 
             }
+        }
+        private void btnPrintEnglishTranscript_Click(object sender, EventArgs e)
+        {
+            TranscriptPrint.printTranscript("zh-TW");
+        }
+
+        private void lblTemplateFolder_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            folderBrowserDialog1 = new FolderBrowserDialog
+            {
+                ShowNewFolderButton = true
+            };
+            DialogResult result = folderBrowserDialog1.ShowDialog();
+            string fbdPath = folderBrowserDialog1.SelectedPath;
+            if (result == DialogResult.Cancel) { return; }
+            lblPathTemplateFolder.Text = fbdPath;
+            AppData.SaveKeyValue("TemplateFolder", fbdPath);
+
+        }
+
+        private void lblTranscriptTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            openFileDialog1 = new OpenFileDialog();
+            string templateFolder = AppData.GetKeyValue("TemplateFolder");
+            if(templateFolder != null && Directory.Exists(templateFolder)) 
+            {
+                openFileDialog1.InitialDirectory = templateFolder;
+            }
+            openFileDialog1.Filter = "dot files(*.dot)|*.dot|dotx files(*.dotx)|*.dotx|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            DialogResult result = openFileDialog1.ShowDialog();
+            if(result == DialogResult.OK)
+            {
+                string filePath = openFileDialog1.FileName;
+                lblPathTemplate.Text = filePath;
+                AppData.SaveKeyValue("TranscriptTemplate", filePath);
+            }
+
+
         }
 
         internal enum Job
