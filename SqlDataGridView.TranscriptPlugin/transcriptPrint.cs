@@ -4,26 +4,28 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace SqlDataGridViewEditor.TranscriptPlugin
 {
-    internal static class TranscriptPrint
+    public partial class frmTranscriptOptions : Form
     {
-        internal static void printTranscript(string lang)
+        internal void printTranscript()
         {
-            if (lang == "zh-TW")
+            string transTemplate = AppData.GetKeyValue("TranscriptTemplate");
+            if (File.Exists(transTemplate))
             {
-                string transTemplate = AppData.GetKeyValue("TranscriptTemplate");
-                if (File.Exists(transTemplate))
-                {
+                if (studentDegreeInfoDT != null && studentDegreeInfoDT.Rows.Count == 1)
+                { 
                     object missing = System.Reflection.Missing.Value;
                     // Create application
                     Word.Application app = new Microsoft.Office.Interop.Word.Application();
                     //Create a new document
                     Word.Document document = app.Documents.Add(transTemplate, ref missing, ref missing, ref missing);
-                    app.Visible = true;
 
+                    string studentName = dataHelper.getColumnValueinDR(studentDegreeInfoDT.Rows[0], "studentName");
+                    // Table, Row, Column index all start at 1
+                    document.Tables[1].Cell(2,2).Range.Text = studentName;
+                    app.Visible = true;
 
                 }
             }
-
         }
     }
 }

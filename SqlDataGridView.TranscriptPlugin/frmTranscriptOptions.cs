@@ -400,7 +400,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             if (tabControl1.SelectedTab == tabOptions)
             {
                 toolStripBtnNarrow.Enabled = false;
-                btnPrintEnglishTranscript.Enabled = true;  // Testing
+                btnPrintTranscript.Enabled = true;  // Testing
 //                btnPrintTranscript.Enabled = true;
             }
             else if (tabControl1.SelectedTab == tabStudent)
@@ -450,10 +450,12 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
             }
         }
-        private void btnPrintEnglishTranscript_Click(object sender, EventArgs e)
+
+        private void btnPrintTranscript_Click(object sender, EventArgs e)
         {
-            TranscriptPrint.printTranscript("zh-TW");
+            printTranscript();
         }
+
 
         private void lblTemplateFolder_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
         {

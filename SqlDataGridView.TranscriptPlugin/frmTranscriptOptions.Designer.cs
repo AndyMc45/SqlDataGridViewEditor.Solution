@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTranscriptOptions));
             tabControl1 = new TabControl();
             tabActions = new TabPage();
-            btnPrintEnglishTranscript = new Button();
+            btnPrintTranscript = new Button();
             tabStudent = new TabPage();
             dgvStudent = new DataGridView();
             tabTranscript = new TabPage();
@@ -81,7 +81,7 @@
             // 
             // tabActions
             // 
-            tabActions.Controls.Add(btnPrintEnglishTranscript);
+            tabActions.Controls.Add(btnPrintTranscript);
             tabActions.Location = new Point(4, 29);
             tabActions.Name = "tabActions";
             tabActions.Size = new Size(1574, 720);
@@ -89,15 +89,15 @@
             tabActions.Text = "Actions";
             tabActions.UseVisualStyleBackColor = true;
             // 
-            // btnPrintEnglishTranscript
+            // btnPrintTranscript
             // 
-            btnPrintEnglishTranscript.Location = new Point(296, 31);
-            btnPrintEnglishTranscript.Name = "btnPrintEnglishTranscript";
-            btnPrintEnglishTranscript.Size = new Size(200, 29);
-            btnPrintEnglishTranscript.TabIndex = 14;
-            btnPrintEnglishTranscript.Text = "Print English Transcript";
-            btnPrintEnglishTranscript.UseVisualStyleBackColor = true;
-            btnPrintEnglishTranscript.Click += btnPrintEnglishTranscript_Click;
+            btnPrintTranscript.Location = new Point(17, 41);
+            btnPrintTranscript.Name = "btnPrintTranscript";
+            btnPrintTranscript.Size = new Size(200, 29);
+            btnPrintTranscript.TabIndex = 14;
+            btnPrintTranscript.Text = "Print Transcript";
+            btnPrintTranscript.UseVisualStyleBackColor = true;
+            btnPrintTranscript.Click += btnPrintTranscript_Click;
             // 
             // tabStudent
             // 
@@ -345,7 +345,7 @@
         private Label lblSaveDocuments;
         private LinkLabel lblTranscriptTemplate;
         private TabPage tabActions;
-        private Button btnPrintEnglishTranscript;
+        private Button btnPrintTranscript;
         private LinkLabel lblT;
         private LinkLabel lblEnglishCourseRoleTemplate;
         private LinkLabel lblCourseRoleTemplate;
