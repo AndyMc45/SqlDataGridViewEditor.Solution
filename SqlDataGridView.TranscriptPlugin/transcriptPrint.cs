@@ -21,7 +21,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
                     string studentName = dataHelper.getColumnValueinDR(studentDegreeInfoDT.Rows[0], "studentName");
                     // Table, Row, Column index all start at 1
-                    document.Tables[1].Cell(2,2).Range.Text = studentName;
+                     document.Tables[1].Cell(1,2).Range.Text = studentName;
                     app.Visible = true;
 
                 }

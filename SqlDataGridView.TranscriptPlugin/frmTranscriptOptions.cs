@@ -52,7 +52,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         public int studentDegreeID { get; set; }
         public List<string> errorMsgs = new List<string>();
 
-        // There are 3 dgv's and 3 sql's in three different tabs
+        // There are 3 dataTables's and 3 sqlFactory's in three different Tabs, each with a dataGridView control 
         public System.Data.DataTable studentDegreeInfoDT { get; set; } // No editing - 1 data row only for this studentDegree 
         private SqlFactory sqlStudentDegrees { get; set; }
 
