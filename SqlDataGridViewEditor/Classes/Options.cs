@@ -59,6 +59,7 @@ namespace SqlDataGridViewEditor
             firstTimeWritingTable = true;
             currentComboFilterValue_isDirty = false;
             allowDisplayKeyEdit = false;
+            mergingDuplicateKeys = false;
 
         }
         // internal bool fixingDatabase { get; set; }
@@ -71,6 +72,7 @@ namespace SqlDataGridViewEditor
         internal bool doNotWriteGrid { get; set; }
         internal bool firstTimeWritingTable { get; set; }
         internal bool allowDisplayKeyEdit { get; set; }
+        internal bool mergingDuplicateKeys {get; set; } 
 
     }
 

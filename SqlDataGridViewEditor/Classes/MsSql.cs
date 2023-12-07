@@ -82,12 +82,13 @@ namespace SqlDataGridViewEditor
                 SqlDbType sqlDbType = GetSqlDbType(fieldToSet.dbType);
                 int size = fieldToSet.size;
                 setList.Add(String.Format("{0} = @{1}", fieldToSet.fieldName, fieldToSet.fieldName));
-                sqlCmd.Parameters.Add("@" + fieldToSet.fieldName, sqlDbType, size, fieldToSet.fieldName);
+                sqlCmd.Parameters.Add("@" + fieldToSet.fieldName, sqlDbType, size, fieldToSet.ColumnName);
             }
             string sqlUpdate = String.Format("UPDATE {0} SET {1} WHERE {2} = {3}", fieldsToSet[0].table, String.Join(",", setList), PK, "@" + PK);
             sqlCmd.CommandText = sqlUpdate;
             sqlCmd.Connection = MsSql.cn;
-            da.UpdateCommand = sqlCmd;
+            da.UpdateCommand = sqlCmd; 
+
         }
 
         // Set delete command - one parameter: the primary key of the row to delete 

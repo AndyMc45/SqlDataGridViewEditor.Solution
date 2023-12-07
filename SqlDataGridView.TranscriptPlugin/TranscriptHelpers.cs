@@ -6,12 +6,13 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using SqlDataGridViewEditor;
+using System.Diagnostics.Eventing.Reader;
 
 namespace SqlDataGridViewEditor.TranscriptPlugin
 {
     internal static class TranscriptHelper
     {
-        internal static DataTable GetOneRowDataTable(string tableName, int PkValue, ref List<string> errorMsgs)
+        internal static DataTable GetOneRowDataTable(string tableName, int PkValue, ref StringBuilder sbErrors)
         {
             SqlFactory sqlFactory = new SqlFactory(tableName, 0, 0, false);
             field fld = dataHelper.getTablePrimaryKeyField(tableName);
@@ -21,16 +22,16 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             string sqlString = sqlFactory.returnSql(command.selectAll);
             DataTable dt = new DataTable();
             string strError = MsSql.FillDataTable(dt, sqlString);
-            if(strError != string.Empty) { errorMsgs.Add(strError); }
+            if(strError != string.Empty) { sbErrors.AppendLine(strError); }
             return dt;
         }
-        internal static Dictionary<string, string> GetPkRowColumnValues(string tableName, int pkValue, List<string> columnNames, ref List<string> errorMsgs)
+        internal static Dictionary<string, string> GetPkRowColumnValues(string tableName, int pkValue, List<string> columnNames, ref StringBuilder sbErrors)
         {
             var columnValues = new Dictionary<string, string>();
-            DataTable dt = GetOneRowDataTable(tableName, pkValue, ref errorMsgs);                 
+            DataTable dt = GetOneRowDataTable(tableName, pkValue, ref sbErrors);                 
             SqlFactory sqlFactory = new SqlFactory(tableName, 0, 0);
             // Should be exactly one row in requirementNameDaDt.dt
-            if(dt.Rows.Count != 1) { errorMsgs.Add(String.Format("Error: {0} rows in {1} with primary {2}", dt.Rows.Count.ToString(), tableName, pkValue.ToString()));}
+            if(dt.Rows.Count != 1) { sbErrors.AppendLine(String.Format("Error: {0} rows in {1} with primary {2}", dt.Rows.Count.ToString(), tableName, pkValue.ToString()));}
             if (dt.Rows.Count > 0)
             {
                 foreach( string colName in  columnNames )
@@ -41,25 +42,472 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             }
             return columnValues;
         }
+
+        internal static void fillStudentDegreeDataRow(int studentDegreeID, ref StringBuilder sbErrors)
+        {
+            PrintToWord.studentDegreeInfoDT = TranscriptHelper.GetOneRowDataTable(TableName.studentDegrees, studentDegreeID, ref sbErrors);
+        }
+        internal static void fillCourseTermDataRow(int courseTermID, ref StringBuilder sbErrors)
+        {
+            PrintToWord.courseTermInfoDT = TranscriptHelper.GetOneRowDataTable(TableName.courseTerms, courseTermID, ref sbErrors);
+        }
+
+        internal static void fillStudentTranscriptTable(int studentDegreeID, ref StringBuilder sbErrors)
+        {
+            // Filter transcript table on studentDegreeID
+            fillTranscriptTable(TableName.studentDegrees, studentDegreeID, ref sbErrors);
+        }
+        internal static void fillCourseRoleTable(int courseTermID, ref StringBuilder sbErrors)
+        {
+            // Filter transcript table on courseTermID
+            fillTranscriptTable(TableName.courseTerms, courseTermID, ref sbErrors);
+        }
+        private static void fillTranscriptTable(string referenceTable, int pkRefTable, ref StringBuilder sbErrors)  // Used for print transcript and print role
+        {
+            // 0, 0 means no paging - false means don't include all columns of all foreign keys - would be 89 if we did
+            SqlFactory sqlTranscript = new SqlFactory(TableName.transcript, 0, 0, false);
+            field fkField = dataHelper.getForeignKeyFromRefTableName(TableName.transcript, referenceTable);
+            where wh = new where(fkField, pkRefTable.ToString());
+            sqlTranscript.myWheres.Add(wh);
+            string sqlString = sqlTranscript.returnSql(command.selectAll);
+            PrintToWord.transcriptDT = new System.Data.DataTable();
+            // I fill the transcript table into a datatable, and show it in the "transcript" tab
+            string strError = MsSql.FillDataTable(PrintToWord.transcriptDT, sqlString);
+            if (strError != string.Empty)
+            {
+                sbErrors.AppendLine(String.Format("ERROR filling transcript table: {0}", strError));
+            }
+        }
+
+        public static void fillGradRequirementsDT(ref StringBuilder sbErrors)
+        {
+            // 1. Create a table "StudentReq" - this table is not in the database.
+            // Add this table to dataHelper.fieldsDT so that I can use an sqlFactory to style the table 
+            // Add rows to dataHelper.fieldsDT. Only do it once in a session
+            string filter = "TableName = 'StudentReq'";
+            DataRow[] drs = dataHelper.fieldsDT.Select(filter);
+            // If no rows in above, the rows have already been added to dataHelper.fieldsDT
+            if (drs.Count() == 0)
+            {
+                dataHelper.AddRowToFieldsDT("StudentReq", 1, "StudentReqID", "StudentReqID", "int", false, true, true, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                //RequirementType table -
+                dataHelper.AddRowToFieldsDT("StudentReq", 9, "ReqTypeDK", "ReqTypeDK", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 2, "ReqType", "ReqType", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 10, "eReqType", "eReqType", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                //RequirementName table - 
+                dataHelper.AddRowToFieldsDT("StudentReq", 11, "ReqNameDK", "ReqNameDK", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 3, "ReqName", "ReqName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 12, "eReqName", "eReqName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                // DeliveryMethodTable
+                dataHelper.AddRowToFieldsDT("StudentReq", 13, "DelMethDK", "DelMethDK", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 4, "DelMethName", "DelMethName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 14, "eDelMethName", "eDelMethName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 15, "rDeliveryLevel", "rDeliveryLevel", "int", false, false, false, false, true, 4, String.Empty, String.Empty, String.Empty, 0);
+                // GradRequirement Table itself
+                dataHelper.AddRowToFieldsDT("StudentReq", 5, "Required", "Required", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 16, "Limit", "Limit", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                // Need to calucate the following from transcript
+                dataHelper.AddRowToFieldsDT("StudentReq", 6, "Earned", "Earned", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 8, "Needed", "Needed", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 7, "InProgress", "InProgress", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 17, "Icredits", "Icredits", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+            }
+
+            // 2. Get Grad Requirements for this degree and handbook
+            int intHandbookID = Int32.Parse(dataHelper.getColumnValueinDR(PrintToWord.studentDegreeInfoDT.Rows[0], "handbookID"));
+            int intDegreeID = Int32.Parse(dataHelper.getColumnValueinDR(PrintToWord.studentDegreeInfoDT.Rows[0], "degreeID"));
+            SqlFactory sqlGradReq = new SqlFactory(TableName.gradRequirements, 0, 0);
+            where wh1 = new where(TableField.GradRequirements_DegreeID, intDegreeID.ToString());
+            where wh2 = new where(TableField.GradRequirements_handbookID, intHandbookID.ToString());
+            sqlGradReq.myWheres.Add(wh1);
+            sqlGradReq.myWheres.Add(wh2);
+            string sqlString = sqlGradReq.returnSql(command.selectAll);
+            // Put degree requirements in a new DataTable grDaDt.dt
+            MsSqlWithDaDt grDaDt = new MsSqlWithDaDt(sqlString);
+
+            // 3. Put all the basic information about this degree, degreeLevel, degreeDeliveryMethod into 3 dictionaries.
+            //    Use "GetPkRowColumnValues" to create the dictionary.
+            //    Use the dictionary to get any value you want about this degree.  For example, sDegreeLevelColValue["degreeLevel"]
+            // Degree - "degreeName", "deliveryMethodID", "eDegreeName", "degreeLevelID"
+            List<string> sDegreeColNames = new List<string> { "degreeName", "eDegreeName", "degreeLevelID" };
+            Dictionary<string, string> sDegreeColValues = TranscriptHelper.GetPkRowColumnValues(
+                    TableName.degrees, intDegreeID, sDegreeColNames, ref sbErrors);
+
+            // degreeLevel - "degreeLevelName", "degreeLevel"
+            int sDegreeLevelID = Int32.Parse(sDegreeColValues["degreeLevelID"]);
+            List<string> sDegreeLevelColNames = new List<string> { "degreeLevelName", "degreeLevel" };
+            Dictionary<string, string> sDegreeLevelColValues = TranscriptHelper.GetPkRowColumnValues(
+                    TableName.degreeLevel, sDegreeLevelID, sDegreeLevelColNames, ref sbErrors);
+            int sDegreeLevel = Int32.Parse(sDegreeLevelColValues["degreeLevel"]);
+            string sDegreeLevelName = sDegreeLevelColValues["degreeLevelName"];
+
+            // 4. Create sqlFactory for studentReq - this will give you sqlStudentReq.myFields()
+            SqlFactory sqlStudentReq = new SqlFactory("StudentReq", 0, 0);
+
+            // 5. Create studentReqDT and add a column for each field.
+            //    We will add a row to this table for each requirement and fill it. 
+            PrintToWord.studentReqDT = new System.Data.DataTable();
+            foreach (field f in sqlStudentReq.myFields)
+            {
+                DataColumn dc = new DataColumn(f.fieldName, dataHelper.ConvertDbTypeToType(f.dbType));
+                // Make StudentReqID the primary key
+                if (f.fieldName == "StudentReqID")
+                {
+                    dc.AutoIncrement = true;
+                    dc.AutoIncrementSeed = 1;
+                    dc.AutoIncrementStep = 1;
+                }
+                PrintToWord.studentReqDT.Columns.Add(dc);
+            }
+
+            // 6. Main routine: Fill studentReqDT 
+            foreach (DataRow drGradReq in grDaDt.dt.Rows)
+            {
+                //6a. Get information we need from drGradReq - use "r" for requirement.
+                Decimal rCreditLimit = Decimal.Parse(dataHelper.getColumnValueinDR(drGradReq, "creditLimit"));
+                Decimal rReqCredits = Decimal.Parse(dataHelper.getColumnValueinDR(drGradReq, "reqUnits"));
+                int rGradReqTypeID = Int32.Parse(dataHelper.getColumnValueinDR(drGradReq, "gradReqTypeID"));
+                int rRequirementNameID = Int32.Parse(dataHelper.getColumnValueinDR(drGradReq, "reqNameID"));
+                int rDeliveryMethodID = Int32.Parse(dataHelper.getColumnValueinDR(drGradReq, "rDeliveryMethodID"));
+
+
+                //6b. requirementNameID - Get information from gradRequirmentType Table
+                List<string> rReqNameTableColNames = new List<string> {"reqNameDK", "reqName", "eReqName" };
+                Dictionary<string, string> rReqNameTableColValues = TranscriptHelper.GetPkRowColumnValues(
+                    TableName.requirementName, rRequirementNameID, rReqNameTableColNames, ref sbErrors);
+                string rReqNameDK = rReqNameTableColValues["reqNameDK"];
+                string rReqName = rReqNameTableColValues["reqName"];
+                string rReqNameEng = rReqNameTableColValues["eReqName"];
+
+                //6c. reqTypeID - Get information from requirementType table
+                List<string> rGradTypeColNames = new List<string> { "typeDK", "typeName", "eTypeName" };
+                Dictionary<string, string> rGradTypeColValues = TranscriptHelper.GetPkRowColumnValues(
+                    TableName.gradRequirementType, rGradReqTypeID, rGradTypeColNames, ref sbErrors);
+                string rGradReqTypeDK = rGradTypeColValues["typeDK"];
+                string rGradReqTypeName = rGradTypeColValues["typeName"];
+                string rGradReqTypeNameEng = rGradTypeColValues["eTypeName"];
+
+                //6d. deliveryMethodID - Get the requirement deliveryMethod table
+                List<string> rDeliveryMethodColNames = new List<string> { "delMethDK", "delMethName", "eDelMethName", "deliveryLevel" };
+                Dictionary<string, string> rDeliveryMethodColValues = TranscriptHelper.GetPkRowColumnValues(
+                    TableName.deliveryMethod, rDeliveryMethodID, rDeliveryMethodColNames, ref sbErrors);
+                string rDelMethDK = rDeliveryMethodColValues["delMethDK"];
+                string rDelMethName = rDeliveryMethodColValues["delMethName"];
+                string rDelMethNameEng = rDeliveryMethodColValues["eDelMethName"];
+                int rDeliveryLevel = Int32.Parse(rDeliveryMethodColValues["deliveryLevel"]);
+
+                //6e. Create a row for studentReqDT, and partially fill it with drGradReq info. extracted above.
+                //   (Except for credits earned / inProgress / needed, we have all that we need to fill this row )
+
+                DataRow dr = PrintToWord.studentReqDT.NewRow();
+
+                // "StudentReqID" is the Primary key and column set to autoincrement.
+                dataHelper.setColumnValueInDR(dr, "Required", rReqCredits);
+                dataHelper.setColumnValueInDR(dr, "Limit", rCreditLimit);
+                dataHelper.setColumnValueInDR(dr, "ReqNameDK", rReqNameDK);
+                dataHelper.setColumnValueInDR(dr, "ReqName", rReqName);
+                dataHelper.setColumnValueInDR(dr, "eReqName", rReqNameEng);
+
+                dataHelper.setColumnValueInDR(dr, "DelMethDK", rDelMethDK);
+                dataHelper.setColumnValueInDR(dr, "DelMethName", rDelMethName);
+                dataHelper.setColumnValueInDR(dr, "eDelMethName", rDelMethNameEng);
+                dataHelper.setColumnValueInDR(dr, "rDeliveryLevel", rDeliveryLevel);
+
+                dataHelper.setColumnValueInDR(dr, "ReqTypeDK", rGradReqTypeDK);
+                dataHelper.setColumnValueInDR(dr, "ReqType", rGradReqTypeName);
+                dataHelper.setColumnValueInDR(dr, "eReqType", rGradReqTypeNameEng);
+                dataHelper.setColumnValueInDR(dr, "Earned", 0);
+                dataHelper.setColumnValueInDR(dr, "InProgress", 0);
+                dataHelper.setColumnValueInDR(dr, "Needed", 0);
+                dataHelper.setColumnValueInDR(dr, "Icredits", 0);
+
+                // 7. Loop through the transcript rows - updating "earned", "InProgress", Icredits"
+                //    Also keep track of QPA credits and QPA pointsEarned
+                //    After loop is complete, fill in the "Needed" (= required minus earned) 
+                decimal qpaCredits = 0;
+                decimal qpaPoints = 0;
+                decimal earned = 0;
+                decimal inProgress = 0;
+                decimal iCredits = 0;
+                foreach (DataRow drTrans in PrintToWord.transcriptDT.Rows)
+                {
+                    // Get all required information about the transcript row course - add "c" before variable for "course"
+
+                    // Information from transcript datarow itself - a lot
+                    int cGradeID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "gradeID"));
+                    int cGradeStatusID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "gradeStatusID"));
+                    int cCourseTermSectionID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "courseTermSectionID"));
+                    int cCourseTermID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "courseTermID"));
+                    int cCourseID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "courseID"));
+                    int cCourseNameID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "courseNameID"));
+                    int cSectionID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "sectionID"));
+                    int cDegreeLevelID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "degreeLevelID"));
+                    // Note the 1 in deliveryMethodID1 - because there are 2 deliveryMethodID columns, Microsoft adds "1" for 2nd.
+                    int cDeliveryMethodID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "deliveryMethodID1"));
+                    int cRequirementNameID = Int32.Parse(dataHelper.getColumnValueinDR(drTrans, "requirementNameID"));
+
+
+                    // Information from Grades table
+                    List<string> cGradesColNames = new List<string> { "grade", "QP", "earnedCredits", "creditsInQPA" };
+                    Dictionary<string, string> cGradesColValues = TranscriptHelper.GetPkRowColumnValues(
+                        TableName.grades, cGradeID, cGradesColNames, ref sbErrors);
+                    string cGrade = cGradesColValues["grade"];
+                    Decimal cGradeQP = Decimal.Parse(cGradesColValues["QP"]);
+                    Boolean cEarnedCredits = Boolean.Parse(cGradesColValues["earnedCredits"]);
+                    Boolean cCreditsInQPA = Boolean.Parse(cGradesColValues["creditsInQPA"]);
+
+                    // Information from GradeStatus table
+                    List<string> cGradeStatusColNames = new List<string> { "statusKey", "statusName", "eStatusName", "forCredit" };
+                    Dictionary<string, string> cGradesStatusColValues = TranscriptHelper.GetPkRowColumnValues(
+                        TableName.gradeStatus, cGradeStatusID, cGradeStatusColNames, ref sbErrors);
+                    string cStatusKey = cGradesStatusColValues["statusKey"];  // Used in error msg
+                    bool forCredit = bool.Parse(cGradesStatusColValues["forCredit"]);
+
+                    // Information from Section table
+                    List<string> cSectionColNames = new List<string> { "credits" };
+                    Dictionary<string, string> cSectionColValues = TranscriptHelper.GetPkRowColumnValues(
+                        TableName.section, cSectionID, cSectionColNames, ref sbErrors);
+                    Decimal cCredits = Decimal.Parse(cSectionColValues["credits"]);
+
+                    // CourseName - 
+                    // int cCourseID = Int32.Parse(cCourseTermColValues["courseID"]);
+                    List<string> cCourseNamesColNames = new List<string> { "courseName", "eCourseName"};
+                    Dictionary<string, string> cCourseNamesColValues = TranscriptHelper.GetPkRowColumnValues(
+                        TableName.courseNames, cCourseNameID, cCourseNamesColNames, ref sbErrors);
+                    string cCourseName = cCourseNamesColValues["courseName"];  // Used in error messages only, i.e. doesn't affect requirements
+
+                    // DegreeLevel - "degreeLevelName", "degreeLevel"
+                    List<string> cDegreeLevelColNames = new List<string> { "degreeLevelName", "degreeLevel" };
+                    Dictionary<string, string> cDegreeLevelColValues = TranscriptHelper.GetPkRowColumnValues(
+                        TableName.degreeLevel, cDegreeLevelID, cDegreeLevelColNames, ref sbErrors);
+                    int cDegreeLevel = Int32.Parse(cDegreeLevelColValues["degreeLevel"]);
+                    string cDegreeLevelName = cDegreeLevelColValues["degreeLevelName"];  // Used in error msg
+
+                    // deliveryMethod - "delMethName", "eDelMethName", "deliveryLevel"
+                    List<string> cDelMethColNames = new List<string> { "delMethDK", "delMethName", "eDelMethName", "deliveryLevel" };
+                    Dictionary<string, string> cDelMethColValues = TranscriptHelper.GetPkRowColumnValues(
+                        TableName.deliveryMethod, cDeliveryMethodID, cDelMethColNames, ref sbErrors);
+                    int cDeliveryLevel = Int32.Parse(cDelMethColValues["deliveryLevel"]);
+
+                    // Requirements - "reqNameDK", "reqName", "eReqName"
+                    List<string> cReqColNames = new List<string> { "reqNameDK", "reqName", "eReqName", "Ancestors" };
+                    Dictionary<string, string> cReqColValues = TranscriptHelper.GetPkRowColumnValues(
+                        TableName.requirementName, cRequirementNameID, cReqColNames, ref sbErrors);
+                    string cReqNameDK = cReqColValues["reqNameDK"];
+                    string cAncestors = cReqColValues["Ancestors"];
+
+                    //Error message
+                    if (cEarnedCredits && !forCredit)
+                    {
+                        // cStatusKey is not "forCredit" but the grade indicates student has earned credit
+                        string strWarn = String.Format("{0} has a grade but its statusKey is {1}. ", cCourseName, cStatusKey);
+                        sbErrors.AppendLine(strWarn);
+                    }
+
+                    // Update "Earned", "InProgress", "Icredit" for this requirement row
+                    // First check that the degreeLevel is correct
+                    if (forCredit)  // This is needed for every type of requirement
+                    {
+                        // Error message
+                        if (cDegreeLevel < sDegreeLevel)
+                        {
+                            sbErrors.AppendLine(String.Format("Degree level of '{0} ({1})' is lower than student degree level ({2}). No credit granted.",
+                                        cCourseName, cDegreeLevelName, sDegreeLevelName));
+                        }
+                        else
+                        {
+                            // Handle QPA row
+                            if (rGradReqTypeDK == "QPA")
+                            {
+                                if (cCreditsInQPA)
+                                {
+                                    qpaPoints = qpaPoints + (cCredits * cGradeQP);
+                                    qpaCredits = qpaCredits + cCredits;
+                                }
+                            }
+                            else
+                            {
+                                // Get the number of "credits" or "units" earned
+                                // Divide case based on the type of requirement ("credit", "hours", "times")
+                                if (rGradReqTypeDK == "times") { cCredits = 1; }  // The main point of "Times"
+
+                                // No credit for this requirement if cDeliveryMethod < rDeliveryMethod
+                                if (cDeliveryLevel < rDeliveryLevel)
+                                {
+                                    cCredits = 0;
+                                }
+
+                                // Check if this drTrans dataRow meets this requirement
+                                List<string> cAncestorsList = cAncestors.Split(",").ToList();
+                                if (rGradReqTypeDK == "credits" || rGradReqTypeDK == "hours" || rGradReqTypeDK == "times")
+                                {
+                                    if (rReqNameDK == cReqNameDK || cAncestorsList.Contains(rReqNameDK)) 
+                                    {
+                                        // This transcript row meets this requirement
+                                    }
+                                    else { cCredits = 0; }
+                                }
+                                // Finally, update earned and inProgress
+                                if (cEarnedCredits)
+                                {
+                                    earned = earned + cCredits;
+                                }
+                                else if (cGrade == "NG")
+                                {
+                                    inProgress = inProgress + cCredits;
+                                }
+                                else if (cGrade == "I")
+                                { 
+                                    iCredits = inProgress + cCredits;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (rGradReqTypeDK == "QPA")
+                {
+                    decimal QPA = 0;
+                    if (qpaCredits > 0)
+                    {
+                        QPA = Math.Round(qpaPoints / qpaCredits, 2);
+                    }
+                    dataHelper.setColumnValueInDR(dr, "Earned", QPA);
+                    dataHelper.setColumnValueInDR(dr, "InProgress", 0);
+                    if (QPA < rReqCredits)
+                    {
+                        dataHelper.setColumnValueInDR(dr, "Needed", rReqCredits-QPA);
+                    }
+                }
+                else
+                { 
+                    // Update 
+                    dataHelper.setColumnValueInDR(dr, "Earned", earned);
+                    dataHelper.setColumnValueInDR(dr, "InProgress", inProgress);
+                    if(rReqCredits > earned + inProgress)
+                    { 
+                        dataHelper.setColumnValueInDR(dr, "Needed", rReqCredits - (earned + inProgress));
+                    }
+                    dataHelper.setColumnValueInDR(dr, "Icredits", iCredits);
+                }
+                // Add this row to studentReqDT
+                PrintToWord.studentReqDT.Rows.Add(dr);
+            }
+        }
+
+        public static Dictionary<string, string> FillColumnHeaderTranslationDictionary()
+        {
+            // Use lowercase english.  "zzz" will find "zzzID" - so "zzzID" can be skipped
+            // Maintain alphabetical order
+            Dictionary<string, string> columnHeaderTranslations = new Dictionary<string, string>(); ;
+            columnHeaderTranslations.Add("ancestors", "祖宗");
+            columnHeaderTranslations.Add("auditing", "潘婷");
+            columnHeaderTranslations.Add("courses", "課程");
+            columnHeaderTranslations.Add("course", "課程");
+            columnHeaderTranslations.Add("coursename", "課程名字");
+            columnHeaderTranslations.Add("courseterms", "學季課程");
+            columnHeaderTranslations.Add("courseterm", "課程學季");
+            columnHeaderTranslations.Add("coursetermsection", "學季課程班");
+            columnHeaderTranslations.Add("creditlimit", "學分限制");
+            columnHeaderTranslations.Add("credits", "學分");
+            columnHeaderTranslations.Add("creditsinqpa", "學分在QPA");
+            columnHeaderTranslations.Add("creditsource", "學分來源");
+            columnHeaderTranslations.Add("degree", "學位");
+            columnHeaderTranslations.Add("degrees", "學位");
+            columnHeaderTranslations.Add("degreelevel", "學位程度");
+            columnHeaderTranslations.Add("degreelevelname", "學位程度名字");
+            columnHeaderTranslations.Add("degreename", "學位名字");
+            columnHeaderTranslations.Add("degreenamelong", "學位名字長");
+            columnHeaderTranslations.Add("departments", "課系");
+            columnHeaderTranslations.Add("deliverylevel", "上課方法程度");
+            columnHeaderTranslations.Add("deliverymethod", "上課方法");
+            columnHeaderTranslations.Add("delmethdk", "上課方法DK");
+            columnHeaderTranslations.Add("delmethname", "上課方法名字");
+            columnHeaderTranslations.Add("dep_longname", "學科長名字");
+            columnHeaderTranslations.Add("dep_shortname", "學科短名字");
+            columnHeaderTranslations.Add("department", "學科");
+            columnHeaderTranslations.Add("earnedcredits", "earned學分s");
+            columnHeaderTranslations.Add("ecoursename", "e課程名字");
+            columnHeaderTranslations.Add("ecreditsource", "e學分來源");
+            columnHeaderTranslations.Add("edegreename", "e學位名字");
+            columnHeaderTranslations.Add("edegreenamelong", "e學位名字長");
+            columnHeaderTranslations.Add("edelmethname", "e上課方法名字");
+            columnHeaderTranslations.Add("efacultyname", "e老師名字");
+            columnHeaderTranslations.Add("enddate", "endDate");
+            columnHeaderTranslations.Add("endmonth", "endMonth");
+            columnHeaderTranslations.Add("endyear", "endYear");
+            columnHeaderTranslations.Add("ereqname", "e規則名字");
+            columnHeaderTranslations.Add("ereqtype", "e規則Type");
+            columnHeaderTranslations.Add("estatusname", "e狀態名字");
+            columnHeaderTranslations.Add("estudentname", "e學生名字");
+            columnHeaderTranslations.Add("etermname", "e學季名字");
+            columnHeaderTranslations.Add("faculty", "老師");
+            columnHeaderTranslations.Add("facultyname", "老師名字");
+            columnHeaderTranslations.Add("facultyunique", "老師Unique");
+            columnHeaderTranslations.Add("fulfillrequirementnocredit", "滿足畢業要求_沒學分");
+            columnHeaderTranslations.Add("grade", "成績");
+            columnHeaderTranslations.Add("grades", "成績");
+            columnHeaderTranslations.Add("gradestatus", "成績狀態");
+            columnHeaderTranslations.Add("gradrequirement", "畢業要求");
+            columnHeaderTranslations.Add("gradrequirements", "畢業要求");
+            columnHeaderTranslations.Add("gradrequirementtype", "畢業要求類別");
+            columnHeaderTranslations.Add("graduated", "已畢業");
+            columnHeaderTranslations.Add("handbook", "手冊");
+            columnHeaderTranslations.Add("handbooks", "手冊");
+            columnHeaderTranslations.Add("note", "說明");
+            columnHeaderTranslations.Add("repeatspermitted", "可重複");
+            columnHeaderTranslations.Add("reqname", "規則名字");
+            columnHeaderTranslations.Add("reqnamedk", "規則名字DK");
+            columnHeaderTranslations.Add("reqtype", "規則Type");
+            columnHeaderTranslations.Add("reqtypedk", "規則TypeDK");
+            columnHeaderTranslations.Add("requirementname", "要求名稱");
+            columnHeaderTranslations.Add("requirementType", "規則Type");
+            columnHeaderTranslations.Add("reqUnits", "規則Units");
+            columnHeaderTranslations.Add("section", "班");
+            columnHeaderTranslations.Add("selfstudycourse", "自修課程");
+            columnHeaderTranslations.Add("startdate", "startDate");
+            columnHeaderTranslations.Add("startmonth", "startMonth");
+            columnHeaderTranslations.Add("startyear", "startYear");
+            columnHeaderTranslations.Add("statuskey", "狀態Key");
+            columnHeaderTranslations.Add("statusname", "狀態名字");
+            columnHeaderTranslations.Add("studentdegree", "學生學位");
+            columnHeaderTranslations.Add("studentdegrees", "學位學生");
+            columnHeaderTranslations.Add("student", "學生");
+            columnHeaderTranslations.Add("students", "學生");
+            columnHeaderTranslations.Add("studentname", "學生名字");
+            columnHeaderTranslations.Add("studentunique", "學生Unique");
+            columnHeaderTranslations.Add("term", "學季");
+            columnHeaderTranslations.Add("terms", "學期");
+            columnHeaderTranslations.Add("termName", "學季名字");
+            columnHeaderTranslations.Add("transcript", "成績單");
+            columnHeaderTranslations.Add("transfercredit", "轉學分");
+
+            return columnHeaderTranslations;
+        }
+
+
+
     }
+
     internal static class TableName
     {
         // Names of the tables <string>
+        internal static string courseNames { get => "CourseNames"; }
         internal static string courses { get => "Courses"; }
         internal static string courseTerms { get =>  "CourseTerms";}
+        internal static string courseTermSection { get => "CourseTermSection"; }
         internal static string degreeLevel { get =>  "DegreeLevel";}
         internal static string degrees { get =>  "Degrees";}
         internal static string deliveryMethod { get =>  "DeliveryMethod";}
         internal static string departments { get =>  "Departments";}
         internal static string faculty { get =>  "Faculty";}
         internal static string grades { get =>  "Grades";}
+        internal static string gradRequirements { get => "GradRequirements"; }
+        internal static string gradRequirementType { get => "GradRequirementType"; }
         internal static string gradeStatus { get =>   "GradeStatus";}
-        internal static string gradReqDelivMeth { get => "GradReqDelivMeth"; }
-        internal static string gradRequirements { get =>   "GradRequirements";}
         internal static string handbooks { get =>   "Handbooks";}
-        internal static string requirementName { get =>   "RequirementName";}
-        internal static string requirementType { get => "RequirementType"; }
-        internal static string studentDegrees { get =>   "StudentDegrees";}
+        internal static string studentDegrees { get => "StudentDegrees"; }
+        internal static string requirementName { get => "RequirementName"; }
+        internal static string section { get =>   "Section";}
         internal static string studentGradReq { get =>   "StudentGradReq";}   
         internal static string students { get =>   "Students";}
         internal static string terms { get =>   "Terms";}
@@ -74,5 +522,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         internal static field GradRequirements_DegreeID { get => dataHelper.getFieldFromFieldsDT(TableName.gradRequirements, "degreeID"); }
         internal static field GradRequirements_handbookID { get => dataHelper.getFieldFromFieldsDT(TableName.gradRequirements, "handbookID"); }
     }
+
+
+
 
 }

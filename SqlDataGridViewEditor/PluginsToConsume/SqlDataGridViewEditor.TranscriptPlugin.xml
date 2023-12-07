@@ -4,6 +4,13 @@
         <name>SqlDataGridViewEditor.TranscriptPlugin</name>
     </assembly>
     <members>
+        <member name="M:SqlDataGridViewEditor.TranscriptPlugin.frmTranscriptOptions.SetPathLabel(System.String,System.Windows.Forms.Label)">
+            <summary>
+            Sets the path label text of a path option in the option tab
+            </summary>
+            <param name="keyValue">The string value of the path</param>
+            <param name="label">The label which is to be ste</param>
+        </member>
         <member name="F:SqlDataGridViewEditor.TranscriptPlugin.frmTranscriptOptions.components">
             <summary>
             Required designer variable.
@@ -21,20 +28,135 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="T:SqlDataGridViewEditor.TranscriptPlugin.Properties.Resources">
+        <member name="T:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
             </summary>
         </member>
-        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.Resources.ResourceManager">
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.ResourceManager">
             <summary>
               Returns the cached ResourceManager instance used by this class.
             </summary>
         </member>
-        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.Resources.Culture">
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.Culture">
             <summary>
               Overrides the current thread's CurrentUICulture property for all
               resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.btnPrintCourseRole_Text">
+            <summary>
+              Looks up a localized string similar to Print Course Role.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.btnPrintTranscript_Text">
+            <summary>
+              Looks up a localized string similar to Print Transcript.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.course">
+            <summary>
+              Looks up a localized string similar to Course.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.courseRole">
+            <summary>
+              Looks up a localized string similar to Course Role.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.ErrorFillingTranscriptTable0">
+            <summary>
+              Looks up a localized string similar to ERROR filling transcript table: {0}.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.lblCourseRoleTemplate_Text">
+            <summary>
+              Looks up a localized string similar to Course Role Template :.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.lblLanguage_Text">
+            <summary>
+              Looks up a localized string similar to Interface Language.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.lblOptions_Text">
+            <summary>
+              Looks up a localized string similar to Folders and Templates.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.lblPathCourseRoleTemplate_Text">
+            <summary>
+              Looks up a localized string similar to Transcript Template Path.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.lblPathTemplateFolder_Text">
+            <summary>
+              Looks up a localized string similar to Template Folder Path.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.lblPathTransTemplate_Text">
+            <summary>
+              Looks up a localized string similar to Transcript Template Path.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.lblRestartMsg_Text">
+            <summary>
+              Looks up a localized string similar to After changing interface language, please close and restart this program..
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.lblTemplateFolder_Text">
+            <summary>
+              Looks up a localized string similar to Template Folder :.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.lblTranscriptTemplate_Text">
+            <summary>
+              Looks up a localized string similar to Transcript Template :.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.String">
+            <summary>
+              Looks up a localized string similar to tabActions.Text.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.tabActions_Text">
+            <summary>
+              Looks up a localized string similar to Actions.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.tabExit_Text">
+            <summary>
+              Looks up a localized string similar to Exit.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.tabOptions_Text">
+            <summary>
+              Looks up a localized string similar to Options.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.tabRequirements_Text">
+            <summary>
+              Looks up a localized string similar to Requirements.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.tabStudent_Text">
+            <summary>
+              Looks up a localized string similar to Student.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.tabTranscript_Text">
+            <summary>
+              Looks up a localized string similar to Transcript.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.toolStripBottom_Text">
+            <summary>
+              Looks up a localized string similar to toolStrip1.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.toolStripBtnNarrow_Text">
+            <summary>
+              Looks up a localized string similar to Narrow.
             </summary>
         </member>
     </members>

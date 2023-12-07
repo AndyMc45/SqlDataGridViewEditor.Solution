@@ -12,7 +12,10 @@ namespace SqlDataGridViewEditor.PluginsInterface
     {
         // Interface requires two things - a string("Name()") and a ControlTemplate("PlugInControls()")
         String Name();
+        String TranslationCultureName();  // Not used.  Instead I am setting appData to communicate to main form
         ControlTemplate CntTemplate();
         Form MainForm { set; }
+
+        Dictionary<string,string> ColumnHeaderTranslations();
     }
 }

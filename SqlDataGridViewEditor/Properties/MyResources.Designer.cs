@@ -22,24 +22,24 @@ namespace SqlDataGridViewEditor.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class MyResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal MyResources() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SqlDataGridViewEditor.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SqlDataGridViewEditor.Properties.MyResources", typeof(MyResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace SqlDataGridViewEditor.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace SqlDataGridViewEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap end_arrow_32 {
+        public static System.Drawing.Bitmap end_arrow_32 {
             get {
                 object obj = ResourceManager.GetObject("end-arrow-32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -71,9 +71,18 @@ namespace SqlDataGridViewEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter Connection String. Numbers in brackets {} represent values given above.  Use {3} for password..
+        /// </summary>
+        public static string EnterConnectionStringDirections {
+            get {
+                return ResourceManager.GetString("EnterConnectionStringDirections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap iconmonstr_arrow_32_LEFT {
+        public static System.Drawing.Bitmap iconmonstr_arrow_32_LEFT {
             get {
                 object obj = ResourceManager.GetObject("iconmonstr-arrow-32 LEFT", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -83,7 +92,7 @@ namespace SqlDataGridViewEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap iconmonstr_arrow_32_OneLEFT {
+        public static System.Drawing.Bitmap iconmonstr_arrow_32_OneLEFT {
             get {
                 object obj = ResourceManager.GetObject("iconmonstr-arrow-32 OneLEFT", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -93,7 +102,7 @@ namespace SqlDataGridViewEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap iconmonstr_arrow_32_OneRight {
+        public static System.Drawing.Bitmap iconmonstr_arrow_32_OneRight {
             get {
                 object obj = ResourceManager.GetObject("iconmonstr-arrow-32 OneRight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -103,7 +112,7 @@ namespace SqlDataGridViewEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap iconmonstr_arrow_32_RIGHT {
+        public static System.Drawing.Bitmap iconmonstr_arrow_32_RIGHT {
             get {
                 object obj = ResourceManager.GetObject("iconmonstr-arrow-32 RIGHT", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -111,12 +120,48 @@ namespace SqlDataGridViewEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Main Filter not set.
+        /// </summary>
+        public static string MainFilterNotSet {
+            get {
+                return ResourceManager.GetString("MainFilterNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must pass test before O.K. button is enabled.
+        /// </summary>
+        public static string MustPassTestBeforeOKButton {
+            get {
+                return ResourceManager.GetString("MustPassTestBeforeOKButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap reload {
+        public static System.Drawing.Bitmap reload {
             get {
                 object obj = ResourceManager.GetObject("reload", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string warning {
+            get {
+                return ResourceManager.GetString("warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} rows, Page {1}.
+        /// </summary>
+        public static string XrowsPageY {
+            get {
+                return ResourceManager.GetString("XrowsPageY", resourceCulture);
             }
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.VisualBasic;
 using System.Text;
 using System.Data;
 using InfoBox;
+using SqlDataGridViewEditor.Properties;
 
 namespace SqlDataGridViewEditor
 {
@@ -22,13 +23,9 @@ namespace SqlDataGridViewEditor
 
         private void frmConnection_Load(object sender, EventArgs e)
         {
-            string msg = "";
-            lblConnection.Text = "Enter Connection String. Numbers in brackets {} represent values given above.  Use {3} for password.";
-
+            lblConnection.Text = MyResources.EnterConnectionStringDirections;
             //Load txtHelp
-            msg = "For information on connection strings, see www.connectionstrings.com  ";
-            msg = msg + Environment.NewLine + "You must pass test before O.K. button is enabled";
-            txtHelp.Text = msg;
+            txtHelp.Text = MyResources.MustPassTestBeforeOKButton;
 
             //Disable OK
             cmdOK.Enabled = false;

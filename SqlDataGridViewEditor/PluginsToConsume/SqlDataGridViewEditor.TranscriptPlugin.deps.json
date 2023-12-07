@@ -14,6 +14,11 @@
         },
         "runtime": {
           "SqlDataGridViewEditor.TranscriptPlugin.dll": {}
+        },
+        "resources": {
+          "zh/SqlDataGridViewEditor.TranscriptPlugin.resources.dll": {
+            "locale": "zh"
+          }
         }
       },
       "runtimepack.Microsoft.Windows.SDK.NET.Ref/10.0.17763.31": {
@@ -156,6 +161,11 @@
         },
         "runtime": {
           "SqlDataGridViewEditor.dll": {}
+        },
+        "resources": {
+          "zh-Hant/SqlDataGridViewEditor.resources.dll": {
+            "locale": "zh-Hant"
+          }
         }
       },
       "SqlDataGridViewEditor.PluginsInterface/1.0.0": {

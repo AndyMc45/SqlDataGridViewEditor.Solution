@@ -19,24 +19,24 @@ namespace SqlDataGridViewEditor
             this.dbType = dbType;
             this.size = size;
             this.fType = fType;
-            this.displayMember = fieldName;  // Default
+            // this.displayMember = fieldName;  // Set below when needed
+            this.ColumnName = fieldName;  // Default
         }
         public field(string table, string fieldName, DbType dbType, int size) :
-            this(table, fieldName, dbType, size, fieldType.regular)
-        { }
+            this(table, fieldName, dbType, size, fieldType.regular){ }
 
-        public string fieldName { get; set; }
+        public string fieldName { get; }
         public string table { get; set; }
         public string tableAlias { get; set; }
         public DbType dbType { get; set; }
         public int size { get; set; }
         public fieldType fType { get; set; }
         public field ValueMember { get { return this; } }  //Field itself - ValueMember used when binding Combos to fields
+        public string ColumnName { get; set; }  // Name Microsoft puts at the top of the column
         public List<field> FKancestors { get { return fkAncestors; } set { fkAncestors = value; } }
         private List<field> fkAncestors = new List<field>();
-        public string DisplayMember
+        public string displayMember
         {
-            set { displayMember = value; }
             get
             {
                 string lastTwoDigetOfTableAlias = tableAlias.Substring(tableAlias.Length - 2);
@@ -44,36 +44,34 @@ namespace SqlDataGridViewEditor
                 {
                     return "PsuedoField";  // Should never see this
                 }
-                else if (fType == fieldType.longName)
-                {
-                    return tableAlias + ":" + fieldName;
-                }
+                //else if (fType == fieldType.longName)   // Never used
+                //{
+                //    return tableAlias + ":" + fieldName;  
+                //}
                 else
                 {
                     if (dataHelper.isTablePrimaryKeyField(this))
                     {
-                        return "PK: " + fieldName;
+                        return "PK: " + dgvHelper.TranslateString(fieldName);
                     }
                     else if (dataHelper.isForeignKeyField(this))
                     {
-                        return "FK: " + fieldName;
+                        return "FK: " + dgvHelper.TranslateString(fieldName);
                     }
                     else
                     {
                         if (lastTwoDigetOfTableAlias! == "00")
                         {
-                            return fieldName;
+                            return dgvHelper.TranslateString(fieldName); ;
                         }
                         else
                         {
-                            return lastTwoDigetOfTableAlias + ": " + fieldName;
+                            return lastTwoDigetOfTableAlias + ": " + dgvHelper.TranslateString(fieldName); ;
                         }
                     }
-
                 }
             }
-        }  // Used to display where in combo
-        private string displayMember;
+        }  
 
         // Key used to avoid needing to implement EqualityComparer<field> class - Used in dictionaries in sqlFactory
         public Tuple<string, string, string> key { get { return Tuple.Create(this.tableAlias, this.table, this.fieldName); } }
@@ -430,7 +428,7 @@ namespace SqlDataGridViewEditor
                 int colIndex = dadt.dt.Columns["DisplayMember"].Ordinal;
                 displayMember = dadt.dt.Rows[0][colIndex].ToString();
             }
-            displayMember = table + ": " + displayMember;  // The entire point of the above 10+ lines
+            // displayMember = table + ": " + displayMember;  // The entire point of the above 10+ lines
             newWhere.DisplayMember = displayMember;
             return newWhere;
         }
@@ -507,7 +505,6 @@ namespace SqlDataGridViewEditor
             DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
             return getFieldFromFieldsDT(dr);
         }
-        
         public static field getFieldFromFieldsDT(DataRow dr)
         {
             string tableName = getColumnValueinDR(dr, "TableName");

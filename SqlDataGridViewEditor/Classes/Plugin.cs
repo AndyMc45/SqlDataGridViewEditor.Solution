@@ -33,7 +33,7 @@ namespace SqlDataGridViewEditor
         }
 
 
-        static internal MenuStrip Load_Plugins()
+        static internal MenuStrip Load_Plugins(ref Dictionary<string,string> colHeaderTranslations, ref string translationCultureName)
         {
             MenuStrip plugInMenus = new MenuStrip();
             pluginFilePath = Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.FullName + @"\PluginsToConsume\";
@@ -61,6 +61,7 @@ namespace SqlDataGridViewEditor
             }
             // At this point the unity container has all the plugin data loaded onto it. 
             // For each plugin, add its menustrip to plugInMenus
+            // For each plugin, add its translations to the ColumnHeader
             if (container != null)
             {
                 loadedPlugins = container.ResolveAll<IPlugin>();
@@ -70,7 +71,18 @@ namespace SqlDataGridViewEditor
                         // Tomorrow - redo the 'transcript existed above but not now
                         // loadedPlugin.CntTemplate().menuStrip.Text = plugInMenus.Text;
                         plugInMenus.Items.Add(loadedPlugin.CntTemplate().menuStrip);
-
+                        // First in is approved if there is a conflict
+                        foreach (string key in loadedPlugin.ColumnHeaderTranslations().Keys)
+                        {
+                            if (!colHeaderTranslations.ContainsKey(key))
+                            { 
+                                colHeaderTranslations.Add(key, loadedPlugin.ColumnHeaderTranslations()[key]);
+                            }
+                        }
+                        // The language of the translation - if two plugins have this, the last one wins!
+                        // The UICulture is set in the plugin.
+                        // If it is set to the translationCultureName, the headers will be translated
+                        translationCultureName = loadedPlugin.TranslationCultureName();
                     }
                 }
             }

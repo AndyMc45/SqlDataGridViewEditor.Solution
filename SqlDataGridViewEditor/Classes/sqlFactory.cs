@@ -55,25 +55,18 @@ namespace SqlDataGridViewEditor
 
         #endregion
 
-       //Constructors
-       public SqlFactory(string table, int page, int pageSize, bool includeAllColumnsInAllTables)
+        //Constructors
+        public SqlFactory(string table, int page, int pageSize) : this(table, page, pageSize, false) { }
+        public SqlFactory(string table, int page, int pageSize, bool includeAllColumnsInAllTables)
         {
-            this.includeAllColumnsInAllTables = includeAllColumnsInAllTables;   // If true, very slow in datagridview, if we make this true for transcripts - 89 columns; but database call fast
+            // If true, very slow in datagridview, if we make this true for transcripts - 89 columns;
+            // Database call is fast, only the display is slow;
+            this.includeAllColumnsInAllTables = includeAllColumnsInAllTables;   
             myTable = table;
             myPage = page;
             myPageSize = pageSize;
 
             SqlFactoryFinishConstructor();
-        }
-       public SqlFactory(string table, int page, int pageSize)
-        {
-            this.includeAllColumnsInAllTables = false;   // Default to false
-            myTable = table;
-            myPage = page;
-            myPageSize = pageSize;
-
-            SqlFactoryFinishConstructor();
-
         }
 
        public void SqlFactoryFinishConstructor()
@@ -341,7 +334,7 @@ namespace SqlDataGridViewEditor
             return ts;
         }
   
-       public bool TableIsInMyInnerJoins(field PkField, string tableAliasName)
+        public bool TableIsInMyInnerJoins(field PkField, string tableAliasName)
         {
             if (tableAliasName == PkField.tableAlias)  // Table can be filtered on itself 
             { 
@@ -362,21 +355,38 @@ namespace SqlDataGridViewEditor
             return false;
         }
 
-       public bool MainFilterTableIsInSql(where mainFilter, field PkField, out string tableAlias)
+        // Loop through all the inner joins.  The Keys are the PK's - check if one is my table
+        // I could also use "MainFilterTableInCOmboSql" to do this by starting with myTable
+        public bool MainFilterTableIsInMyTable(where mainFilter, out string tableAlias)
         {
-            // Same logic as "TableIsInMyInnerJoin" but will return a tableAlias that matches the mainFilter field
+            string mainFilterTable = mainFilter.fl.table;
+            foreach (Tuple<string, string, string> key in PKs_InnerjoinMap.Keys)
+            {
+                if (key.Item2 == mainFilterTable)
+                { 
+                    tableAlias = key.Item1;
+                    return true;
+                }
+            }
+            tableAlias = string.Empty;
+            return false;
+        }
+        
+        // Start with the table in the combo, and recursively trace all PK's that are inner-joins under it.
+        public bool MainFilterTableIsInComboSql(where mainFilter, field PkField, out string tableAlias)
+        {
             if (mainFilter.fl.baseKey.Equals(PkField.baseKey))  // Table itself is the first table in the Sql table string
-            { 
-                tableAlias = PkField.tableAlias;  
-                return true; 
+            {
+                tableAlias = PkField.tableAlias;
+                return true;
             }
             // Recursive search
             Tuple<string, string, string> key = Tuple.Create(PkField.tableAlias, PkField.table, PkField.fieldName);
             if (PKs_InnerjoinMap.Keys.Contains(key))
-            { 
+            {
                 foreach (innerJoin ij in PKs_InnerjoinMap[key])
                 {
-                    if(MainFilterTableIsInSql(mainFilter, ij.pkRefFld,out tableAlias))
+                    if (MainFilterTableIsInComboSql(mainFilter, ij.pkRefFld, out tableAlias))
                     {
                         return true;
                     }
@@ -388,7 +398,6 @@ namespace SqlDataGridViewEditor
 
         // This function is used in transcript plugin
         // Find index of field with unknown Alias - Use this method if you are certain there is only one
-
         public int getColumn(field fld)
         {
             List<field> inAncestors = new List<field>();

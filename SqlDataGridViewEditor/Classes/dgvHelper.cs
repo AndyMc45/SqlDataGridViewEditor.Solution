@@ -10,6 +10,10 @@ namespace SqlDataGridViewEditor
 {
     public static class dgvHelper
     {
+        public static Dictionary<string, string> translations = new Dictionary<string, string>();
+
+        public static bool translate;
+
         // Results of this coloring use in color combo boxes above
         public static void SetHeaderColorsOnWritePage(DataGridView dgv, string myTable, List<field> myFields)
         {
@@ -36,6 +40,7 @@ namespace SqlDataGridViewEditor
                 else if (myDisplayKey)
                 {
                     dkNumber++;  // Increase dkNumber
+                    if(dkNumber == formOptions.DkColorArray.Count()) { dkNumber = 0; }
                     dgv.Columns[i].HeaderCell.Style.BackColor = formOptions.DkColorArray[dkNumber];
                     dgv.Columns[i].HeaderCell.Style.SelectionBackColor = formOptions.DkColorArray[dkNumber];
                     // Next two used below to handle a displaykey of foreign key
@@ -52,6 +57,7 @@ namespace SqlDataGridViewEditor
                 else if (myForeignKey)  // A typical (non display-key) foreign key
                 {
                     nonDkNumber++;
+                    if (nonDkNumber == formOptions.nonDkColorArray.Count()) { nonDkNumber = 0; }
                     dgv.Columns[i].HeaderCell.Style.BackColor = formOptions.nonDkColorArray[nonDkNumber];
                     dgv.Columns[i].HeaderCell.Style.SelectionBackColor = formOptions.nonDkColorArray[nonDkNumber];
                     currentArrayIsDkColors = false;
@@ -162,6 +168,59 @@ namespace SqlDataGridViewEditor
                 // Prepare for next load of table before program closed - every column must be at least 62
                 dataHelper.storeColumnWidth(fl.table, fl.fieldName, nextWidth);
             }
+        }
+
+        public static void TranslateHeaders(DataGridView dgv)
+        {
+            if (translate)
+            {
+            // Rename the header rows (if a plugin has added some colHeaderTranslation.keys)
+                foreach (DataGridViewColumn col in dgv.Columns)
+                {
+                    string headerText = col.HeaderText;
+                    string lastCharacter = headerText.Substring(headerText.Length - 1);
+                    bool lastCharacterRemoved = false;
+                    if (Int32.TryParse(lastCharacter, out int result))
+                    {
+                        headerText = headerText.Substring(0, headerText.Length - 1);
+                        lastCharacterRemoved = true;
+                    }
+                    string newHeaderText = TranslateString(headerText);
+                    // Change header text
+                    if (headerText != newHeaderText)
+                    {
+                        if (lastCharacterRemoved) { newHeaderText = newHeaderText + lastCharacter; }
+                        col.HeaderText = newHeaderText;
+                    }
+                }
+            }
+        }
+
+        public static string TranslateString(string englishKey)
+        {
+            string returnValue = englishKey;
+            if (translate)
+            {
+                if (translations.ContainsKey(englishKey.ToLower()))
+                {
+                    returnValue = translations[englishKey.ToLower()];
+                    return returnValue;
+                }
+                else if(englishKey.Length >2) 
+                {
+                    if (englishKey.Substring(englishKey.Length - 2,2) == "ID")
+                    {
+                        string shortKey = englishKey.Substring(0, englishKey.Length - 2);
+                        if (translations.ContainsKey(shortKey.ToLower()))
+                        {
+                            returnValue = translations[shortKey.ToLower()] + "ID";
+                            return returnValue;
+                        }
+                    }
+                }
+                return englishKey;
+            }
+            return englishKey;
         }
 
 
