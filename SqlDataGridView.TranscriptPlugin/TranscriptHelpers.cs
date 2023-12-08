@@ -401,6 +401,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             Dictionary<string, string> columnHeaderTranslations = new Dictionary<string, string>(); ;
             columnHeaderTranslations.Add("ancestors", "祖宗");
             columnHeaderTranslations.Add("auditing", "潘婷");
+            columnHeaderTranslations.Add("cdepname", "c學科名字");
             columnHeaderTranslations.Add("courses", "課程");
             columnHeaderTranslations.Add("course", "課程");
             columnHeaderTranslations.Add("coursename", "課程名字");
@@ -422,14 +423,14 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("deliverymethod", "上課方法");
             columnHeaderTranslations.Add("delmethdk", "上課方法DK");
             columnHeaderTranslations.Add("delmethname", "上課方法名字");
-            columnHeaderTranslations.Add("dep_longname", "學科長名字");
-            columnHeaderTranslations.Add("dep_shortname", "學科短名字");
+            columnHeaderTranslations.Add("depname", "學科名字");
             columnHeaderTranslations.Add("department", "學科");
             columnHeaderTranslations.Add("earnedcredits", "earned學分s");
             columnHeaderTranslations.Add("ecoursename", "e課程名字");
             columnHeaderTranslations.Add("ecreditsource", "e學分來源");
             columnHeaderTranslations.Add("edegreename", "e學位名字");
             columnHeaderTranslations.Add("edegreenamelong", "e學位名字長");
+            columnHeaderTranslations.Add("edepname", "e學科名字");
             columnHeaderTranslations.Add("edelmethname", "e上課方法名字");
             columnHeaderTranslations.Add("efacultyname", "e老師名字");
             columnHeaderTranslations.Add("enddate", "endDate");

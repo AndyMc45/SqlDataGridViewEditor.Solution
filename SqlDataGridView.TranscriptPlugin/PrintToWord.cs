@@ -40,7 +40,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     // Table, Row, Column index all start at 1
                     document.Tables[1].Cell(1, 2).Range.Text = studentName;
 
-                    string startDate = DateTime.Parse(dataHelper.getColumnValueinDR(studentDegreeInfoDT.Rows[0], "startDate"),ci).ToString("yyyy年MM月");
+                    string startDate = dataHelper.getColumnValueinDR(studentDegreeInfoDT.Rows[0], "startDate");
+                    startDate = DateTime.Parse(startDate,ci).ToString("MM/yyyy");
                     document.Tables[1].Cell(1, 6).Range.Text = startDate;
 
                     string studentDegree = dataHelper.getColumnValueinDR(studentDegreeInfoDT.Rows[0], "degreeName");
@@ -71,13 +72,14 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
                             document.Tables[2].Cell(currentRow, 1).Range.Text = term;
                             document.Tables[2].Cell(currentRow, 3).Range.Text = termStartDate + " - " + termEndDate;
+                            document.Tables[2].Cell(currentRow, 4).Range.Text = termName;
                             document.Tables[2].Rows.Add();
                             currentRow = currentRow + 1;
                             currentTermID = termID;
                         }
                         string courseName = dataHelper.getColumnValueinDR(transDR, "courseName");
                         string facultyName = dataHelper.getColumnValueinDR(transDR, "facultyName");
-                        string department = dataHelper.getColumnValueinDR(transDR, "Dep_ShortName");
+                        string department = dataHelper.getColumnValueinDR(transDR, "depName");
 
                         document.Tables[2].Cell(currentRow, 1).Range.Text = term;
                         document.Tables[2].Cell(currentRow, 2).Range.Text = department;
