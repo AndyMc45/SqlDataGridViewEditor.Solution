@@ -6,6 +6,7 @@ using System.Text;
 using InfoBox;
 using System.Web;
 using System.Resources;
+using System.Threading;
 using System.Globalization;
 using SqlDataGridViewEditor.Properties;
 using System.Reflection.Metadata.Ecma335;
@@ -79,7 +80,8 @@ namespace SqlDataGridViewEditor
             // Sets culture - this can be set in a plugin
             if (IsUICulture(uiCulture))
             {
-                System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(uiCulture);
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(uiCulture);
+                Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(uiCulture);
             }
             //Required by windows forms
             InitializeComponent();
@@ -318,7 +320,7 @@ namespace SqlDataGridViewEditor
                 connectionString csObject = AppData.GetFirstConnectionStringOrNull();
                 if (csObject == null)
                 {
-                    sb.AppendLine("No previous connection string.");
+                    sb.AppendLine(MyResources.NoPreviousConnectionSet);
                 }
                 else
                 {

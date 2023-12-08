@@ -127,6 +127,10 @@
   <data name="MustPassTestBeforeOKButton" xml:space="preserve">
     <value>您必須通過測試才能啟用 "OK "按鈕。</value>
   </data>
+  <data name="NoPreviousConnectionSet" xml:space="preserve">
+    <value>沒有連結的紀錄</value>
+    <comment>Used in datagridviewForm.cs</comment>
+  </data>
   <data name="warning" xml:space="preserve">
     <value>警 告</value>
   </data>

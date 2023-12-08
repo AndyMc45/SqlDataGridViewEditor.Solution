@@ -67,7 +67,9 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                             string termStartDate = startMonth + "/" + startYear;
                             string termEndDate = endMonth + "/" + endYear;
 
-                            termStartDate = DateTime.Parse(termStartDate, ci).ToString("yyyy年MM月");
+                            DateTime dt = new DateTime(Int32.Parse(startYear), Int32.Parse(startMonth), 1);
+                            string strDT = dt.ToString("MM/dd/yyyy");
+                            termStartDate = DateTime.ParseExact(strDT, "MM yyyy", ci).ToString();
                             termEndDate = DateTime.Parse(termEndDate, ci).ToString("yyyy年MM月");
 
                             document.Tables[2].Cell(currentRow, 1).Range.Text = term;

@@ -138,6 +138,15 @@ namespace SqlDataGridViewEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No previous connection string..
+        /// </summary>
+        public static string NoPreviousConnectionSet {
+            get {
+                return ResourceManager.GetString("NoPreviousConnectionSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap reload {
