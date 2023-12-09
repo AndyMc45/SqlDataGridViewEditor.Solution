@@ -66,9 +66,24 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         {
             // 0, 0 means no paging - false means don't include all columns of all foreign keys - would be 89 if we did
             SqlFactory sqlTranscript = new SqlFactory(TableName.transcript, 0, 0, false);
-            field fkField = dataHelper.getForeignKeyFromRefTableName(TableName.transcript, referenceTable);
-            where wh = new where(fkField, pkRefTable.ToString());
-            sqlTranscript.myWheres.Add(wh);
+            if (referenceTable == TableName.studentDegrees)
+            {
+                field fkField = dataHelper.getForeignKeyFromRefTableName(TableName.transcript, referenceTable);
+                where wh = new where(fkField, pkRefTable.ToString());
+                sqlTranscript.myWheres.Add(wh);
+                field term = new field(TableName.terms, "term", DbType.Int32, 4);
+                orderBy ob = new orderBy(term, System.Windows.Forms.SortOrder.Ascending);
+                sqlTranscript.myOrderBys.Add(ob);
+            }
+            else if (referenceTable == TableName.courseTerms)
+            {
+                field fkField = dataHelper.getForeignKeyFromRefTableName(TableName.courseTermSection, referenceTable);
+                where wh = new where(fkField, pkRefTable.ToString());
+                sqlTranscript.myWheres.Add(wh);
+                field section = new field(TableName.section, "sectionID", DbType.Int32, 4);
+                orderBy ob = new orderBy(section, System.Windows.Forms.SortOrder.Ascending);  // Could order by deliveryMethodID
+                sqlTranscript.myOrderBys.Add(ob);
+            }
             string sqlString = sqlTranscript.returnSql(command.selectAll);
             PrintToWord.transcriptDT = new System.Data.DataTable();
             // I fill the transcript table into a datatable, and show it in the "transcript" tab

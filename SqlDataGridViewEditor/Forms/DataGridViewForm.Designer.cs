@@ -99,6 +99,7 @@
             mnuForeignKeyMissing = new ToolStripMenuItem();
             mnuPrintCurrentTable = new ToolStripMenuItem();
             mnuViewLog = new ToolStripMenuItem();
+            mnuOrderComboListsByPK = new ToolStripMenuItem();
             mnuHelp = new ToolStripMenuItem();
             mnuHelpFile = new ToolStripMenuItem();
             toolStripBottom = new ToolStrip();
@@ -758,7 +759,7 @@
             // 
             // mnuTools
             // 
-            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuPrintCurrentTable, mnuViewLog });
+            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuPrintCurrentTable, mnuViewLog, mnuOrderComboListsByPK });
             mnuTools.Name = "mnuTools";
             resources.ApplyResources(mnuTools, "mnuTools");
             // 
@@ -789,6 +790,13 @@
             // 
             mnuViewLog.Name = "mnuViewLog";
             resources.ApplyResources(mnuViewLog, "mnuViewLog");
+            // 
+            // mnuOrderComboListsByPK
+            // 
+            mnuOrderComboListsByPK.CheckOnClick = true;
+            mnuOrderComboListsByPK.Name = "mnuOrderComboListsByPK";
+            resources.ApplyResources(mnuOrderComboListsByPK, "mnuOrderComboListsByPK");
+            mnuOrderComboListsByPK.Click += mnuOrderComboListsByPK_Click;
             // 
             // mnuHelp
             // 
@@ -965,6 +973,7 @@
         private Button btnReload;
         private ToolStripMenuItem GridContextMenu_TimesUsedAsFK;
         private ToolStripButton toolStripButtonColumnWidth;
+        private ToolStripMenuItem mnuOrderComboListsByPK;
         //private Button button2;
     }
 }

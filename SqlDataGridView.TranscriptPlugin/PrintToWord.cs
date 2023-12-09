@@ -21,6 +21,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         // StudentReqDT is created from scrath -columns added to mainform dataHelper.fieldDT to allows sqlStudentReq factory
         public static System.Data.DataTable studentReqDT { get; set; } // No editing.  
         // A 4th Datatable and Sql for course role - I also use transcriptDT / sql but filter on course
+        // No editing - 1 data row only for this studentDegree
         public static System.Data.DataTable courseTermInfoDT { get; set; } // No editing - 1 data row only for this studentDegree 
 
         public static void printTranscript(CultureInfo ci, ref StringBuilder sbErrors)
@@ -68,8 +69,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                             string termEndDate = endMonth + "/" + endYear;
 
                             DateTime dt = new DateTime(Int32.Parse(startYear), Int32.Parse(startMonth), 1);
-                            string strDT = dt.ToString("MM/dd/yyyy");
-                            termStartDate = DateTime.ParseExact(strDT, "MM yyyy", ci).ToString();
+                            termStartDate = DateTime.Parse(termStartDate, ci).ToString("yyyy年MM月"); ;
                             termEndDate = DateTime.Parse(termEndDate, ci).ToString("yyyy年MM月");
 
                             document.Tables[2].Cell(currentRow, 1).Range.Text = term;

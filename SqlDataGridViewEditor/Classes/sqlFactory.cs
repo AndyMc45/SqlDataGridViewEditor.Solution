@@ -233,29 +233,34 @@ namespace SqlDataGridViewEditor
         }
 
         // This factory is still the currentSql factory
-       public string returnComboSql(field cmbField, comboValueType cmbValueType)  // Return all Display keys
+       public string returnComboSql(field cmbField, bool includePKinDisplayMember, comboValueType cmbValueType)  // Return all Display keys
         {
             string sqlString = string.Empty;
 
             // For primary keys, displayMember is the ostensive display keys and value member is the Pk value.
             // This displayMember is used in combos to identifies the row; and similarly in mainFilter dropdown items
+            // If includePKinDisplayMember is true, the displayMember will begin with PK and be ordered by PK
             if (cmbValueType == comboValueType.PK_myTable || cmbValueType == comboValueType.PK_refTable)  // no distinction between these two
             { 
                 StringBuilder sqlFieldStringSB = new StringBuilder();
-                // Put the cmbField as first field
                 List<field> fls = PKs_OstensiveDictionary[cmbField.key];  // Error if not present
                 // If myTable has no display keys, make the primary field the display key
                 if (fls.Count == 0)
                 {
                     sqlFieldStringSB.Append(dataHelper.QualifiedAliasFieldName(cmbField));
                 }
-                else if (fls.Count == 1)
+                else if (fls.Count == 1 && !includePKinDisplayMember)  // 1 field only
                 {
                     sqlFieldStringSB.Append(dataHelper.QualifiedAliasFieldName(fls[0]));
                 }
-                else
+                else  // 2 or more fields
                 {
                     sqlFieldStringSB.Append("Concat_WS(',',");
+                    if (includePKinDisplayMember)
+                    {
+                        sqlFieldStringSB.Append(dataHelper.QualifiedAliasFieldName(cmbField));
+                        sqlFieldStringSB.Append(",");
+                    }
                     sqlFieldStringSB.Append(SqlStatic.sqlFieldString(fls));  // function converts fls to list of fields seperated by comma
                     sqlFieldStringSB.Append(")");
                 }
@@ -264,7 +269,18 @@ namespace SqlDataGridViewEditor
                 // Add primary key of table as ValueField (May not need to add this twice but O.K. with Alias) 
                 sqlFieldStringSB.Append(dataHelper.QualifiedAliasFieldName(cmbField));
                 sqlFieldStringSB.Append(" as ValueMember");
-                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + sqlTableString(cmbField) + " " + SqlStatic.sqlWhereString(myComboWheres, strStaticWhereClause, false) + " Order by DisplayMember";
+
+                string orderBy = string.Empty;
+                if (includePKinDisplayMember)
+                {
+                    orderBy = " Order by ValueMember";
+                }
+                else
+                {
+                    orderBy = " Order by DisplayMember";
+                }
+                //Not uses strStaticWhereClause in combo
+                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + sqlTableString(cmbField) + " " + SqlStatic.sqlWhereString(myComboWheres, string.Empty, false) + orderBy;
             }
             // For text fields return distinct values - used in combo boxes 
             else if (cmbValueType == comboValueType.textField_myTable || cmbValueType == comboValueType.textField_refTable)  // no distinction between these two
@@ -286,7 +302,7 @@ namespace SqlDataGridViewEditor
                 //    field PkField = dataHelper.getForeignKeyRefField(Keyfield);
                 //    tableString = sqlTableString(PkField, ijList);
                 //}
-                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + tableString + " " + SqlStatic.sqlWhereString(myComboWheres, strStaticWhereClause, false) + " Order by DisplayMember";
+                sqlString = "SELECT DISTINCT " + sqlFieldStringSB.ToString() + " FROM " + tableString + " " + SqlStatic.sqlWhereString(myComboWheres, string.Empty, false) + " Order by DisplayMember";
             }
             return sqlString;
         }

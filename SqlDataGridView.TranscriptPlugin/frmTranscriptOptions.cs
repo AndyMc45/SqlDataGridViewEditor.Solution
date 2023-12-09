@@ -99,8 +99,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         public int studentDegreeID { get; set; }
         public int courseTermID { get; set; }
         public string uiCulture { get; set; }
-        
-        private CultureInfo uiCultureFull = CultureInfo.InvariantCulture; 
+
+        private CultureInfo uiCultureFull = CultureInfo.InvariantCulture;
 
         public Dictionary<string, string> headerTranslations { get; set; }
         public string translationCultureName { get; set; }
@@ -121,9 +121,13 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
         private void frmTranscriptOptions_Load(object sender, EventArgs e)
         {
-            // Load options
-            SetPathLabel(AppData.GetKeyValue("templateFolder"), lblPathTemplateFolder);
+            // Load path options
+            SetPathLabel(AppData.GetKeyValue("TemplateFolder"), lblPathTemplateFolder);
+            SetPathLabel(AppData.GetKeyValue("DocumentFolder"), lblPathDocumentFolder);
             SetPathLabel(AppData.GetKeyValue("TranscriptTemplate"), lblPathTransTemplate);
+            SetPathLabel(AppData.GetKeyValue("CourseRoleTemplate"), lblPathCourseRoleTemplate);
+            SetPathLabel(AppData.GetKeyValue("EnglishTranscriptTemplate"), lblPathEnglishTranscriptTemplate);
+            SetPathLabel(AppData.GetKeyValue("EnglishCourseRoleTemplate"), lblPathEnglishCourseRoleTemplate);
 
             toolStripBtnNarrow.Enabled = false;  // Viewing options
             if (myJob == Job.options)
@@ -213,7 +217,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                         // Load DGV
                         dgvTranscript.DataSource = PrintToWord.transcriptDT;
                         tabTranscript.Text = "Course Role";
-                        SqlFactory sqlTranscript = new SqlFactory(TableName.transcript, 0, 0, true); // Danger: must be same as in fillStudentTranscript
+                        SqlFactory sqlTranscript = new SqlFactory(TableName.transcript, 0, 0, false); // Danger: must be same as in fillStudentTranscript
                         dgvHelper.SetHeaderColorsOnWritePage(dgvTranscript, sqlTranscript.myTable, sqlTranscript.myFields);
                         dgvHelper.SetNewColumnWidths(dgvTranscript, sqlTranscript.myFields, true);
                         dgvHelper.TranslateHeaders(dgvTranscript);
@@ -313,7 +317,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
         }
 
-        private void lblTemplateFolder_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        private void lblTemplateFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             folderBrowserDialog1 = new FolderBrowserDialog
             {
@@ -326,6 +330,21 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             AppData.SaveKeyValue("TemplateFolder", fbdPath);
 
         }
+        private void lblDocumentFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            folderBrowserDialog1 = new FolderBrowserDialog
+            {
+                ShowNewFolderButton = true
+            };
+            DialogResult result = folderBrowserDialog1.ShowDialog();
+            string fbdPath = folderBrowserDialog1.SelectedPath;
+            if (result == DialogResult.Cancel) { return; }
+            lblPathDocumentFolder.Text = fbdPath;
+            AppData.SaveKeyValue("DocumentFolder", fbdPath);
+
+        }
+
+
 
         private void lblTranscriptTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -345,6 +364,27 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             {
                 lblPathCourseRoleTemplate.Text = filePath;
                 AppData.SaveKeyValue("CourseRoleTemplate", filePath);
+            }
+        }
+
+        private void lblEnglishTranscriptTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string filePath = SelectTemplateFile();
+            openFileDialog1 = new OpenFileDialog();
+            if (filePath != String.Empty)
+            {
+                lblPathEnglishTranscriptTemplate.Text = filePath;
+                AppData.SaveKeyValue("EnglishTranscriptTemplate", filePath);
+            }
+        }
+        private void lblEnglishCourseRoleTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string filePath = SelectTemplateFile();
+            openFileDialog1 = new OpenFileDialog();
+            if (filePath != String.Empty)
+            {
+                lblPathEnglishCourseRoleTemplate.Text = filePath;
+                AppData.SaveKeyValue("EnglishCourseRoleTemplate", filePath);
             }
         }
 
@@ -420,6 +460,16 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         {
             tabControl1.Height = this.Height - toolStripBottom.Height;
             tabControl1.Width = this.Width;
+        }
+
+        private void btnPrintEnglishTranscript_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPrintEnglishCourseRole_Click(object sender, EventArgs e)
+        {
+
         }
 
         internal enum Job

@@ -416,11 +416,11 @@ namespace SqlDataGridViewEditor
         {
             field pkField = getTablePrimaryKeyField(table);
             where newWhere = new where(pkField, PKvalue);
-            // Next 10+ lines: Change display name to name used in main filter --> table : displayName
+            // Rest of this method is to set the "newWhere.DisplayMember" shown in mainFilter dropdown
             SqlFactory sf = new SqlFactory(table, 0, 0);
             sf.myComboWheres.Add(newWhere);
             // returnComboSql contains a "DisplayMember" column that is a comma seperated list of display fields.
-            string strSql = sf.returnComboSql(pkField, comboValueType.PK_myTable);
+            string strSql = sf.returnComboSql(pkField, false, comboValueType.PK_myTable);
             MsSqlWithDaDt dadt = new MsSqlWithDaDt(strSql);
             string displayMember = "Missing DK";  // Default - modified below
             if (dadt.dt.Rows.Count > 0)
@@ -428,7 +428,6 @@ namespace SqlDataGridViewEditor
                 int colIndex = dadt.dt.Columns["DisplayMember"].Ordinal;
                 displayMember = dadt.dt.Rows[0][colIndex].ToString();
             }
-            // displayMember = table + ": " + displayMember;  // The entire point of the above 10+ lines
             newWhere.DisplayMember = displayMember;
             return newWhere;
         }

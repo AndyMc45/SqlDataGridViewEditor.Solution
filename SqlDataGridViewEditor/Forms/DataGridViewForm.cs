@@ -64,7 +64,6 @@ namespace SqlDataGridViewEditor
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-
         //----------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------
 
@@ -420,6 +419,11 @@ namespace SqlDataGridViewEditor
             {
                 msgText(currentSql.myTable);
             }
+            if (!String.IsNullOrEmpty(formOptions.strSuperStaticWhereClause))
+            {
+                currentSql.strStaticWhereClause = formOptions.strSuperStaticWhereClause;
+                formOptions.strSuperStaticWhereClause = string.Empty;   // Only use this once
+            }
 
             // 2. Bind 9 cmbGridFilterFields with fields for user to select
             //    Only setting up cmbGridFilterFields - cmbGridFilterValues set on cmbGridFilterField SelectionChanged event
@@ -656,7 +660,6 @@ namespace SqlDataGridViewEditor
                 dataGridView1.Columns[gridColumn].SortMode = DataGridViewColumnSortMode.Programmatic;
                 dataGridView1.Columns[gridColumn].HeaderCell.SortGlyphDirection = sortOrder;
             }
-
 
             // e. Format the rest of the grid and form
             dgvHelper.SetHeaderColorsOnWritePage(dataGridView1, currentSql.myTable, currentSql.myFields);// Must do everytime we re-write grid
@@ -1220,6 +1223,12 @@ namespace SqlDataGridViewEditor
 
         }
 
+        private void mnuOrderComboListsByPK_Click(object sender, EventArgs e)
+        {
+            formOptions.orderComboListsByPK = mnuOrderComboListsByPK.Checked;
+        }
+
+
         // Add Database - frmConnection
         internal void mnuAddDatabase_Click(Object eventSender, EventArgs eventArgs)
         {
@@ -1580,19 +1589,8 @@ namespace SqlDataGridViewEditor
                 FkComboColumn Fkcol = col as FkComboColumn;
                 if (Fkcol != null)  // Will be null for non-foreign key row
                 {
-                    // Get from inner joins because we need the correct table alias
-                    //foreach (innerJoin ij in currentSql.myInnerJoins)
-                    //{
-                    //    if (ij.fkFld.isSameFieldAs(colField))
-                    //    {
-                    //        // Fill Data table (datahelper.extraDT)
-                    //        field PK_refTable = ij.pkRefFld;
-                    //        FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
-                    //        break;
-                    //    }
-                    //}
                     field PK_refTable = dataHelper.getForeignKeyRefField(colField);
-                    FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
+                    FillComboDT(PK_refTable, comboValueType.PK_refTable);
 
                     // Assign datatable to each cell in FK column
                     int index = dataHelper.currentDT.Columns.IndexOf(col.Name);
@@ -1958,7 +1956,7 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        private void RebindOneGridFilterValueCombo(int i, bool sameFilterField)
+        private void RebindOneGridFilterValueCombo(int i, bool selectOriginalValueAfterBinding)
         {
             if (!tableOptions.doNotRebindGridFV)
             {
@@ -1970,13 +1968,13 @@ namespace SqlDataGridViewEditor
                 // Get old value
                 string oldTextValue = String.Empty;
                 int oldKeyIntValue = 0;
-                if (sameFilterField)
+                if (selectOriginalValueAfterBinding)
                 {
-                    if (cmbGridFV.DropDownStyle == ComboBoxStyle.DropDown)
+                    if (cmbGridFV.DropDownStyle == ComboBoxStyle.DropDown)  // combo has a text value
                     {
                         oldTextValue = cmbGridFV.Text;
                     }
-                    else
+                    else  // Combo has an integer value
                     {
                         if (cmbGridFV.SelectedIndex > 0)  // Item 0 has null value
                         {
@@ -1984,7 +1982,8 @@ namespace SqlDataGridViewEditor
                         }
                     }
                 }
-                // Settig Datasource = null - No _TextChange event, and _SelectionChange will have selectedIndex = -1 (stops grid write)
+                // Set Datasource to null
+                // This will fire the change event but both TextChange event and SelectionChange will have selectedIndex = -1 (which stops grid write)
                 cmbGridFilterValue[i].DataSource = null;
                 cmbGridFilterValue[i].Items.Clear();
                 cmbGridFilterValue[i].Enabled = true;
@@ -1993,34 +1992,12 @@ namespace SqlDataGridViewEditor
                 field selectedField = (field)cmbGridFilterFields[i].SelectedValue;
                 if (dataHelper.isForeignKeyField(selectedField))
                 {
-                    // Get primary key of the Ref table from innerJoins
-                    // Get from inner joins because we need the correct table alias
-                    //foreach (innerJoin ij in currentSql.myInnerJoins)
-                    //{
-                    //    if (ij.fkFld.isSameFieldAs(selectedField))
-                    //    {
-                    //        // Fill Data table (datahelper.extraDT)
-                    //        field PK_refTable = ij.pkRefFld;
-                    //        FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
-                    //        break;
-                    //    }
-                    //}
                     field PK_refTable = dataHelper.getForeignKeyRefField(selectedField);
-                    //foreach (innerJoin ij in currentSql.PKs_InnerjoinMap[PK_RefTable.key])
-                    //{
-                    //if (ij.fkFld.isSameFieldAs(selectedField))
-                    //{
-                    // Fill Data table (datahelper.extraDT)
-                    //field PK_refTable = ij.pkRefFld;
-                    FillExtraDTForUseInCombo(PK_refTable, comboValueType.PK_refTable);
-                    // break;
-                    //}
-                    //}
-
+                    FillComboDT(PK_refTable, comboValueType.PK_refTable);
                 }
                 else
                 {
-                    FillExtraDTForUseInCombo(selectedField, comboValueType.textField_myTable);
+                    FillComboDT(selectedField, comboValueType.textField_myTable);
                 }
                 DataRow firstRow = dataHelper.comboDT.NewRow();
                 // The Datasource in GridFieldsCombos must have "DisplayMember" and "ValueMember" columns
@@ -2028,10 +2005,12 @@ namespace SqlDataGridViewEditor
                 dataHelper.comboDT.Rows.InsertAt(firstRow, 0); // Even if no rows
                 cmbGridFilterValue[i].DisplayMember = "DisplayMember";
                 cmbGridFilterValue[i].ValueMember = "ValueMember";
+
+                // Bind the combo
                 // Will not rewrite Grid because I set doNotRewriteGrid = true whenever I call this method
                 cmbGridFilterValue[i].DataSource = dataHelper.comboDT;  // Be careful not to use extraDt until finished loading
 
-                if (sameFilterField)
+                if (selectOriginalValueAfterBinding)
                 {
                     // Restore old Value
                     if (cmbGridFV.DropDownStyle == ComboBoxStyle.DropDown)
@@ -2180,7 +2159,7 @@ namespace SqlDataGridViewEditor
 
             field fi = (field)cmb.Tag;  // Non-FK myTable
             List<string> strList = new List<string>();
-            FillExtraDTForUseInCombo(fi, comboValueType.textField_refTable);
+            FillComboDT(fi, comboValueType.textField_refTable);
             strList = dataHelper.comboDT.AsEnumerable().Select(x => x["DisplayMember"].ToString()).ToList();
 
             // Insert Dummy element
@@ -2267,13 +2246,7 @@ namespace SqlDataGridViewEditor
         //----------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------
 
-
-        #region 5 Radio buttons, Add-Delete-Merge Button
-        private void btnReload_Click(object sender, EventArgs e)
-        {
-            writeGrid_NewFilter();
-        }
-
+        #region Add-Delete-Merge Button
         private void btnDeleteAddMerge_Click(object sender, EventArgs e)
         {
             ComboBox[] cmbGridFilterFields = { cmbGridFilterFields_0, cmbGridFilterFields_1, cmbGridFilterFields_2, cmbGridFilterFields_3, cmbGridFilterFields_4, cmbGridFilterFields_5, cmbGridFilterFields_6, cmbGridFilterFields_7, cmbGridFilterFields_8 };
@@ -2298,16 +2271,20 @@ namespace SqlDataGridViewEditor
                 // Get two PK values
                 int firstPK = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
                 int secondPK = Convert.ToInt32(dataGridView1.SelectedRows[1].Cells[0].Value);
-                merge(currentSql.myTable, dataHelper.currentDT, firstPK, secondPK);
-                if (!tableOptions.mergingDuplicateKeys)
+                if (MergeTwoRows(currentSql.myTable,firstPK, secondPK))
                 {
-                    currentSql.strStaticWhereClause = string.Empty;
-                    rbView.Checked = true;
-                    writeGrid_NewFilter();
-                }
-                else
-                {
-                    showDuplicateDispayKeys();
+                    // User has asked to see dublicate keys and choosen to merge.
+                    // ShowDublicateDisplayKeys will write an strStaticWhereClause to show dublicate keys
+                    if (tableOptions.mergingDuplicateKeys)
+                    {
+                        showDuplicateDispayKeys();
+                    }
+                    else  
+                    {   // Return to viewing after the merge
+                        currentSql.strStaticWhereClause = string.Empty;
+                        rbView.Checked = true;
+                        writeGrid_NewFilter();
+                    }
                 }
             }
 
@@ -2443,18 +2420,19 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        private void merge(string table, DataTable tableDT, int pk1, int pk2)
+        private bool MergeTwoRows(string table, int pk1, int pk2)
         {
             StringBuilder msgSB = new StringBuilder();
-            MsSql.SetDeleteCommand(table, tableDT); // I will delete from tableDT and then update
+            // Set delete command, delete from currentDT and then call "update" to update the database
+            MsSql.SetDeleteCommand(table, dataHelper.currentDT); 
 
             txtMessages.Text = String.Format(" {0} is the first and {1} is the second", pk1, pk2);
-            //  Get rows in the fieldsDT that have table as RefTable - i.e. descendants of table 
-            DataRow[] drs = dataHelper.fieldsDT.Select(String.Format("RefTable = '{0}'", table));
+            //  From dataHelper.fieldsDT, get all the tables that have an FK for this table 
+            DataRow[] fieldsDTdrs = dataHelper.fieldsDT.Select(String.Format("RefTable = '{0}'", table));
             // Count how many rows the firstPK and secondPK as FK's in other tables
             int firstPKCount = 0;
             int secondPKCount = 0;
-            foreach (DataRow dr in drs)    // Only 1 dr with "Courses" main table, and that is the CourseTerm table.
+            foreach (DataRow dr in fieldsDTdrs)   
             {
                 string FKColumnName = dataHelper.getColumnValueinDR(dr, "ColumnName");
                 string TableWithFK = dataHelper.getColumnValueinDR(dr, "TableName");
@@ -2477,10 +2455,11 @@ namespace SqlDataGridViewEditor
                 {
                     field PKField = dataHelper.getTablePrimaryKeyField(table);
                     where wh = new where(PKField, PkToDelete.ToString());
-                    string errorMsg = MsSql.DeleteRowsFromDT(tableDT, wh);
-                    if (errorMsg != string.Empty)
+                    string errorMsg = MsSql.DeleteRowsFromDT(dataHelper.currentDT, wh);
+                    if (errorMsg != string.Empty)   // Deleting the row unlikely to cause error, but just in case . . . 
                     {
-
+                        InformationBox.Show(msgSB.ToString(), "Error", InformationBoxIcon.Exclamation);
+                        return false;
                     }
                 }
             }
@@ -2492,7 +2471,7 @@ namespace SqlDataGridViewEditor
                 InformationBoxResult reply = InformationBox.Show(msgSB.ToString(), "Merge two rows?", InformationBoxButtons.YesNo);
                 if (reply == InformationBoxResult.Yes)
                 {
-                    foreach (DataRow dr in drs)
+                    foreach (DataRow dr in fieldsDTdrs)
                     {
                         string FKColumnName = dataHelper.getColumnValueinDR(dr, "ColumnName");
                         string TableWithFK = dataHelper.getColumnValueinDR(dr, "TableName");
@@ -2511,11 +2490,71 @@ namespace SqlDataGridViewEditor
                         // 2. Update these rows in extraDT - loop through these rows and change the FK column)
                         foreach (DataRow dr2 in dadt.dt.Rows)
                         {
-                            // Check for display key violation - and war if there is one
-                            if (dataHelper.isDisplayKey(fld))
+                            // 2.5 Check for display key violation - and war if there is one
+                            // Problem:  When we replace pk1 with pk2 in the FK table, we might violate the DK unique constraint
+                            // Example:  Suppose that the DK has three columns.  Suppose we want to replace the first column pk2 with pk1.
+                            //           But if the FK table has both "pk1, X, Y" and "pk2, X, Y", this will violate the unique constraint.
+                            //           The user will need to first merge these two rows in the higher table -- I don't try this.  I just give a message
+                            if (dataHelper.isDisplayKey(fld))  // Non-display keys can have dublicates
                             {
-                                // Check for a conflict - i.e. if pk2-->pk1 will produce a duplicate.  If so, merge the two.
+                                SqlFactory sqlForeignKeyTable = new SqlFactory(TableWithFK, 0, 0);
+                                foreach (field fl3 in sqlForeignKeyTable.myFields)
+                                { 
+                                    // Check if this is a DisplayKey that is in this table
+                                    if(fl3.table == TableWithFK && dataHelper.isDisplayKey(fl3)) 
+                                    {
+                                        // Substitute FKColumnName with pk2; otherwise use the same DK as in dr2
+                                        string whValue = string.Empty;
+                                        if (fl3.baseKey.Equals(fld.baseKey))
+                                        {
+                                            whValue = pk2.ToString();
+                                        }
+                                        else
+                                        {
+                                            whValue = dr2[fl3.fieldName].ToString();
+                                        }
+                                        where wh3 = new where(fl3, whValue);
+                                        if (dataHelper.TryParseToDbType(wh3.whereValue, fl3.dbType))
+                                        {
+                                            sqlForeignKeyTable.myWheres.Add(wh3);
+                                        }
+                                        else  // Rare ?
+                                        {
+                                            string erroMsg = String.Format(dataHelper.errMsg, dataHelper.errMsgParameter1, dataHelper.errMsgParameter2);
+                                            msgTextError(erroMsg);
+                                        }
+                                    }
 
+                                }
+                                string strSql = sqlForeignKeyTable.returnSql(command.selectAll);
+                                MsSqlWithDaDt dadt2 = new MsSqlWithDaDt(strSql);
+                                if (dadt2.dt.Rows.Count > 0)
+                                {
+                                    field fkTablePKfield = dataHelper.getTablePrimaryKeyField(TableWithFK);
+                                    List<string> fkTablePKs = new List<string>();
+                                    fkTablePKs.Add(dr2[fkTablePKfield.fieldName].ToString());
+                                    foreach (DataRow dr3 in  dadt2.dt.Rows)
+                                    {
+                                        fkTablePKs.Add(dr3[fkTablePKfield.fieldName].ToString());
+                                    }
+                                    msgSB.Clear();
+                                    msgSB.AppendLine(String.Format("You need to merge rows in {0}.", TableWithFK, dadt2.dt.Rows.Count.ToString()));
+                                    msgSB.AppendLine(String.Format("Rows that should be merged: {0}", String.Join(", ", fkTablePKs)));
+                                    msgSB.AppendLine(String.Format("Do you want to see these rows?", String.Join(", ", fkTablePKs)));
+                                    InformationBoxResult result = InformationBox.Show(msgSB.ToString(), "Important message",InformationBoxButtons.YesNo, InformationBoxIcon.Exclamation);
+                                    if (result == InformationBoxResult.Yes)
+                                    {
+                                        List<string> orConditions = new List<string>(); 
+                                        foreach (string strPkValue in fkTablePKs)
+                                        {
+                                            orConditions.Add(String.Format("({0} = '{1}' OR {0} IS NULL)", dataHelper.QualifiedAliasFieldName(fkTablePKfield), strPkValue));
+                                        }
+                                        string whereCondition = String.Join(" OR ", orConditions);
+                                        formOptions.strSuperStaticWhereClause = " WHERE " + whereCondition;
+                                        writeGrid_NewTable(TableWithFK);
+                                    }
+                                    return false;
+                                }
                             }
                             dr2[FKColumnName] = pk2;
                         }
@@ -2530,19 +2569,28 @@ namespace SqlDataGridViewEditor
                         catch (Exception ex)
                         {
                             msgSB.Clear();
-                            msgSB.AppendLine(String.Format("We must first merge rows in the Descendant table {0}.", TableWithFK));
+                            msgSB.AppendLine(String.Format("Error in updated table {0}.", TableWithFK));
                             msgSB.AppendLine("Database Error Messsage: " + ex.Message);
-                            msgSB.AppendLine("Do you want me to proceed?");
                             InformationBox.Show(msgSB.ToString(), "Error", InformationBoxIcon.Exclamation);
+                            return false;
                         }
                     }
                     // 4.  Delete merged row from currentDT
                     field PKField = dataHelper.getTablePrimaryKeyField(currentSql.myTable);
-                    where wh = new where(PKField, 1.ToString());
+                    where wh = new where(PKField, pk1.ToString());
                     string errorMsg = MsSql.DeleteRowsFromDT(dataHelper.currentDT, wh);
                 }
             }
+            return true;
         }
+
+
+        #endregion 
+                
+        //----------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------
+
+        #region 5 Radio buttons and other Buttons (Reload, Wide columns)
 
 
         private void rbView_CheckedChanged(object sender, EventArgs e)
@@ -2624,7 +2672,25 @@ namespace SqlDataGridViewEditor
             }
         }
 
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+            writeGrid_NewFilter();
+        }
+
+        private void toolStripColumnWidth_Click(object sender, EventArgs e)
+        {
+            toolStripButtonColumnWidth.Enabled = false;
+            formOptions.narrowColumns = !formOptions.narrowColumns;
+            if (formOptions.narrowColumns) { toolStripButtonColumnWidth.Text = "Wide"; }
+            else { toolStripButtonColumnWidth.Text = "Narrow"; }
+            dgvHelper.SetNewColumnWidths(dataGridView1, currentSql.myFields, formOptions.narrowColumns);
+            toolStripButtonColumnWidth.Enabled = true;
+        }
+
         #endregion
+
+        //----------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------
 
         #region 5 paging buttons & RecordsPerPage (RPP)
         // Paging - <<
@@ -2719,11 +2785,27 @@ namespace SqlDataGridViewEditor
         }
         #endregion
 
-
         //----------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------
 
         #region Other functions and methods
+
+        private bool IsUICulture(String UICulture)
+        {
+            CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+            foreach (CultureInfo culture in cultures)
+            {
+                if (culture.Equals(CultureInfo.InvariantCulture)) { continue; } //do not use "==", won't work
+                else
+                {
+                    if (UICulture == culture.Name)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         public int getDGVcolumn(field fld)
         {
@@ -2888,7 +2970,7 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        private void FillExtraDTForUseInCombo(field fl, comboValueType cmbValueType)
+        private void FillComboDT(field fl, comboValueType cmbValueType)
         {
             // If a foreign key
             if (cmbValueType == comboValueType.PK_myTable || cmbValueType == comboValueType.PK_refTable)
@@ -2902,10 +2984,10 @@ namespace SqlDataGridViewEditor
                 callSqlWheresForCombo(PkTable);
             }
             // combo.returnComboSql works very differently for Primary keys and non-Primary keys
-            string strSql = currentSql.returnComboSql(fl, cmbValueType);
+            string strSql = currentSql.returnComboSql(fl, formOptions.orderComboListsByPK, cmbValueType);
             dataHelper.comboDT = new DataTable();
             string errorMsg = MsSql.FillDataTable(dataHelper.comboDT, strSql);
-            if (errorMsg != string.Empty) { InformationBox.Show(errorMsg, "ERROR in FillExtarDTFOrUseInCombo", InformationBoxIcon.Error); }
+            if (errorMsg != string.Empty) { InformationBox.Show(errorMsg, "ERROR in FillComboDT", InformationBoxIcon.Error); }
 
         }
 
@@ -3018,34 +3100,6 @@ namespace SqlDataGridViewEditor
 
         #endregion
 
-        private void toolStripColumnWidth_Click(object sender, EventArgs e)
-        {
-            toolStripButtonColumnWidth.Enabled = false;
-            formOptions.narrowColumns = !formOptions.narrowColumns;
-            if (formOptions.narrowColumns) { toolStripButtonColumnWidth.Text = "Wide"; }
-            else { toolStripButtonColumnWidth.Text = "Narrow"; }
-            dgvHelper.SetNewColumnWidths(dataGridView1, currentSql.myFields, formOptions.narrowColumns);
-            toolStripButtonColumnWidth.Enabled = true;
-        }
-
-        private bool IsUICulture(String UICulture)
-        {
-            CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-            foreach (CultureInfo culture in cultures)
-            {
-                if (culture.Equals(CultureInfo.InvariantCulture)) { continue; } //do not use "==", won't work
-                else
-                {
-                    if (UICulture == culture.Name)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-
         //----------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------
 
@@ -3096,6 +3150,7 @@ namespace SqlDataGridViewEditor
         }
 
         #endregion
+
     }
 }
 

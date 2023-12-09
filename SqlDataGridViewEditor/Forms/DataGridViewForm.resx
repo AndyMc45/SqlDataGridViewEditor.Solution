@@ -1544,34 +1544,40 @@
     <value>Tables</value>
   </data>
   <data name="mnuDatabaseInfo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>309, 26</value>
+    <value>314, 26</value>
   </data>
   <data name="mnuDatabaseInfo.Text" xml:space="preserve">
     <value>Database Information</value>
   </data>
   <data name="mnuDuplicateDisplayKeys.Size" type="System.Drawing.Size, System.Drawing">
-    <value>309, 26</value>
+    <value>314, 26</value>
   </data>
   <data name="mnuDuplicateDisplayKeys.Text" xml:space="preserve">
     <value>Check for Duplicate Display Keys</value>
   </data>
   <data name="mnuForeignKeyMissing.Size" type="System.Drawing.Size, System.Drawing">
-    <value>309, 26</value>
+    <value>314, 26</value>
   </data>
   <data name="mnuForeignKeyMissing.Text" xml:space="preserve">
     <value>Prepare a new Foreign Key</value>
   </data>
   <data name="mnuPrintCurrentTable.Size" type="System.Drawing.Size, System.Drawing">
-    <value>309, 26</value>
+    <value>314, 26</value>
   </data>
   <data name="mnuPrintCurrentTable.Text" xml:space="preserve">
     <value>Print Selection</value>
   </data>
   <data name="mnuViewLog.Size" type="System.Drawing.Size, System.Drawing">
-    <value>309, 26</value>
+    <value>314, 26</value>
   </data>
   <data name="mnuViewLog.Text" xml:space="preserve">
     <value>View Log</value>
+  </data>
+  <data name="mnuOrderComboListsByPK.Size" type="System.Drawing.Size, System.Drawing">
+    <value>314, 26</value>
+  </data>
+  <data name="mnuOrderComboListsByPK.Text" xml:space="preserve">
+    <value>Order Combo lists by Primary Key</value>
   </data>
   <data name="mnuTools.Size" type="System.Drawing.Size, System.Drawing">
     <value>58, 24</value>
@@ -1838,6 +1844,12 @@
     <value>mnuViewLog</value>
   </data>
   <data name="&gt;&gt;mnuViewLog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuOrderComboListsByPK.Name" xml:space="preserve">
+    <value>mnuOrderComboListsByPK</value>
+  </data>
+  <data name="&gt;&gt;mnuOrderComboListsByPK.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuHelp.Name" xml:space="preserve">

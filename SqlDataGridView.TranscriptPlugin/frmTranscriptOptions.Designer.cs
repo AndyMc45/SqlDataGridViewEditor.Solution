@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             tabControl1 = new TabControl();
             tabActions = new TabPage();
             btnPrintCourseRole = new Button();
@@ -42,6 +42,12 @@
             tabRequirements = new TabPage();
             dgvRequirements = new DataGridView();
             tabOptions = new TabPage();
+            lblPathEnglishCourseRoleTemplate = new Label();
+            lblPathEnglishTranscriptTemplate = new Label();
+            lblEnglishCourseRoleTemplate = new LinkLabel();
+            lblEnglishTranscriptTemplate = new LinkLabel();
+            lblPathDocumentFolder = new Label();
+            lblDocumentFolder = new LinkLabel();
             lblRestartMsg = new Label();
             cmbInterfaceLanguage = new ComboBox();
             lblLanguage = new Label();
@@ -58,6 +64,8 @@
             folderBrowserDialog1 = new FolderBrowserDialog();
             openFileDialog1 = new OpenFileDialog();
             saveFileDialog1 = new SaveFileDialog();
+            btnPrintEnglishCourseRole = new Button();
+            btnPrintEnglishTranscript = new Button();
             tabControl1.SuspendLayout();
             tabActions.SuspendLayout();
             tabStudent.SuspendLayout();
@@ -89,6 +97,8 @@
             // 
             // tabActions
             // 
+            tabActions.Controls.Add(btnPrintEnglishCourseRole);
+            tabActions.Controls.Add(btnPrintEnglishTranscript);
             tabActions.Controls.Add(btnPrintCourseRole);
             tabActions.Controls.Add(btnPrintTranscript);
             tabActions.Location = new Point(4, 29);
@@ -100,7 +110,7 @@
             // 
             // btnPrintCourseRole
             // 
-            btnPrintCourseRole.Location = new Point(17, 120);
+            btnPrintCourseRole.Location = new Point(20, 120);
             btnPrintCourseRole.Name = "btnPrintCourseRole";
             btnPrintCourseRole.Size = new Size(200, 29);
             btnPrintCourseRole.TabIndex = 15;
@@ -110,7 +120,7 @@
             // 
             // btnPrintTranscript
             // 
-            btnPrintTranscript.Location = new Point(17, 41);
+            btnPrintTranscript.Location = new Point(20, 40);
             btnPrintTranscript.Name = "btnPrintTranscript";
             btnPrintTranscript.Size = new Size(200, 29);
             btnPrintTranscript.TabIndex = 14;
@@ -131,14 +141,14 @@
             // 
             // dgvStudent
             // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            dgvStudent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Control;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            dgvStudent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             dgvStudent.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvStudent.Dock = DockStyle.Top;
             dgvStudent.Location = new Point(0, 0);
@@ -164,14 +174,14 @@
             dgvTranscript.AllowUserToAddRows = false;
             dgvTranscript.AllowUserToDeleteRows = false;
             dgvTranscript.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dgvTranscript.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = SystemColors.Control;
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+            dgvTranscript.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             dgvTranscript.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvTranscript.Dock = DockStyle.Left;
             dgvTranscript.GridColor = Color.WhiteSmoke;
@@ -196,14 +206,14 @@
             // 
             // dgvRequirements
             // 
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
-            dgvRequirements.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = SystemColors.Control;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
+            dgvRequirements.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
             dgvRequirements.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvRequirements.Dock = DockStyle.Left;
             dgvRequirements.Location = new Point(3, 3);
@@ -215,6 +225,12 @@
             // 
             // tabOptions
             // 
+            tabOptions.Controls.Add(lblPathEnglishCourseRoleTemplate);
+            tabOptions.Controls.Add(lblPathEnglishTranscriptTemplate);
+            tabOptions.Controls.Add(lblEnglishCourseRoleTemplate);
+            tabOptions.Controls.Add(lblEnglishTranscriptTemplate);
+            tabOptions.Controls.Add(lblPathDocumentFolder);
+            tabOptions.Controls.Add(lblDocumentFolder);
             tabOptions.Controls.Add(lblRestartMsg);
             tabOptions.Controls.Add(cmbInterfaceLanguage);
             tabOptions.Controls.Add(lblLanguage);
@@ -233,10 +249,76 @@
             tabOptions.Text = "Options";
             tabOptions.UseVisualStyleBackColor = true;
             // 
+            // lblPathEnglishCourseRoleTemplate
+            // 
+            lblPathEnglishCourseRoleTemplate.AutoSize = true;
+            lblPathEnglishCourseRoleTemplate.BorderStyle = BorderStyle.FixedSingle;
+            lblPathEnglishCourseRoleTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            lblPathEnglishCourseRoleTemplate.Location = new Point(258, 227);
+            lblPathEnglishCourseRoleTemplate.Name = "lblPathEnglishCourseRoleTemplate";
+            lblPathEnglishCourseRoleTemplate.Size = new Size(218, 19);
+            lblPathEnglishCourseRoleTemplate.TabIndex = 31;
+            lblPathEnglishCourseRoleTemplate.Text = "English Course Role Template Path";
+            // 
+            // lblPathEnglishTranscriptTemplate
+            // 
+            lblPathEnglishTranscriptTemplate.AutoSize = true;
+            lblPathEnglishTranscriptTemplate.BorderStyle = BorderStyle.FixedSingle;
+            lblPathEnglishTranscriptTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            lblPathEnglishTranscriptTemplate.Location = new Point(258, 177);
+            lblPathEnglishTranscriptTemplate.Name = "lblPathEnglishTranscriptTemplate";
+            lblPathEnglishTranscriptTemplate.Size = new Size(204, 19);
+            lblPathEnglishTranscriptTemplate.TabIndex = 30;
+            lblPathEnglishTranscriptTemplate.Text = "English Transcript Template Path";
+            // 
+            // lblEnglishCourseRoleTemplate
+            // 
+            lblEnglishCourseRoleTemplate.AutoSize = true;
+            lblEnglishCourseRoleTemplate.Location = new Point(30, 224);
+            lblEnglishCourseRoleTemplate.Name = "lblEnglishCourseRoleTemplate";
+            lblEnglishCourseRoleTemplate.Size = new Size(212, 20);
+            lblEnglishCourseRoleTemplate.TabIndex = 29;
+            lblEnglishCourseRoleTemplate.TabStop = true;
+            lblEnglishCourseRoleTemplate.Text = "English Course Role Template :";
+            lblEnglishCourseRoleTemplate.LinkClicked += lblEnglishCourseRoleTemplate_LinkClicked;
+            // 
+            // lblEnglishTranscriptTemplate
+            // 
+            lblEnglishTranscriptTemplate.AutoSize = true;
+            lblEnglishTranscriptTemplate.Location = new Point(30, 174);
+            lblEnglishTranscriptTemplate.Name = "lblEnglishTranscriptTemplate";
+            lblEnglishTranscriptTemplate.Size = new Size(197, 20);
+            lblEnglishTranscriptTemplate.TabIndex = 28;
+            lblEnglishTranscriptTemplate.TabStop = true;
+            lblEnglishTranscriptTemplate.Text = "English Transcript Template :";
+            lblEnglishTranscriptTemplate.LinkClicked += lblEnglishTranscriptTemplate_LinkClicked;
+            // 
+            // lblPathDocumentFolder
+            // 
+            lblPathDocumentFolder.AutoSize = true;
+            lblPathDocumentFolder.BorderStyle = BorderStyle.FixedSingle;
+            lblPathDocumentFolder.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            lblPathDocumentFolder.Location = new Point(258, 325);
+            lblPathDocumentFolder.Name = "lblPathDocumentFolder";
+            lblPathDocumentFolder.Size = new Size(143, 19);
+            lblPathDocumentFolder.TabIndex = 27;
+            lblPathDocumentFolder.Text = "Document Folder Path";
+            // 
+            // lblDocumentFolder
+            // 
+            lblDocumentFolder.AutoSize = true;
+            lblDocumentFolder.Location = new Point(30, 322);
+            lblDocumentFolder.Name = "lblDocumentFolder";
+            lblDocumentFolder.Size = new Size(131, 20);
+            lblDocumentFolder.TabIndex = 26;
+            lblDocumentFolder.TabStop = true;
+            lblDocumentFolder.Text = "Document Folder :";
+            lblDocumentFolder.LinkClicked += lblDocumentFolder_LinkClicked;
+            // 
             // lblRestartMsg
             // 
             lblRestartMsg.AutoSize = true;
-            lblRestartMsg.Location = new Point(600, 260);
+            lblRestartMsg.Location = new Point(258, 429);
             lblRestartMsg.Name = "lblRestartMsg";
             lblRestartMsg.Size = new Size(490, 20);
             lblRestartMsg.TabIndex = 25;
@@ -246,7 +328,7 @@
             // 
             cmbInterfaceLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbInterfaceLanguage.FormattingEnabled = true;
-            cmbInterfaceLanguage.Location = new Point(258, 252);
+            cmbInterfaceLanguage.Location = new Point(258, 379);
             cmbInterfaceLanguage.Name = "cmbInterfaceLanguage";
             cmbInterfaceLanguage.Size = new Size(336, 28);
             cmbInterfaceLanguage.TabIndex = 24;
@@ -259,7 +341,7 @@
             lblLanguage.FlatStyle = FlatStyle.Flat;
             lblLanguage.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point);
             lblLanguage.ImeMode = ImeMode.NoControl;
-            lblLanguage.Location = new Point(30, 252);
+            lblLanguage.Location = new Point(30, 379);
             lblLanguage.Margin = new Padding(3);
             lblLanguage.Name = "lblLanguage";
             lblLanguage.Size = new Size(144, 20);
@@ -273,16 +355,16 @@
             lblPathCourseRoleTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
             lblPathCourseRoleTemplate.Location = new Point(258, 133);
             lblPathCourseRoleTemplate.Name = "lblPathCourseRoleTemplate";
-            lblPathCourseRoleTemplate.Size = new Size(158, 19);
+            lblPathCourseRoleTemplate.Size = new Size(172, 19);
             lblPathCourseRoleTemplate.TabIndex = 22;
-            lblPathCourseRoleTemplate.Text = "Transcript Template Path";
+            lblPathCourseRoleTemplate.Text = "Course Role Template Path";
             // 
             // lblPathTemplateFolder
             // 
             lblPathTemplateFolder.AutoSize = true;
             lblPathTemplateFolder.BorderStyle = BorderStyle.FixedSingle;
             lblPathTemplateFolder.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPathTemplateFolder.Location = new Point(258, 184);
+            lblPathTemplateFolder.Location = new Point(258, 275);
             lblPathTemplateFolder.Name = "lblPathTemplateFolder";
             lblPathTemplateFolder.Size = new Size(136, 19);
             lblPathTemplateFolder.TabIndex = 21;
@@ -302,13 +384,13 @@
             // lblTemplateFolder
             // 
             lblTemplateFolder.AutoSize = true;
-            lblTemplateFolder.Location = new Point(30, 181);
+            lblTemplateFolder.Location = new Point(30, 272);
             lblTemplateFolder.Name = "lblTemplateFolder";
             lblTemplateFolder.Size = new Size(124, 20);
             lblTemplateFolder.TabIndex = 19;
             lblTemplateFolder.TabStop = true;
             lblTemplateFolder.Text = "Template Folder :";
-            lblTemplateFolder.LinkClicked += lblTemplateFolder_LinkClicked_1;
+            lblTemplateFolder.LinkClicked += lblTemplateFolder_LinkClicked;
             // 
             // lblCourseRoleTemplate
             // 
@@ -384,6 +466,26 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
+            // btnPrintEnglishCourseRole
+            // 
+            btnPrintEnglishCourseRole.Location = new Point(320, 120);
+            btnPrintEnglishCourseRole.Name = "btnPrintEnglishCourseRole";
+            btnPrintEnglishCourseRole.Size = new Size(250, 29);
+            btnPrintEnglishCourseRole.TabIndex = 17;
+            btnPrintEnglishCourseRole.Text = "Print English Course Role";
+            btnPrintEnglishCourseRole.UseVisualStyleBackColor = true;
+            btnPrintEnglishCourseRole.Click += btnPrintEnglishCourseRole_Click;
+            // 
+            // btnPrintEnglishTranscript
+            // 
+            btnPrintEnglishTranscript.Location = new Point(320, 40);
+            btnPrintEnglishTranscript.Name = "btnPrintEnglishTranscript";
+            btnPrintEnglishTranscript.Size = new Size(250, 29);
+            btnPrintEnglishTranscript.TabIndex = 16;
+            btnPrintEnglishTranscript.Text = "Print English Transcript";
+            btnPrintEnglishTranscript.UseVisualStyleBackColor = true;
+            btnPrintEnglishTranscript.Click += btnPrintEnglishTranscript_Click;
+            // 
             // frmTranscriptOptions
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -441,5 +543,13 @@
         private Label lblRestartMsg;
         private ComboBox cmbInterfaceLanguage;
         private TabPage tabExit;
+        private Label lblPathDocumentFolder;
+        private LinkLabel lblDocumentFolder;
+        private Label lblPathEnglishCourseRoleTemplate;
+        private Label lblPathEnglishTranscriptTemplate;
+        private LinkLabel lblEnglishCourseRoleTemplate;
+        private LinkLabel lblEnglishTranscriptTemplate;
+        private Button btnPrintEnglishCourseRole;
+        private Button btnPrintEnglishTranscript;
     }
 }
