@@ -55,7 +55,11 @@
             GridContextMenu = new ContextMenuStrip(components);
             GridContextMenu_SetAsMainFilter = new ToolStripMenuItem();
             GridContextMenu_SetFKasMainFIlter = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
             GridContextMenu_TimesUsedAsFK = new ToolStripMenuItem();
+            GridContextMenu_Seperator = new ToolStripSeparator();
+            GridContextMenu_RestoreFilters = new ToolStripMenuItem();
+            GridContextMenu_ClearFilters = new ToolStripMenuItem();
             rbAdd = new RadioButton();
             rbDelete = new RadioButton();
             rbEdit = new RadioButton();
@@ -371,7 +375,7 @@
             // GridContextMenu
             // 
             GridContextMenu.ImageScalingSize = new Size(20, 20);
-            GridContextMenu.Items.AddRange(new ToolStripItem[] { GridContextMenu_SetAsMainFilter, GridContextMenu_SetFKasMainFIlter, GridContextMenu_TimesUsedAsFK });
+            GridContextMenu.Items.AddRange(new ToolStripItem[] { GridContextMenu_SetAsMainFilter, GridContextMenu_SetFKasMainFIlter, toolStripSeparator1, GridContextMenu_TimesUsedAsFK, GridContextMenu_Seperator, GridContextMenu_RestoreFilters, GridContextMenu_ClearFilters });
             GridContextMenu.Name = "contextMenuStrip1";
             resources.ApplyResources(GridContextMenu, "GridContextMenu");
             GridContextMenu.Opening += GridContextMenu_Opening;
@@ -389,11 +393,32 @@
             resources.ApplyResources(GridContextMenu_SetFKasMainFIlter, "GridContextMenu_SetFKasMainFIlter");
             GridContextMenu_SetFKasMainFIlter.Click += GridContextMenu_SetFkAsMainFilter_Click;
             // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
+            // 
             // GridContextMenu_TimesUsedAsFK
             // 
             GridContextMenu_TimesUsedAsFK.Name = "GridContextMenu_TimesUsedAsFK";
             resources.ApplyResources(GridContextMenu_TimesUsedAsFK, "GridContextMenu_TimesUsedAsFK");
             GridContextMenu_TimesUsedAsFK.Click += GridContextMenu_TimesUsedAsFK_Click;
+            // 
+            // GridContextMenu_Seperator
+            // 
+            GridContextMenu_Seperator.Name = "GridContextMenu_Seperator";
+            resources.ApplyResources(GridContextMenu_Seperator, "GridContextMenu_Seperator");
+            // 
+            // GridContextMenu_RestoreFilters
+            // 
+            GridContextMenu_RestoreFilters.Name = "GridContextMenu_RestoreFilters";
+            resources.ApplyResources(GridContextMenu_RestoreFilters, "GridContextMenu_RestoreFilters");
+            // 
+            // GridContextMenu_ClearFilters
+            // 
+            GridContextMenu_ClearFilters.Name = "GridContextMenu_ClearFilters";
+            resources.ApplyResources(GridContextMenu_ClearFilters, "GridContextMenu_ClearFilters");
+            GridContextMenu_ClearFilters.Click += GridContextMenu_ClearFilters_Click;
             // 
             // rbAdd
             // 
@@ -974,6 +999,10 @@
         private ToolStripMenuItem GridContextMenu_TimesUsedAsFK;
         private ToolStripButton toolStripButtonColumnWidth;
         private ToolStripMenuItem mnuOrderComboListsByPK;
+        private ToolStripSeparator GridContextMenu_Seperator;
+        private ToolStripMenuItem GridContextMenu_RestoreFilters;
+        private ToolStripMenuItem GridContextMenu_ClearFilters;
+        private ToolStripSeparator toolStripSeparator1;
         //private Button button2;
     }
 }

@@ -565,14 +565,32 @@
   <data name="GridContextMenu_SetFKasMainFIlter.Text" xml:space="preserve">
     <value>Set an FK as main filter</value>
   </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>226, 6</value>
+  </data>
   <data name="GridContextMenu_TimesUsedAsFK.Size" type="System.Drawing.Size, System.Drawing">
     <value>229, 24</value>
   </data>
   <data name="GridContextMenu_TimesUsedAsFK.Text" xml:space="preserve">
     <value>Times used as FK</value>
   </data>
+  <data name="GridContextMenu_Seperator.Size" type="System.Drawing.Size, System.Drawing">
+    <value>226, 6</value>
+  </data>
+  <data name="GridContextMenu_RestoreFilters.Size" type="System.Drawing.Size, System.Drawing">
+    <value>229, 24</value>
+  </data>
+  <data name="GridContextMenu_RestoreFilters.Text" xml:space="preserve">
+    <value>Restore last filter</value>
+  </data>
+  <data name="GridContextMenu_ClearFilters.Size" type="System.Drawing.Size, System.Drawing">
+    <value>229, 24</value>
+  </data>
+  <data name="GridContextMenu_ClearFilters.Text" xml:space="preserve">
+    <value>Clear all filters</value>
+  </data>
   <data name="GridContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>230, 76</value>
+    <value>230, 136</value>
   </data>
   <data name="&gt;&gt;GridContextMenu.Name" xml:space="preserve">
     <value>GridContextMenu</value>
@@ -1756,10 +1774,34 @@
   <data name="&gt;&gt;GridContextMenu_SetFKasMainFIlter.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
+    <value>toolStripSeparator1</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;GridContextMenu_TimesUsedAsFK.Name" xml:space="preserve">
     <value>GridContextMenu_TimesUsedAsFK</value>
   </data>
   <data name="&gt;&gt;GridContextMenu_TimesUsedAsFK.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;GridContextMenu_Seperator.Name" xml:space="preserve">
+    <value>GridContextMenu_Seperator</value>
+  </data>
+  <data name="&gt;&gt;GridContextMenu_Seperator.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;GridContextMenu_RestoreFilters.Name" xml:space="preserve">
+    <value>GridContextMenu_RestoreFilters</value>
+  </data>
+  <data name="&gt;&gt;GridContextMenu_RestoreFilters.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;GridContextMenu_ClearFilters.Name" xml:space="preserve">
+    <value>GridContextMenu_ClearFilters</value>
+  </data>
+  <data name="&gt;&gt;GridContextMenu_ClearFilters.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuFile.Name" xml:space="preserve">

@@ -373,9 +373,8 @@ namespace SqlDataGridViewEditor
 
         // Loop through all the inner joins.  The Keys are the PK's - check if one is my table
         // I could also use "MainFilterTableInCOmboSql" to do this by starting with myTable
-        public bool MainFilterTableIsInMyTable(where mainFilter, out string tableAlias)
+        public bool MainFilterTableIsInMyTable(string mainFilterTable, out string tableAlias)
         {
-            string mainFilterTable = mainFilter.fl.table;
             foreach (Tuple<string, string, string> key in PKs_InnerjoinMap.Keys)
             {
                 if (key.Item2 == mainFilterTable)
