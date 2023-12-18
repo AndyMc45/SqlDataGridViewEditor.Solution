@@ -127,7 +127,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             SetPathLabel(AppData.GetKeyValue("TranscriptTemplate"), lblPathTransTemplate);
             SetPathLabel(AppData.GetKeyValue("CourseRoleTemplate"), lblPathCourseRoleTemplate);
             SetPathLabel(AppData.GetKeyValue("EnglishTranscriptTemplate"), lblPathEnglishTranscriptTemplate);
-            SetPathLabel(AppData.GetKeyValue("EnglishCourseRoleTemplate"), lblPathEnglishCourseRoleTemplate);
+            SetPathLabel(AppData.GetKeyValue("CourseGradesTemplate"), lblPathCourseGradeTemplate);
 
             toolStripBtnNarrow.Enabled = false;  // Viewing options
             if (myJob == Job.options)
@@ -235,13 +235,13 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 {
                     dgvHelper.SetNewColumnWidths(dgvCurrentlyViewing, sqlCurrentlyViewing.myFields, true);
                     toolStripBtnNarrow.Tag = "wide";
-                    toolStripBtnNarrow.Text = "Wide";
+                    toolStripBtnNarrow.Text = Properties.PluginResources.toolStripBtnNarrowWide_Text;
                 }
                 else
                 {
                     dgvHelper.SetNewColumnWidths(dgvCurrentlyViewing, sqlCurrentlyViewing.myFields, false);
                     toolStripBtnNarrow.Tag = "narrow";
-                    toolStripBtnNarrow.Text = "Narrow";
+                    toolStripBtnNarrow.Text = Properties.PluginResources.toolStripBtnNarrow_Text;
                 }
             }
         }
@@ -316,6 +316,15 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         {
 
         }
+        private void btnPrintEnglishTranscript_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void btnPrintCourseGrades_Click(object sender, EventArgs e)
+        {
+
+        }
+
 
         private void lblTemplateFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -343,9 +352,6 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             AppData.SaveKeyValue("DocumentFolder", fbdPath);
 
         }
-
-
-
         private void lblTranscriptTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string filePath = SelectTemplateFile();
@@ -366,7 +372,6 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 AppData.SaveKeyValue("CourseRoleTemplate", filePath);
             }
         }
-
         private void lblEnglishTranscriptTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string filePath = SelectTemplateFile();
@@ -377,15 +382,16 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 AppData.SaveKeyValue("EnglishTranscriptTemplate", filePath);
             }
         }
-        private void lblEnglishCourseRoleTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void lblCourseGradesTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string filePath = SelectTemplateFile();
             openFileDialog1 = new OpenFileDialog();
             if (filePath != String.Empty)
             {
-                lblPathEnglishCourseRoleTemplate.Text = filePath;
-                AppData.SaveKeyValue("EnglishCourseRoleTemplate", filePath);
+                lblPathCourseGradeTemplate.Text = filePath;
+                AppData.SaveKeyValue("CourseGradesTemplate", filePath);
             }
+
         }
 
         private string SelectTemplateFile()
@@ -397,8 +403,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             {
                 openFileDialog1.InitialDirectory = templateFolder;
             }
-            openFileDialog1.Filter = "dot files(*.dot)|*.dot|dotx files(*.dotx)|*.dotx|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.Filter = "Word files(*.docx)|*.docx|Old Word files(*.doc)|*.doc|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 1;
             DialogResult result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -431,24 +437,30 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
         private void translateForm()
         {
-            tabStudent.Text = TranscriptPlugin.Properties.PluginResources.tabStudent_Text;
-            tabOptions.Text = TranscriptPlugin.Properties.PluginResources.tabOptions_Text;
-            tabRequirements.Text = TranscriptPlugin.Properties.PluginResources.tabRequirements_Text;
-            tabActions.Text = TranscriptPlugin.Properties.PluginResources.tabActions_Text;
-            tabTranscript.Text = TranscriptPlugin.Properties.PluginResources.tabTranscript_Text;
-            tabExit.Text = TranscriptPlugin.Properties.PluginResources.tabExit_Text;
-            btnPrintCourseRole.Text = TranscriptPlugin.Properties.PluginResources.btnPrintCourseRole_Text;
-            btnPrintTranscript.Text = TranscriptPlugin.Properties.PluginResources.btnPrintTranscript_Text;
-            lblCourseRoleTemplate.Text = TranscriptPlugin.Properties.PluginResources.lblCourseRoleTemplate_Text;
-            lblLanguage.Text = TranscriptPlugin.Properties.PluginResources.lblLanguage_Text;
-            lblOptions.Text = TranscriptPlugin.Properties.PluginResources.lblOptions_Text;
-            lblPathCourseRoleTemplate.Text = TranscriptPlugin.Properties.PluginResources.lblPathCourseRoleTemplate_Text;
-            lblPathTemplateFolder.Text = TranscriptPlugin.Properties.PluginResources.lblPathTemplateFolder_Text;
-            lblPathTransTemplate.Text = TranscriptPlugin.Properties.PluginResources.lblTranscriptTemplate_Text;
-            lblRestartMsg.Text = TranscriptPlugin.Properties.PluginResources.lblRestartMsg_Text;
-            lblTemplateFolder.Text = TranscriptPlugin.Properties.PluginResources.lblTemplateFolder_Text;
-            lblTranscriptTemplate.Text = TranscriptPlugin.Properties.PluginResources.lblTranscriptTemplate_Text;
-            toolStripBtnNarrow.Text = TranscriptPlugin.Properties.PluginResources.toolStripBtnNarrow_Text;
+            tabStudent.Text = Properties.PluginResources.tabStudent_Text;
+            tabOptions.Text = Properties.PluginResources.tabOptions_Text;
+            tabRequirements.Text = Properties.PluginResources.tabRequirements_Text;
+            tabActions.Text = Properties.PluginResources.tabActions_Text;
+            tabTranscript.Text = Properties.PluginResources.tabTranscript_Text;
+            tabExit.Text = Properties.PluginResources.tabExit_Text;
+
+            btnPrintCourseRole.Text = Properties.PluginResources.btnPrintCourseRole_Text;
+            btnPrintTranscript.Text = Properties.PluginResources.btnPrintTranscript_Text;
+            btnPrintCourseGrades.Text = Properties.PluginResources.btnPrintCourseGrades_Text;
+            btnPrintEnglishTranscript.Text = Properties.PluginResources.btnEnglishPrintTranscript_Text;
+
+            lblLanguage.Text = Properties.PluginResources.lblLanguage_Text;
+            lblOptions.Text = Properties.PluginResources.lblOptions_Text;
+            lblRestartMsg.Text = Properties.PluginResources.lblRestartMsg_Text;
+
+            lblTemplateFolder.Text = Properties.PluginResources.lblTemplateFolder_Text;
+            lblDocumentFolder.Text = Properties.PluginResources.lblDocumentFolder;
+            lblTranscriptTemplate.Text = Properties.PluginResources.lblTranscriptTemplate_Text;
+            lblEnglishTranscriptTemplate.Text = Properties.PluginResources.lblEnglishTranscriptTemplate;
+            lblCourseGradesTemplate.Text = Properties.PluginResources.lblCourseGradesTemplate_Text;
+            lblCourseRoleTemplate.Text = Properties.PluginResources.lblCourseRoleTemplate_Text;
+
+            toolStripBtnNarrow.Text = Properties.PluginResources.toolStripBtnNarrow_Text;
         }
 
         private void frmTranscriptOptions_Resize(object sender, EventArgs e)
@@ -460,16 +472,6 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         {
             tabControl1.Height = this.Height - toolStripBottom.Height;
             tabControl1.Width = this.Width;
-        }
-
-        private void btnPrintEnglishTranscript_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnPrintEnglishCourseRole_Click(object sender, EventArgs e)
-        {
-
         }
 
         internal enum Job

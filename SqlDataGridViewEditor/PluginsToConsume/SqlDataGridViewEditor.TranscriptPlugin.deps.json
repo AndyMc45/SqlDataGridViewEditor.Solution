@@ -17,6 +17,9 @@
           "SqlDataGridViewEditor.TranscriptPlugin.dll": {}
         },
         "resources": {
+          "zh-Hant/SqlDataGridViewEditor.TranscriptPlugin.resources.dll": {
+            "locale": "zh-Hant"
+          },
           "zh/SqlDataGridViewEditor.TranscriptPlugin.resources.dll": {
             "locale": "zh"
           }

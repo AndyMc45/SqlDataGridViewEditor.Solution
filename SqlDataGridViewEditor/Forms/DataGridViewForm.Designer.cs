@@ -57,6 +57,7 @@
             GridContextMenu_SetFKasMainFIlter = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             GridContextMenu_TimesUsedAsFK = new ToolStripMenuItem();
+            GridContextMenu_OrderCombolByPK = new ToolStripMenuItem();
             GridContextMenu_Seperator = new ToolStripSeparator();
             GridContextMenu_RestoreFilters = new ToolStripMenuItem();
             GridContextMenu_ClearFilters = new ToolStripMenuItem();
@@ -98,11 +99,11 @@
             mnuClose = new ToolStripMenuItem();
             mnuOpenTables = new ToolStripMenuItem();
             mnuTools = new ToolStripMenuItem();
+            mnuTools_ShowITtools = new ToolStripMenuItem();
             mnuDatabaseInfo = new ToolStripMenuItem();
             mnuDuplicateDisplayKeys = new ToolStripMenuItem();
             mnuForeignKeyMissing = new ToolStripMenuItem();
             mnuPrintCurrentTable = new ToolStripMenuItem();
-            mnuViewLog = new ToolStripMenuItem();
             mnuOrderComboListsByPK = new ToolStripMenuItem();
             mnuHelp = new ToolStripMenuItem();
             mnuHelpFile = new ToolStripMenuItem();
@@ -375,10 +376,9 @@
             // GridContextMenu
             // 
             GridContextMenu.ImageScalingSize = new Size(20, 20);
-            GridContextMenu.Items.AddRange(new ToolStripItem[] { GridContextMenu_SetAsMainFilter, GridContextMenu_SetFKasMainFIlter, toolStripSeparator1, GridContextMenu_TimesUsedAsFK, GridContextMenu_Seperator, GridContextMenu_RestoreFilters, GridContextMenu_ClearFilters });
+            GridContextMenu.Items.AddRange(new ToolStripItem[] { GridContextMenu_SetAsMainFilter, GridContextMenu_SetFKasMainFIlter, toolStripSeparator1, GridContextMenu_TimesUsedAsFK, GridContextMenu_OrderCombolByPK, GridContextMenu_Seperator, GridContextMenu_RestoreFilters, GridContextMenu_ClearFilters });
             GridContextMenu.Name = "contextMenuStrip1";
             resources.ApplyResources(GridContextMenu, "GridContextMenu");
-            GridContextMenu.Opening += GridContextMenu_Opening;
             // 
             // GridContextMenu_SetAsMainFilter
             // 
@@ -403,6 +403,13 @@
             GridContextMenu_TimesUsedAsFK.Name = "GridContextMenu_TimesUsedAsFK";
             resources.ApplyResources(GridContextMenu_TimesUsedAsFK, "GridContextMenu_TimesUsedAsFK");
             GridContextMenu_TimesUsedAsFK.Click += GridContextMenu_TimesUsedAsFK_Click;
+            // 
+            // GridContextMenu_OrderCombolByPK
+            // 
+            GridContextMenu_OrderCombolByPK.CheckOnClick = true;
+            GridContextMenu_OrderCombolByPK.Name = "GridContextMenu_OrderCombolByPK";
+            resources.ApplyResources(GridContextMenu_OrderCombolByPK, "GridContextMenu_OrderCombolByPK");
+            GridContextMenu_OrderCombolByPK.Click += GridContextMenu_OrderCombolByPK_Click;
             // 
             // GridContextMenu_Seperator
             // 
@@ -784,9 +791,18 @@
             // 
             // mnuTools
             // 
-            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuPrintCurrentTable, mnuViewLog, mnuOrderComboListsByPK });
+            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuTools_ShowITtools, mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuPrintCurrentTable, mnuOrderComboListsByPK });
             mnuTools.Name = "mnuTools";
             resources.ApplyResources(mnuTools, "mnuTools");
+            // 
+            // mnuTools_ShowITtools
+            // 
+            mnuTools_ShowITtools.Checked = true;
+            mnuTools_ShowITtools.CheckOnClick = true;
+            mnuTools_ShowITtools.CheckState = CheckState.Checked;
+            mnuTools_ShowITtools.Name = "mnuTools_ShowITtools";
+            resources.ApplyResources(mnuTools_ShowITtools, "mnuTools_ShowITtools");
+            mnuTools_ShowITtools.CheckedChanged += mnuTools_ShowITtools_CheckedChanged;
             // 
             // mnuDatabaseInfo
             // 
@@ -810,11 +826,6 @@
             // 
             mnuPrintCurrentTable.Name = "mnuPrintCurrentTable";
             resources.ApplyResources(mnuPrintCurrentTable, "mnuPrintCurrentTable");
-            // 
-            // mnuViewLog
-            // 
-            mnuViewLog.Name = "mnuViewLog";
-            resources.ApplyResources(mnuViewLog, "mnuViewLog");
             // 
             // mnuOrderComboListsByPK
             // 
@@ -987,7 +998,6 @@
         private ToolStripMenuItem GridContextMenu_SetFKasMainFIlter;
         private ToolStripMenuItem mnuDuplicateDisplayKeys;
         private ToolStripMenuItem mnuForeignKeyMissing;
-        private ToolStripMenuItem mnuViewLog;
         private ComboBox cmbGridFilterFields_7;
         private ComboBox cmbGridFilterValue_6;
         private ComboBox cmbGridFilterFields_6;
@@ -1003,6 +1013,8 @@
         private ToolStripMenuItem GridContextMenu_RestoreFilters;
         private ToolStripMenuItem GridContextMenu_ClearFilters;
         private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem GridContextMenu_OrderCombolByPK;
+        private ToolStripMenuItem mnuTools_ShowITtools;
         //private Button button2;
     }
 }

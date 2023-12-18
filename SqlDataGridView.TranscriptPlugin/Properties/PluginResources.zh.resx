@@ -117,82 +117,76 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="actions" xml:space="preserve">
-    <value>列  印</value>
+  <data name="btnEnglishPrintTranscript.Text" xml:space="preserve">
+    <value>英文成績單列印</value>
+  </data>
+  <data name="btnPrintCourseGrades.Text" xml:space="preserve">
+    <value>課程成績單列印</value>
   </data>
   <data name="btnPrintCourseRole.Text" xml:space="preserve">
-    <value>Course Role 列 印</value>
+    <value>點名表列印</value>
   </data>
   <data name="btnPrintTranscript.Text" xml:space="preserve">
-    <value>Transcript列 印</value>
+    <value>成績單列印</value>
   </data>
   <data name="course" xml:space="preserve">
-    <value>課  程</value>
+    <value>課程</value>
   </data>
   <data name="courseRole" xml:space="preserve">
     <value>課程點名表</value>
   </data>
   <data name="ErrorFillingTranscriptTable0" xml:space="preserve">
-    <value>ERROR filling transcript table: {0}</value>
+    <value>成績單表格填寫錯誤： {0}</value>
+  </data>
+  <data name="lblCourseGradesTemplate.Text" xml:space="preserve">
+    <value>課程成績單範本</value>
   </data>
   <data name="lblCourseRoleTemplate.Text" xml:space="preserve">
-    <value>Course Role Template :</value>
+    <value>點名表範本</value>
+  </data>
+  <data name="lblDocumentFolder" xml:space="preserve">
+    <value>存檔案資料夾</value>
+  </data>
+  <data name="lblEnglishTranscriptTemplate" xml:space="preserve">
+    <value>英文成績單範本：</value>
   </data>
   <data name="lblLanguage.Text" xml:space="preserve">
-    <value>Interface Language</value>
+    <value>介面語言</value>
   </data>
   <data name="lblOptions.Text" xml:space="preserve">
-    <value>Folders and Templates</value>
-  </data>
-  <data name="lblPathCourseRoleTemplate.Text" xml:space="preserve">
-    <value>Transcript Template Path</value>
-  </data>
-  <data name="lblPathTemplateFolder.Text" xml:space="preserve">
-    <value>Template Folder Path</value>
-  </data>
-  <data name="lblPathTransTemplate.Text" xml:space="preserve">
-    <value>Transcript Template Path</value>
+    <value>資料夾及範本</value>
   </data>
   <data name="lblRestartMsg.Text" xml:space="preserve">
-    <value>After changing interface language, please close and restart this program.</value>
+    <value>切換語言後，請關閉並重啟程式</value>
   </data>
   <data name="lblTemplateFolder.Text" xml:space="preserve">
-    <value>Template Folder :</value>
+    <value>範本資料夾：</value>
   </data>
   <data name="lblTranscriptTemplate.Text" xml:space="preserve">
-    <value>Transcript Template :</value>
-  </data>
-  <data name="options" xml:space="preserve">
-    <value>選  項</value>
-  </data>
-  <data name="requirements" xml:space="preserve">
-    <value>畢業要求</value>
-  </data>
-  <data name="student" xml:space="preserve">
-    <value>學  生</value>
+    <value>成績單範本：</value>
   </data>
   <data name="tabActions.Text" xml:space="preserve">
-    <value>列  印</value>
+    <value>列印</value>
   </data>
   <data name="tabExit.Text" xml:space="preserve">
-    <value>Exit</value>
+    <value>離開</value>
   </data>
   <data name="tabOptions.Text" xml:space="preserve">
-    <value>選  項</value>
+    <value>選項</value>
   </data>
   <data name="tabRequirements.Text" xml:space="preserve">
     <value>畢業要求</value>
   </data>
   <data name="tabStudent.Text" xml:space="preserve">
-    <value>學  生</value>
+    <value>學生</value>
   </data>
   <data name="tabTranscript.Text" xml:space="preserve">
-    <value>成 績 單</value>
-  </data>
-  <data name="toolStripBottom.Text" xml:space="preserve">
-    <value>toolStrip1</value>
+    <value>成績單</value>
   </data>
   <data name="toolStripBtnNarrow.Text" xml:space="preserve">
-    <value>縮  小</value>
+    <value>縮小</value>
+  </data>
+  <data name="toolStripBtnNarrowWide.Text" xml:space="preserve">
+    <value>放大 </value>
   </data>
 </root>

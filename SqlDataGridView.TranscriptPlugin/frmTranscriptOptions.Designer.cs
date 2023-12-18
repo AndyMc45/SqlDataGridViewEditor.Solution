@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             tabControl1 = new TabControl();
             tabActions = new TabPage();
+            btnPrintCourseGrades = new Button();
+            btnPrintEnglishTranscript = new Button();
             btnPrintCourseRole = new Button();
             btnPrintTranscript = new Button();
             tabStudent = new TabPage();
@@ -42,9 +44,9 @@
             tabRequirements = new TabPage();
             dgvRequirements = new DataGridView();
             tabOptions = new TabPage();
-            lblPathEnglishCourseRoleTemplate = new Label();
+            lblPathCourseGradeTemplate = new Label();
             lblPathEnglishTranscriptTemplate = new Label();
-            lblEnglishCourseRoleTemplate = new LinkLabel();
+            lblCourseGradesTemplate = new LinkLabel();
             lblEnglishTranscriptTemplate = new LinkLabel();
             lblPathDocumentFolder = new Label();
             lblDocumentFolder = new LinkLabel();
@@ -64,8 +66,6 @@
             folderBrowserDialog1 = new FolderBrowserDialog();
             openFileDialog1 = new OpenFileDialog();
             saveFileDialog1 = new SaveFileDialog();
-            btnPrintEnglishCourseRole = new Button();
-            btnPrintEnglishTranscript = new Button();
             tabControl1.SuspendLayout();
             tabActions.SuspendLayout();
             tabStudent.SuspendLayout();
@@ -97,7 +97,7 @@
             // 
             // tabActions
             // 
-            tabActions.Controls.Add(btnPrintEnglishCourseRole);
+            tabActions.Controls.Add(btnPrintCourseGrades);
             tabActions.Controls.Add(btnPrintEnglishTranscript);
             tabActions.Controls.Add(btnPrintCourseRole);
             tabActions.Controls.Add(btnPrintTranscript);
@@ -108,9 +108,30 @@
             tabActions.Text = "Actions";
             tabActions.UseVisualStyleBackColor = true;
             // 
+            // btnPrintCourseGrades
+            // 
+            btnPrintCourseGrades.Location = new Point(320, 120);
+            btnPrintCourseGrades.Margin = new Padding(3, 4, 3, 4);
+            btnPrintCourseGrades.Name = "btnPrintCourseGrades";
+            btnPrintCourseGrades.Size = new Size(250, 31);
+            btnPrintCourseGrades.TabIndex = 17;
+            btnPrintCourseGrades.Text = "Print Course Grades";
+            btnPrintCourseGrades.UseVisualStyleBackColor = true;
+            btnPrintCourseGrades.Click += btnPrintCourseGrades_Click;
+            // 
+            // btnPrintEnglishTranscript
+            // 
+            btnPrintEnglishTranscript.Location = new Point(320, 40);
+            btnPrintEnglishTranscript.Name = "btnPrintEnglishTranscript";
+            btnPrintEnglishTranscript.Size = new Size(250, 29);
+            btnPrintEnglishTranscript.TabIndex = 16;
+            btnPrintEnglishTranscript.Text = "列印英文成績單";
+            btnPrintEnglishTranscript.UseVisualStyleBackColor = true;
+            btnPrintEnglishTranscript.Click += btnPrintEnglishTranscript_Click;
+            // 
             // btnPrintCourseRole
             // 
-            btnPrintCourseRole.Location = new Point(20, 120);
+            btnPrintCourseRole.Location = new Point(21, 120);
             btnPrintCourseRole.Name = "btnPrintCourseRole";
             btnPrintCourseRole.Size = new Size(200, 29);
             btnPrintCourseRole.TabIndex = 15;
@@ -120,11 +141,11 @@
             // 
             // btnPrintTranscript
             // 
-            btnPrintTranscript.Location = new Point(20, 40);
+            btnPrintTranscript.Location = new Point(21, 40);
             btnPrintTranscript.Name = "btnPrintTranscript";
             btnPrintTranscript.Size = new Size(200, 29);
             btnPrintTranscript.TabIndex = 14;
-            btnPrintTranscript.Text = "Print Transcript";
+            btnPrintTranscript.Text = "列印成績單";
             btnPrintTranscript.UseVisualStyleBackColor = true;
             btnPrintTranscript.Click += btnPrintTranscript_Click;
             // 
@@ -141,14 +162,14 @@
             // 
             // dgvStudent
             // 
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = SystemColors.Control;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            dgvStudent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            dgvStudent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvStudent.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvStudent.Dock = DockStyle.Top;
             dgvStudent.Location = new Point(0, 0);
@@ -174,14 +195,14 @@
             dgvTranscript.AllowUserToAddRows = false;
             dgvTranscript.AllowUserToDeleteRows = false;
             dgvTranscript.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
-            dgvTranscript.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dgvTranscript.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvTranscript.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvTranscript.Dock = DockStyle.Left;
             dgvTranscript.GridColor = Color.WhiteSmoke;
@@ -206,14 +227,14 @@
             // 
             // dgvRequirements
             // 
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = SystemColors.Control;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
-            dgvRequirements.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dgvRequirements.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dgvRequirements.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvRequirements.Dock = DockStyle.Left;
             dgvRequirements.Location = new Point(3, 3);
@@ -225,9 +246,9 @@
             // 
             // tabOptions
             // 
-            tabOptions.Controls.Add(lblPathEnglishCourseRoleTemplate);
+            tabOptions.Controls.Add(lblPathCourseGradeTemplate);
             tabOptions.Controls.Add(lblPathEnglishTranscriptTemplate);
-            tabOptions.Controls.Add(lblEnglishCourseRoleTemplate);
+            tabOptions.Controls.Add(lblCourseGradesTemplate);
             tabOptions.Controls.Add(lblEnglishTranscriptTemplate);
             tabOptions.Controls.Add(lblPathDocumentFolder);
             tabOptions.Controls.Add(lblDocumentFolder);
@@ -249,16 +270,16 @@
             tabOptions.Text = "Options";
             tabOptions.UseVisualStyleBackColor = true;
             // 
-            // lblPathEnglishCourseRoleTemplate
+            // lblPathCourseGradeTemplate
             // 
-            lblPathEnglishCourseRoleTemplate.AutoSize = true;
-            lblPathEnglishCourseRoleTemplate.BorderStyle = BorderStyle.FixedSingle;
-            lblPathEnglishCourseRoleTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPathEnglishCourseRoleTemplate.Location = new Point(258, 227);
-            lblPathEnglishCourseRoleTemplate.Name = "lblPathEnglishCourseRoleTemplate";
-            lblPathEnglishCourseRoleTemplate.Size = new Size(218, 19);
-            lblPathEnglishCourseRoleTemplate.TabIndex = 31;
-            lblPathEnglishCourseRoleTemplate.Text = "English Course Role Template Path";
+            lblPathCourseGradeTemplate.AutoSize = true;
+            lblPathCourseGradeTemplate.BorderStyle = BorderStyle.FixedSingle;
+            lblPathCourseGradeTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            lblPathCourseGradeTemplate.Location = new Point(258, 229);
+            lblPathCourseGradeTemplate.Name = "lblPathCourseGradeTemplate";
+            lblPathCourseGradeTemplate.Size = new Size(187, 19);
+            lblPathCourseGradeTemplate.TabIndex = 32;
+            lblPathCourseGradeTemplate.Text = "Course Grades Template Path";
             // 
             // lblPathEnglishTranscriptTemplate
             // 
@@ -271,21 +292,20 @@
             lblPathEnglishTranscriptTemplate.TabIndex = 30;
             lblPathEnglishTranscriptTemplate.Text = "English Transcript Template Path";
             // 
-            // lblEnglishCourseRoleTemplate
+            // lblCourseGradesTemplate
             // 
-            lblEnglishCourseRoleTemplate.AutoSize = true;
-            lblEnglishCourseRoleTemplate.Location = new Point(30, 224);
-            lblEnglishCourseRoleTemplate.Name = "lblEnglishCourseRoleTemplate";
-            lblEnglishCourseRoleTemplate.Size = new Size(212, 20);
-            lblEnglishCourseRoleTemplate.TabIndex = 29;
-            lblEnglishCourseRoleTemplate.TabStop = true;
-            lblEnglishCourseRoleTemplate.Text = "English Course Role Template :";
-            lblEnglishCourseRoleTemplate.LinkClicked += lblEnglishCourseRoleTemplate_LinkClicked;
+            lblCourseGradesTemplate.Location = new Point(34, 225);
+            lblCourseGradesTemplate.Name = "lblCourseGradesTemplate";
+            lblCourseGradesTemplate.Size = new Size(193, 23);
+            lblCourseGradesTemplate.TabIndex = 29;
+            lblCourseGradesTemplate.TabStop = true;
+            lblCourseGradesTemplate.Text = "Course Grades Template:";
+            lblCourseGradesTemplate.LinkClicked += lblCourseGradesTemplate_LinkClicked;
             // 
             // lblEnglishTranscriptTemplate
             // 
             lblEnglishTranscriptTemplate.AutoSize = true;
-            lblEnglishTranscriptTemplate.Location = new Point(30, 174);
+            lblEnglishTranscriptTemplate.Location = new Point(30, 173);
             lblEnglishTranscriptTemplate.Name = "lblEnglishTranscriptTemplate";
             lblEnglishTranscriptTemplate.Size = new Size(197, 20);
             lblEnglishTranscriptTemplate.TabIndex = 28;
@@ -307,7 +327,7 @@
             // lblDocumentFolder
             // 
             lblDocumentFolder.AutoSize = true;
-            lblDocumentFolder.Location = new Point(30, 322);
+            lblDocumentFolder.Location = new Point(30, 323);
             lblDocumentFolder.Name = "lblDocumentFolder";
             lblDocumentFolder.Size = new Size(131, 20);
             lblDocumentFolder.TabIndex = 26;
@@ -330,7 +350,7 @@
             cmbInterfaceLanguage.FormattingEnabled = true;
             cmbInterfaceLanguage.Location = new Point(258, 379);
             cmbInterfaceLanguage.Name = "cmbInterfaceLanguage";
-            cmbInterfaceLanguage.Size = new Size(336, 28);
+            cmbInterfaceLanguage.Size = new Size(335, 28);
             cmbInterfaceLanguage.TabIndex = 24;
             cmbInterfaceLanguage.SelectedIndexChanged += cmbInterfaceLanguage_SelectedIndexChanged;
             // 
@@ -395,7 +415,7 @@
             // lblCourseRoleTemplate
             // 
             lblCourseRoleTemplate.AutoSize = true;
-            lblCourseRoleTemplate.Location = new Point(30, 130);
+            lblCourseRoleTemplate.Location = new Point(30, 131);
             lblCourseRoleTemplate.Name = "lblCourseRoleTemplate";
             lblCourseRoleTemplate.Size = new Size(161, 20);
             lblCourseRoleTemplate.TabIndex = 16;
@@ -466,26 +486,6 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
-            // btnPrintEnglishCourseRole
-            // 
-            btnPrintEnglishCourseRole.Location = new Point(320, 120);
-            btnPrintEnglishCourseRole.Name = "btnPrintEnglishCourseRole";
-            btnPrintEnglishCourseRole.Size = new Size(250, 29);
-            btnPrintEnglishCourseRole.TabIndex = 17;
-            btnPrintEnglishCourseRole.Text = "Print English Course Role";
-            btnPrintEnglishCourseRole.UseVisualStyleBackColor = true;
-            btnPrintEnglishCourseRole.Click += btnPrintEnglishCourseRole_Click;
-            // 
-            // btnPrintEnglishTranscript
-            // 
-            btnPrintEnglishTranscript.Location = new Point(320, 40);
-            btnPrintEnglishTranscript.Name = "btnPrintEnglishTranscript";
-            btnPrintEnglishTranscript.Size = new Size(250, 29);
-            btnPrintEnglishTranscript.TabIndex = 16;
-            btnPrintEnglishTranscript.Text = "Print English Transcript";
-            btnPrintEnglishTranscript.UseVisualStyleBackColor = true;
-            btnPrintEnglishTranscript.Click += btnPrintEnglishTranscript_Click;
-            // 
             // frmTranscriptOptions
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -545,11 +545,11 @@
         private TabPage tabExit;
         private Label lblPathDocumentFolder;
         private LinkLabel lblDocumentFolder;
-        private Label lblPathEnglishCourseRoleTemplate;
         private Label lblPathEnglishTranscriptTemplate;
-        private LinkLabel lblEnglishCourseRoleTemplate;
+        private LinkLabel lblCourseGradesTemplate;
         private LinkLabel lblEnglishTranscriptTemplate;
-        private Button btnPrintEnglishCourseRole;
+        private Button btnPrintCourseGrades;
         private Button btnPrintEnglishTranscript;
+        private Label lblPathCourseGradeTemplate;
     }
 }

@@ -31,7 +31,10 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             DataTable dt = GetOneRowDataTable(tableName, pkValue, ref sbErrors);                 
             SqlFactory sqlFactory = new SqlFactory(tableName, 0, 0);
             // Should be exactly one row in requirementNameDaDt.dt
-            if(dt.Rows.Count != 1) { sbErrors.AppendLine(String.Format("Error: {0} rows in {1} with primary {2}", dt.Rows.Count.ToString(), tableName, pkValue.ToString()));}
+            if(dt.Rows.Count != 1) 
+            { 
+                sbErrors.AppendLine(String.Format("Error: {0} rows in {1} with primary {2}", dt.Rows.Count.ToString(), tableName, pkValue.ToString()));
+            }
             if (dt.Rows.Count > 0)
             {
                 foreach( string colName in  columnNames )
@@ -123,8 +126,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 dataHelper.AddRowToFieldsDT("StudentReq", 16, "Limit", "Limit", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
                 // Need to calucate the following from transcript
                 dataHelper.AddRowToFieldsDT("StudentReq", 6, "Earned", "Earned", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 8, "Needed", "Needed", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 7, "InProgress", "InProgress", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 7, "Needed", "Needed", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 8, "InProgress", "InProgress", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
                 dataHelper.AddRowToFieldsDT("StudentReq", 17, "Icredits", "Icredits", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
             }
 
@@ -175,7 +178,27 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 PrintToWord.studentReqDT.Columns.Add(dc);
             }
 
+            //------------------------------------------------------------------------------------//
+            // Outer loop - graduation requirements
+            //------------------------------------------------------------------------------------//
+
+            decimal totalQpaCredits = 0;  // Only update on the first inner loop through transcripts
+            decimal totalQpaPoints = 0;
+            decimal totalCreditsEarned = 0;
+            bool firstLoop = true;
             // 6. Main routine: Fill studentReqDT 
+            // Old degrees might not have any requirements, but I need one to get the QPA.
+            // So I get the first row in the gradReq table along with a 'note' that this is a fakeRow
+            bool fakeRow = false;
+            if (grDaDt.dt.Rows.Count == 0)
+            {
+                // These values are not used, so I just use the first row in the gradRequirement Table.
+                sqlGradReq.myWheres.Clear();
+                sqlString = sqlGradReq.returnSql(command.selectAll);
+                grDaDt = new MsSqlWithDaDt(sqlString);
+                fakeRow = true;
+            }
+
             foreach (DataRow drGradReq in grDaDt.dt.Rows)
             {
                 //6a. Get information we need from drGradReq - use "r" for requirement.
@@ -184,7 +207,6 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 int rGradReqTypeID = Int32.Parse(dataHelper.getColumnValueinDR(drGradReq, "gradReqTypeID"));
                 int rRequirementNameID = Int32.Parse(dataHelper.getColumnValueinDR(drGradReq, "reqNameID"));
                 int rDeliveryMethodID = Int32.Parse(dataHelper.getColumnValueinDR(drGradReq, "rDeliveryMethodID"));
-
 
                 //6b. requirementNameID - Get information from gradRequirmentType Table
                 List<string> rReqNameTableColNames = new List<string> {"reqNameDK", "reqName", "eReqName" };
@@ -210,6 +232,13 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 string rDelMethName = rDeliveryMethodColValues["delMethName"];
                 string rDelMethNameEng = rDeliveryMethodColValues["eDelMethName"];
                 int rDeliveryLevel = Int32.Parse(rDeliveryMethodColValues["deliveryLevel"]);
+                // For level zero, don't give user the name; just leave it empty
+                if (rDeliveryLevel == 0)
+                {
+                    rDelMethDK = string.Empty;
+                    rDelMethName = string.Empty; ;
+                    rDelMethNameEng = string.Empty; ;
+                }
 
                 //6e. Create a row for studentReqDT, and partially fill it with drGradReq info. extracted above.
                 //   (Except for credits earned / inProgress / needed, we have all that we need to fill this row )
@@ -236,6 +265,10 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 dataHelper.setColumnValueInDR(dr, "Needed", 0);
                 dataHelper.setColumnValueInDR(dr, "Icredits", 0);
 
+                //------------------------------------------------------------------------------------//
+                //   Inner Loop - Transcript rows
+                //------------------------------------------------------------------------------------//
+
                 // 7. Loop through the transcript rows - updating "earned", "InProgress", Icredits"
                 //    Also keep track of QPA credits and QPA pointsEarned
                 //    After loop is complete, fill in the "Needed" (= required minus earned) 
@@ -244,6 +277,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 decimal earned = 0;
                 decimal inProgress = 0;
                 decimal iCredits = 0;
+
                 foreach (DataRow drTrans in PrintToWord.transcriptDT.Rows)
                 {
                     // Get all required information about the transcript row course - add "c" before variable for "course"
@@ -312,7 +346,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     string cAncestors = cReqColValues["Ancestors"];
 
                     //Error message
-                    if (cEarnedCredits && !forCredit)
+                    if (cEarnedCredits && !forCredit && !fakeRow)
                     {
                         // cStatusKey is not "forCredit" but the grade indicates student has earned credit
                         string strWarn = String.Format("{0} has a grade but its statusKey is {1}. ", cCourseName, cStatusKey);
@@ -321,92 +355,145 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
                     // Update "Earned", "InProgress", "Icredit" for this requirement row
                     // First check that the degreeLevel is correct
-                    if (forCredit)  // This is needed for every type of requirement
+                    if (forCredit || fakeRow)  // This is needed for every type of requirement
                     {
                         // Error message
-                        if (cDegreeLevel < sDegreeLevel)
+                        if (cDegreeLevel < sDegreeLevel && !fakeRow)
                         {
                             sbErrors.AppendLine(String.Format("Degree level of '{0} ({1})' is lower than student degree level ({2}). No credit granted.",
                                         cCourseName, cDegreeLevelName, sDegreeLevelName));
                         }
                         else
                         {
-                            // Handle QPA row
-                            if (rGradReqTypeDK == "QPA")
+                            // Handle total QPA points and credits earned
+                            // This is the only thing that we need in a fake row
+                            if (cCreditsInQPA && firstLoop)
                             {
-                                if (cCreditsInQPA)
-                                {
-                                    qpaPoints = qpaPoints + (cCredits * cGradeQP);
-                                    qpaCredits = qpaCredits + cCredits;
-                                }
+                                totalQpaPoints = totalQpaPoints + (cCredits * cGradeQP);
+                                totalQpaCredits = totalQpaCredits + cCredits;
                             }
-                            else
+                            if (cEarnedCredits && firstLoop)
+                            { 
+                                totalCreditsEarned = totalCreditsEarned + cCredits;
+                            }
+                            if (!fakeRow)
                             {
-                                // Get the number of "credits" or "units" earned
-                                // Divide case based on the type of requirement ("credit", "hours", "times")
-                                if (rGradReqTypeDK == "times") { cCredits = 1; }  // The main point of "Times"
-
-                                // No credit for this requirement if cDeliveryMethod < rDeliveryMethod
-                                if (cDeliveryLevel < rDeliveryLevel)
+                                if (rGradReqTypeDK == "QPA" || fakeRow)
                                 {
-                                    cCredits = 0;
-                                }
-
-                                // Check if this drTrans dataRow meets this requirement
-                                List<string> cAncestorsList = cAncestors.Split(",").ToList();
-                                if (rGradReqTypeDK == "credits" || rGradReqTypeDK == "hours" || rGradReqTypeDK == "times")
-                                {
-                                    if (rReqNameDK == cReqNameDK || cAncestorsList.Contains(rReqNameDK)) 
+                                    if (cCreditsInQPA)
                                     {
-                                        // This transcript row meets this requirement
+                                        qpaPoints = qpaPoints + (cCredits * cGradeQP);
+                                        qpaCredits = qpaCredits + cCredits;
                                     }
-                                    else { cCredits = 0; }
                                 }
-                                // Finally, update earned and inProgress
-                                if (cEarnedCredits)
+                                else  // Credits or Hours or Times requirement
                                 {
-                                    earned = earned + cCredits;
-                                }
-                                else if (cGrade == "NG")
-                                {
-                                    inProgress = inProgress + cCredits;
-                                }
-                                else if (cGrade == "I")
-                                { 
-                                    iCredits = inProgress + cCredits;
+                                    // Get the number of "credits" or "units" earned
+                                    if (rGradReqTypeDK == "times")
+                                    {
+                                        cCredits = 1;
+                                    }  // The main point of "Times"
+
+                                    // No credit for this requirement if cDeliveryMethod < rDeliveryMethod
+                                    if (cDeliveryLevel < rDeliveryLevel)
+                                    {
+                                        cCredits = 0;
+                                    }
+
+                                    // Check if this drTrans dataRow meets this requirement
+                                    List<string> cAncestorsList = cAncestors.Split(",").ToList();
+                                    if (rGradReqTypeDK == "credits" || rGradReqTypeDK == "hours" || rGradReqTypeDK == "times")
+                                    {
+                                        if (rReqNameDK == cReqNameDK || cAncestorsList.Contains(rReqNameDK))
+                                        {
+                                            // This transcript row meets this requirement
+                                        }
+                                        else
+                                        {
+                                            cCredits = 0;
+                                        }
+                                    }
+                                    // Finally, update earned and inProgress
+                                    if (cEarnedCredits)
+                                    {
+                                        earned = earned + cCredits;
+                                    }
+                                    else if (cGrade == "NG")
+                                    {
+                                        inProgress = inProgress + cCredits;
+                                    }
+                                    else if (cGrade == "I")
+                                    {
+                                        iCredits = inProgress + cCredits;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-                if (rGradReqTypeDK == "QPA")
+                // Fill in the requirement row Earned, InProgress, Needed
+                if (!fakeRow)
                 {
-                    decimal QPA = 0;
-                    if (qpaCredits > 0)
+                    if (rGradReqTypeDK == "QPA")
                     {
-                        QPA = Math.Round(qpaPoints / qpaCredits, 2);
+                        decimal QPA = 0;
+                        if (qpaCredits > 0)
+                        {
+                            QPA = Math.Round(qpaPoints / qpaCredits, 2);
+                        }
+                        dataHelper.setColumnValueInDR(dr, "Earned", QPA);
+                        dataHelper.setColumnValueInDR(dr, "InProgress", 0);
+                        if (QPA < rReqCredits)
+                        {
+                            dataHelper.setColumnValueInDR(dr, "Needed", rReqCredits - QPA);
+                        }
                     }
-                    dataHelper.setColumnValueInDR(dr, "Earned", QPA);
-                    dataHelper.setColumnValueInDR(dr, "InProgress", 0);
-                    if (QPA < rReqCredits)
+                    else
                     {
-                        dataHelper.setColumnValueInDR(dr, "Needed", rReqCredits-QPA);
+                        // Fill in columns 
+                        dataHelper.setColumnValueInDR(dr, "Earned", earned);
+                        dataHelper.setColumnValueInDR(dr, "InProgress", inProgress);
+                        if (rReqCredits > earned)
+                        {
+                            dataHelper.setColumnValueInDR(dr, "Needed", rReqCredits - earned);
+                        }
+                        else
+                        {
+                            dataHelper.setColumnValueInDR(dr, "Needed", 0);
+                        }
+                        dataHelper.setColumnValueInDR(dr, "Icredits", iCredits);
                     }
+                    // Add this row to studentReqDT
+                    PrintToWord.studentReqDT.Rows.Add(dr);
+                    firstLoop = false;
                 }
-                else
-                { 
-                    // Update 
-                    dataHelper.setColumnValueInDR(dr, "Earned", earned);
-                    dataHelper.setColumnValueInDR(dr, "InProgress", inProgress);
-                    if(rReqCredits > earned + inProgress)
-                    { 
-                        dataHelper.setColumnValueInDR(dr, "Needed", rReqCredits - (earned + inProgress));
-                    }
-                    dataHelper.setColumnValueInDR(dr, "Icredits", iCredits);
-                }
-                // Add this row to studentReqDT
-                PrintToWord.studentReqDT.Rows.Add(dr);
+                if (fakeRow) { break; } 
             }
+            // Update student QPA and total Credits - not yet committed to database
+            DataRow studentDegreeInfoRow = PrintToWord.studentDegreeInfoDT.Rows[0];
+            decimal totalQPA = 0;
+            if (totalQpaCredits > 0)
+            {
+                totalQPA = Math.Round(totalQpaPoints / totalQpaCredits, 2);
+            }
+            dataHelper.setColumnValueInDR(studentDegreeInfoRow, "creditsEarned", totalCreditsEarned);
+            dataHelper.setColumnValueInDR(studentDegreeInfoRow, "QPA", totalQPA);
+            dataHelper.setColumnValueInDR(studentDegreeInfoRow, "lastUpdatedQPA", DateTime.Now.ToShortDateString());
+
+            // Save these three changes down to the database - start over from scratch.
+            field pkField = dataHelper.getTablePrimaryKeyField(TableName.studentDegrees);
+            string pk = dataHelper.getColumnValueinDR(studentDegreeInfoRow, pkField.fieldName);
+            sqlString = String.Format("Select * from {0} where {1} = '{2}'", TableName.studentDegrees,pkField.fieldName,pk);
+            MsSqlWithDaDt dadt = new MsSqlWithDaDt(sqlString);
+            List<field> fieldsToUpdate = new List<field>();
+            fieldsToUpdate.Add(dataHelper.getFieldFromFieldsDT(TableName.studentDegrees, "creditsEarned"));
+            fieldsToUpdate.Add(dataHelper.getFieldFromFieldsDT(TableName.studentDegrees, "QPA"));
+            fieldsToUpdate.Add(dataHelper.getFieldFromFieldsDT(TableName.studentDegrees, "lastUpdatedQPA"));
+            MsSql.SetUpdateCommand(fieldsToUpdate, dadt.da);
+            dataHelper.setColumnValueInDR(dadt.dt.Rows[0], "creditsEarned", totalCreditsEarned);
+            dataHelper.setColumnValueInDR(dadt.dt.Rows[0], "QPA", totalQPA);
+            dataHelper.setColumnValueInDR(dadt.dt.Rows[0], "lastUpdatedQPA", DateTime.Now.ToShortDateString());
+            try { dadt.da.Update(dadt.dt); } catch { }
         }
 
         public static Dictionary<string, string> FillColumnHeaderTranslationDictionary()
@@ -420,11 +507,13 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("courses", "課程");
             columnHeaderTranslations.Add("course", "課程");
             columnHeaderTranslations.Add("coursename", "課程名字");
+            columnHeaderTranslations.Add("coursenames", "課程名字");
             columnHeaderTranslations.Add("courseterms", "學季課程");
             columnHeaderTranslations.Add("courseterm", "課程學季");
             columnHeaderTranslations.Add("coursetermsection", "學季課程班");
             columnHeaderTranslations.Add("creditlimit", "學分限制");
-            columnHeaderTranslations.Add("credits", "學分");
+            columnHeaderTranslations.Add("credits", "學分"); 
+            columnHeaderTranslations.Add("creditsearned", "總學分"); 
             columnHeaderTranslations.Add("creditsinqpa", "學分在QPA");
             columnHeaderTranslations.Add("creditsource", "學分來源");
             columnHeaderTranslations.Add("degree", "學位");
@@ -448,9 +537,9 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("edepname", "e學科名字");
             columnHeaderTranslations.Add("edelmethname", "e上課方法名字");
             columnHeaderTranslations.Add("efacultyname", "e老師名字");
-            columnHeaderTranslations.Add("enddate", "endDate");
-            columnHeaderTranslations.Add("endmonth", "endMonth");
-            columnHeaderTranslations.Add("endyear", "endYear");
+            columnHeaderTranslations.Add("enddate", "結束日期");
+            columnHeaderTranslations.Add("endmonth", "結束月");
+            columnHeaderTranslations.Add("endyear", "結束年");
             columnHeaderTranslations.Add("ereqname", "e規則名字");
             columnHeaderTranslations.Add("ereqtype", "e規則Type");
             columnHeaderTranslations.Add("estatusname", "e狀態名字");
@@ -469,6 +558,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("graduated", "已畢業");
             columnHeaderTranslations.Add("handbook", "手冊");
             columnHeaderTranslations.Add("handbooks", "手冊");
+            columnHeaderTranslations.Add("lastupdatedqpa", "QPA更新日期");
             columnHeaderTranslations.Add("note", "說明");
             columnHeaderTranslations.Add("repeatspermitted", "可重複");
             columnHeaderTranslations.Add("reqname", "規則名字");
@@ -480,9 +570,9 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("reqUnits", "規則Units");
             columnHeaderTranslations.Add("section", "班");
             columnHeaderTranslations.Add("selfstudycourse", "自修課程");
-            columnHeaderTranslations.Add("startdate", "startDate");
-            columnHeaderTranslations.Add("startmonth", "startMonth");
-            columnHeaderTranslations.Add("startyear", "startYear");
+            columnHeaderTranslations.Add("startdate", "錄取日期");
+            columnHeaderTranslations.Add("startmonth", "錄取月");
+            columnHeaderTranslations.Add("startyear", "錄取年");
             columnHeaderTranslations.Add("statuskey", "狀態Key");
             columnHeaderTranslations.Add("statusname", "狀態名字");
             columnHeaderTranslations.Add("studentdegree", "學生學位");
@@ -491,11 +581,18 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("students", "學生");
             columnHeaderTranslations.Add("studentname", "學生名字");
             columnHeaderTranslations.Add("studentunique", "學生Unique");
+            columnHeaderTranslations.Add("table", "表格");
             columnHeaderTranslations.Add("term", "學季");
             columnHeaderTranslations.Add("terms", "學期");
-            columnHeaderTranslations.Add("termName", "學季名字");
+            columnHeaderTranslations.Add("termname", "學季名字");
             columnHeaderTranslations.Add("transcript", "成績單");
-            columnHeaderTranslations.Add("transfercredit", "轉學分");
+            columnHeaderTranslations.Add("transfercredits", "轉學分");
+
+            // My menu items    
+            columnHeaderTranslations.Add("transcripts", "成績單");
+            columnHeaderTranslations.Add("print transcript", "列印成績單");
+            columnHeaderTranslations.Add("print course role", "列印點名表");
+            columnHeaderTranslations.Add("options", "選類");
 
             return columnHeaderTranslations;
         }

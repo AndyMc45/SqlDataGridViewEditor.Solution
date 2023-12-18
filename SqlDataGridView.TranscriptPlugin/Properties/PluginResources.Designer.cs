@@ -61,6 +61,24 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Print English Transcript.
+        /// </summary>
+        public static string btnEnglishPrintTranscript_Text {
+            get {
+                return ResourceManager.GetString("btnEnglishPrintTranscript.Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print Course Grades.
+        /// </summary>
+        public static string btnPrintCourseGrades_Text {
+            get {
+                return ResourceManager.GetString("btnPrintCourseGrades.Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Print Course Role.
         /// </summary>
         public static string btnPrintCourseRole_Text {
@@ -106,11 +124,38 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Course Grades template.
+        /// </summary>
+        public static string lblCourseGradesTemplate_Text {
+            get {
+                return ResourceManager.GetString("lblCourseGradesTemplate.Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Course Role Template :.
         /// </summary>
         public static string lblCourseRoleTemplate_Text {
             get {
                 return ResourceManager.GetString("lblCourseRoleTemplate.Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Document Folder.
+        /// </summary>
+        public static string lblDocumentFolder {
+            get {
+                return ResourceManager.GetString("lblDocumentFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to English Transcript Template.
+        /// </summary>
+        public static string lblEnglishTranscriptTemplate {
+            get {
+                return ResourceManager.GetString("lblEnglishTranscriptTemplate", resourceCulture);
             }
         }
         
@@ -129,33 +174,6 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         public static string lblOptions_Text {
             get {
                 return ResourceManager.GetString("lblOptions.Text", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Transcript Template Path.
-        /// </summary>
-        public static string lblPathCourseRoleTemplate_Text {
-            get {
-                return ResourceManager.GetString("lblPathCourseRoleTemplate.Text", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Template Folder Path.
-        /// </summary>
-        public static string lblPathTemplateFolder_Text {
-            get {
-                return ResourceManager.GetString("lblPathTemplateFolder.Text", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Transcript Template Path.
-        /// </summary>
-        public static string lblPathTransTemplate_Text {
-            get {
-                return ResourceManager.GetString("lblPathTransTemplate.Text", resourceCulture);
             }
         }
         
@@ -183,15 +201,6 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         public static string lblTranscriptTemplate_Text {
             get {
                 return ResourceManager.GetString("lblTranscriptTemplate.Text", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tabActions.Text.
-        /// </summary>
-        public static string String {
-            get {
-                return ResourceManager.GetString("String", resourceCulture);
             }
         }
         
@@ -250,20 +259,20 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to toolStrip1.
-        /// </summary>
-        public static string toolStripBottom_Text {
-            get {
-                return ResourceManager.GetString("toolStripBottom.Text", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Narrow.
         /// </summary>
         public static string toolStripBtnNarrow_Text {
             get {
                 return ResourceManager.GetString("toolStripBtnNarrow.Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wide.
+        /// </summary>
+        public static string toolStripBtnNarrowWide_Text {
+            get {
+                return ResourceManager.GetString("toolStripBtnNarrowWide.Text", resourceCulture);
             }
         }
     }

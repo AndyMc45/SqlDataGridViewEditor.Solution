@@ -55,7 +55,7 @@ namespace SqlDataGridViewEditor
         #endregion
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        { 
+        {
             if (keyData == (Keys.Control | Keys.U))
             {
                 GridContextMenu_FindUnusedFK_Click(null, null);
@@ -94,6 +94,22 @@ namespace SqlDataGridViewEditor
             dgvMainFormDelegate = Plugins.ExportForm;  // The way to put this method into the delegate
             if (pluginMenus.Items.Count > 0)
             {
+                // Translate plugin menus
+                ToolStripItemCollection toolStripItems = pluginMenus.Items;
+                foreach (ToolStripItem toolStripItem in toolStripItems)
+                {
+                    toolStripItem.Text = dgvHelper.TranslateString(toolStripItem.Text);
+                    if (toolStripItem is ToolStripMenuItem)
+                    {
+                        // Should do a recursive call, but I only use one deep 
+                        ToolStripMenuItem innerMenu = (ToolStripMenuItem)toolStripItem;
+                        foreach (ToolStripItem innerMenuItem in innerMenu.DropDownItems)
+                        {
+                            innerMenuItem.Text = dgvHelper.TranslateString(innerMenuItem.Text);
+                        }
+                    }
+                }
+                // Add plugin menus
                 MainMenu1.Items.AddRange(pluginMenus.Items);
             }
             // Invoke delegate - this will load mainForm into all plugins
@@ -150,6 +166,8 @@ namespace SqlDataGridViewEditor
             // 8. Build English database - will do nothing if Boolean BuildingUpEnglishDatabase in MultiLingual.cs set to false
             programMode = ProgramMode.none;
             SetAllFiltersByMode(); // Will disable filters and call SetTableLayoutPanelHeight();
+
+            mnuTools_ShowITtools.Checked = false;
         }
 
         private void DataGridViewForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -426,7 +444,7 @@ namespace SqlDataGridViewEditor
             }
             else
             {
-                msgText(currentSql.myTable);
+                msgText(dgvHelper.TranslateString("Table") + " : " + dgvHelper.TranslateString(currentSql.myTable));
             }
             if (!String.IsNullOrEmpty(formOptions.strSuperStaticWhereClause))
             {
@@ -993,8 +1011,8 @@ namespace SqlDataGridViewEditor
             {
                 cmbGridFilterFields[i].DataSource = null;
                 cmbGridFilterFields[i].Items.Clear();
-                if(loadingNewTable)
-                { 
+                if (loadingNewTable)
+                {
                     cmbGridFilterFields[i].Visible = false;
                     cmbGridFilterFields[i].Enabled = false;
                 }
@@ -1009,7 +1027,8 @@ namespace SqlDataGridViewEditor
             {
                 cmbGridFilterValue[i].DataSource = null;
                 cmbGridFilterValue[i].Items.Clear();
-                if (loadingNewTable) { 
+                if (loadingNewTable)
+                {
                     cmbGridFilterValue[i].Visible = false;
                     cmbGridFilterValue[i].Enabled = false;
                     cmbGridFilterValue[i].Text = string.Empty;
@@ -1025,8 +1044,9 @@ namespace SqlDataGridViewEditor
             for (int i = 0; i < cmbComboFilterValue.Length; i++)
             {
                 // Selection_change event of cmbComboTableList will make some visible
-                // Visible labels will continue to visible for the table, but txtBoxes may be disabled
-                if(loadingNewTable) {
+                // Visible labels will continue to visible for the table, but cmbBoxes may be disabled
+                if (loadingNewTable)
+                {
                     cmbComboFilterValue[i].DataSource = null;
                     lblCmbFilterFields[i].Text = String.Empty;
                     cmbComboFilterValue[i].Visible = false;
@@ -1119,6 +1139,18 @@ namespace SqlDataGridViewEditor
             if (currentSql == null) { return; }
             showDuplicateDispayKeys();
         }
+        private void mnuTools_ShowITtools_Click(object sender, EventArgs e){ }
+
+        private void mnuTools_ShowITtools_CheckedChanged(object sender, EventArgs e)
+        {
+            mnuForeignKeyMissing.Visible = mnuTools_ShowITtools.Checked;
+            mnuDuplicateDisplayKeys.Visible = mnuTools_ShowITtools.Checked;
+            mnuOrderComboListsByPK.Visible = mnuTools_ShowITtools.Checked;
+            mnuPrintCurrentTable.Visible = mnuTools_ShowITtools.Checked;
+            rbMerge.Visible = mnuTools_ShowITtools.Checked;
+            mnuDatabaseInfo.Visible = mnuTools_ShowITtools.Checked;
+
+        }
 
         private void showDuplicateDispayKeys()
         {
@@ -1142,7 +1174,7 @@ namespace SqlDataGridViewEditor
             }
             if (DaDt.dt.Rows.Count == 0)
             {
-                msgTextError("Everything O.K. No duplicates!" + "                " + "Everything O.K. No duplicates!");
+                msgTextError("Everything O.K. No duplicates!");
                 return;
             }
             msgText("Count: " + DaDt.dt.Rows.Count.ToString());
@@ -1255,8 +1287,15 @@ namespace SqlDataGridViewEditor
         private void mnuOrderComboListsByPK_Click(object sender, EventArgs e)
         {
             formOptions.orderComboListsByPK = mnuOrderComboListsByPK.Checked;
+            GridContextMenu_OrderCombolByPK.Checked = mnuOrderComboListsByPK.Checked;
+            writeGrid_NewTable(currentSql.myTable);
         }
-
+        private void GridContextMenu_OrderCombolByPK_Click(object sender, EventArgs e)
+        {
+            formOptions.orderComboListsByPK = GridContextMenu_OrderCombolByPK.Checked;
+            mnuOrderComboListsByPK.Checked = GridContextMenu_OrderCombolByPK.Checked;
+            writeGrid_NewTable(currentSql.myTable);
+        }
 
         // Add Database - frmConnection
         internal void mnuAddDatabase_Click(Object eventSender, EventArgs eventArgs)
@@ -1427,6 +1466,7 @@ namespace SqlDataGridViewEditor
                 if (dataGridView1.SelectedRows.Count != 1)
                 {
                     msgTextError("Please select exactly one row.");
+                    return;
                 }
 
                 // 1a. This assumes the first column in row is the Primary Key and it is an integer
@@ -1436,14 +1476,18 @@ namespace SqlDataGridViewEditor
                 DataRow[] drs = dataHelper.fieldsDT.Select(String.Format("RefTable = '{0}'", currentSql.myTable));
                 // Count how many rows the firstPK occurs as FK's in other tables
                 int firstPKCount = 0;
+                StringBuilder sb = new StringBuilder();
                 foreach (DataRow drInner in drs)    // Only 1 dr with "Courses" main table, and that is the CourseTerm table.
                 {
                     string FKColumnName = dataHelper.getColumnValueinDR(drInner, "ColumnName");
                     string TableWithFK = dataHelper.getColumnValueinDR(drInner, "TableName");
                     string strSql = String.Format("SELECT COUNT(1) FROM {0} where {1} = '{2}'", TableWithFK, FKColumnName, intValue);
-                    firstPKCount = firstPKCount + MsSql.GetRecordCount(strSql);
+                    int thisTableCount = MsSql.GetRecordCount(strSql);
+                    sb.AppendLine(String.Format("{0} : {1} times", dgvHelper.TranslateString(TableWithFK), thisTableCount.ToString()));
+                    firstPKCount = firstPKCount + thisTableCount;
                 }
-                msgTextError("Count: " + firstPKCount.ToString());
+                sb.Append(String.Format("Total : {0} times", firstPKCount.ToString()));
+                InformationBox.Show(sb.ToString());
             }
         }
 
@@ -2181,7 +2225,7 @@ namespace SqlDataGridViewEditor
                 senderComboBox.DropDownWidth = width;
             }
         }
-       
+
         #endregion
 
         //----------------------------------------------------------------------------------------------------------------------
@@ -2956,6 +3000,7 @@ namespace SqlDataGridViewEditor
 
         private void msgText(string text)
         {
+            txtMessages.ForeColor = Color.Navy;
             string msg = text;
             txtMessages.Text = msg;
         }
@@ -3074,10 +3119,7 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        private void GridContextMenu_Opening(object sender, CancelEventArgs e)
-        {
-
-        }
+        private void GridContextMenu_Opening(object sender, CancelEventArgs e) { }
 
         private void toolStripBottom_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
