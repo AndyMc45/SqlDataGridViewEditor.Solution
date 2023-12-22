@@ -1,9 +1,7 @@
-using Microsoft.VisualBasic;
 // using System.Data.SqlClient;
-using System.Text;
-using System.Data;
-using InfoBox;
 using SqlDataGridViewEditor.Properties;
+using System.Data;
+using System.Text;
 
 namespace SqlDataGridViewEditor
 {
@@ -45,7 +43,7 @@ namespace SqlDataGridViewEditor
                 }
             }
             cmbStrings.Items.Clear();
-            cmbStrings.Items.AddRange(defaultComboItems.ToArray()) ;
+            cmbStrings.Items.AddRange(defaultComboItems.ToArray());
 
             // Select the first - this will set the 3 txtboxes
             cmbStrings.SelectedIndex = 0;
@@ -64,7 +62,7 @@ namespace SqlDataGridViewEditor
             }
             if (sb.Length > 0)
             {
-                InformationBox.Show(sb.ToString());
+                MessageBox.Show(sb.ToString());
             }
             else
             {
@@ -121,7 +119,7 @@ namespace SqlDataGridViewEditor
             }
             catch (Exception exc)
             {
-                InformationBox.Show("Error opening connection: " + exc.Message, "Error opening Connection", InformationBoxIcon.Error);
+                MessageBox.Show("Error opening connection: " + exc.Message, "Error opening Connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return strList;
         }
@@ -150,7 +148,7 @@ namespace SqlDataGridViewEditor
             {
                 MsSql.CloseConnection();
                 MsSql.openConnection(cs);  // No error handling in openConnection(cs)
-                InformationBox.Show("Test passed.", "Success", InformationBoxIcon.Success);
+                MessageBox.Show("Test passed.", "Success");
                 cmdOK.Enabled = true;
                 success = true;
             }
@@ -159,17 +157,10 @@ namespace SqlDataGridViewEditor
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("Error opening connection.");
                 sb.AppendLine(excep.Message);
-                InformationBox.Show(sb.ToString(), "Error", InformationBoxIcon.Error);
+                MessageBox.Show(sb.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 cmdOK.Enabled = false;
                 success = false;
 
-                //if (Information.Err().Description != "")
-                //{
-                //    InformationBox.Show("We are sorry to report that the connection failed. " + Environment.NewLine
-                //                    + "Your connection string : " + Environment.NewLine + showUser
-                //                    + Environment.NewLine + "Error message:"
-                //                    + Environment.NewLine + Information.Err().Description, "Error", InformationBoxIcon.Error);
-                //}
             }
         }
 

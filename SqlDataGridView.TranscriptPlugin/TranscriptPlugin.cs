@@ -1,13 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using SqlDataGridViewEditor.PluginsInterface;
 using System.Text;
-using System.Threading.Tasks;
-using SqlDataGridViewEditor.PluginsInterface;
-using System.Data;
-using System.Data.SqlClient;
-using SqlDataGridViewEditor;
-using InfoBox;
-using System.Diagnostics.Eventing.Reader;
 
 
 namespace SqlDataGridViewEditor.TranscriptPlugin
@@ -38,7 +30,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
         public TransPlugin(String name)
         {
-            this.name = "Transcripts"; 
+            this.name = "Transcripts";
             var tupleList = new List<(String, String)>
             {
                 ("Print Transcript", "printTranscript"),
@@ -47,7 +39,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             };
 
             frmTranscriptOptions fOptions = new frmTranscriptOptions();
-            cntTemplate = new ControlTemplate(  ("Transcripts","transcriptMenu"), 
+            cntTemplate = new ControlTemplate(("Transcripts", "transcriptMenu"),
                                                 tupleList, fOptions, Transcript_CallBack);
             columnHeaderTranslations = TranscriptHelper.FillColumnHeaderTranslationDictionary();
             translationCultureName = "zh-Hant";  // Hard coded to the language of the translation
@@ -59,7 +51,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             if (e.Value == "transcriptMenu")
             {
                 // Disable some menuItems
-                
+
             }
             else if (e.Value == "options")
             {
@@ -71,7 +63,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             {
                 int studentDegreeID = SetStudentDegreeID();  // Shows error message if any
                 if (studentDegreeID == 0)
-                { 
+                {
                     // Messages shown already by setStudentDegreeID and so do nothing here.
                 }
                 else
@@ -98,7 +90,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     fOptions.myJob = frmTranscriptOptions.Job.printClassRole;
                     fOptions.courseTermID = courseTermID;
                     fOptions.headerTranslations = columnHeaderTranslations;
-                    fOptions.translationCultureName= translationCultureName;
+                    fOptions.translationCultureName = translationCultureName;
                     fOptions.ShowDialog();    // 
                 }
             }
@@ -152,7 +144,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
             if (sbError.Length > 0)
             {
-                InformationBox.Show(sbError.ToString(), "Error message", InformationBoxIcon.Question);
+                MessageBox.Show(sbError.ToString(), "Error message", MessageBoxButtons.OK, MessageBoxIcon.Question);
                 return 0;
             }
             return studentDegreeID;
@@ -202,7 +194,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
             if (sbError.Length > 0)
             {
-                InformationBox.Show(sbError.ToString(), "Error message", InformationBoxIcon.Question);
+                MessageBox.Show(sbError.ToString(), "Error message", MessageBoxButtons.OK, MessageBoxIcon.Question);
                 return 0;
             }
             return courseTermID;

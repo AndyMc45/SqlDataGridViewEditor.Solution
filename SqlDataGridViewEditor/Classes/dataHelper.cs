@@ -1,181 +1,9 @@
 ﻿using System.Data;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 using System.Globalization;
+using System.Text;
 
 namespace SqlDataGridViewEditor
 {
-    #region Helper classes - field, where, innerJoin, orderBy, enums: command, ProgramMode, DbTypeType, fieldType, comboValueType
-
-    public class field
-    {
-        public field(string table, string fieldName, DbType dbType, int size, fieldType fType)
-        {
-
-            // Only call this constructor with pseudoFields = true;
-            this.table = table;
-            this.tableAlias = table + "00";  //Default
-            this.fieldName = fieldName;
-            this.dbType = dbType;
-            this.size = size;
-            this.fType = fType;
-            // this.displayMember = fieldName;  // Set below when needed
-            this.ColumnName = fieldName;  // Default
-        }
-        public field(string table, string fieldName, DbType dbType, int size) :
-            this(table, fieldName, dbType, size, fieldType.regular){ }
-
-        public string fieldName { get; }
-        public string table { get; set; }
-        public string tableAlias { get; set; }
-        public DbType dbType { get; set; }
-        public int size { get; set; }
-        public fieldType fType { get; set; }
-        public field ValueMember { get { return this; } }  //Field itself - ValueMember used when binding Combos to fields
-        public string ColumnName { get; set; }  // Name Microsoft puts at the top of the column
-        public List<field> FKancestors { get { return fkAncestors; } set { fkAncestors = value; } }
-        private List<field> fkAncestors = new List<field>();
-        public string displayMember
-        {
-            get
-            {
-                string lastTwoDigetOfTableAlias = tableAlias.Substring(tableAlias.Length - 2);
-                if (fType == fieldType.pseudo)
-                {
-                    return "PsuedoField";  // Should never see this
-                }
-                //else if (fType == fieldType.longName)   // Never used
-                //{
-                //    return tableAlias + ":" + fieldName;  
-                //}
-                else
-                {
-                    if (dataHelper.isTablePrimaryKeyField(this))
-                    {
-                        return "PK: " + dgvHelper.TranslateString(fieldName);
-                    }
-                    else if (dataHelper.isForeignKeyField(this))
-                    {
-                        return "FK: " + dgvHelper.TranslateString(fieldName);
-                    }
-                    else
-                    {
-                        if (lastTwoDigetOfTableAlias! == "00")
-                        {
-                            return dgvHelper.TranslateString(fieldName); ;
-                        }
-                        else
-                        {
-                            return lastTwoDigetOfTableAlias + ": " + dgvHelper.TranslateString(fieldName); ;
-                        }
-                    }
-                }
-            }
-        }  
-
-        // Key used to avoid needing to implement EqualityComparer<field> class - Used in dictionaries in sqlFactory
-        public Tuple<string, string, string> key { get { return Tuple.Create(this.tableAlias, this.table, this.fieldName); } }
-        public Tuple<string, string> baseKey { get { return Tuple.Create(this.table, this.fieldName); } }
-    }
-
-
-    public class where
-    {
-        public where(field fl, string whereValue)
-        {
-            this.fl = fl;
-            this.whereValue = whereValue;
-        }
-        public where(string table, string field, string whereValue, DbType dbType, int size)
-        {
-            this.fl = new field(table, field, dbType, size);
-            this.whereValue = whereValue;
-            this.DisplayMember= whereValue;
-        }
-  
-        public field fl { get; set; }
-        public string whereValue { get; set; }
-
-        public string DisplayMember { get; set; }  // Used to display where in combo
-
-        public where ValueMember { get { return this; } }
-
-        public bool isSameWhereAs(where wh)
-        {
-            if (wh == null) { return false; }
-            if (this.fl.key.Equals(wh.fl.key) && this.whereValue == wh.whereValue) 
-            { return true; } else { return false; }
-        }
-    }
-
-    public class innerJoin
-    {
-        public field fkFld { get; set; }
-        public field pkRefFld { get; set; }
-        public innerJoin(field fkFld, field pkRefField)
-        {
-            this.fkFld = fkFld;
-            this.pkRefFld = pkRefField;
-        }
-    }
-
-    public class orderBy
-    {
-        public field fld;
-        public System.Windows.Forms.SortOrder sortOrder;
-
-        public orderBy(field fld, System.Windows.Forms.SortOrder sortOrder)
-        {
-            this.fld = fld;
-            this.sortOrder = sortOrder;
-        }
-    }
-
-    public enum command
-    {
-        select,
-        selectAll,
-        selectOneField,
-        count
-    }
-
-    public enum ProgramMode
-    {
-        none,
-        view,
-        edit,
-        add,
-        delete,
-        merge
-    }
-
-    public enum DbTypeType
-    {
-        isString,
-        isDecimal,
-        isInteger,
-        isDateTime,
-        isBoolean,
-        isBinary
-    }
-
-    public enum fieldType
-    {
-        regular,
-        longName,
-        pseudo
-    }
-
-    public enum comboValueType
-    { 
-        // This enum is not actually needed, but using it to remember there are four returnComboSql cases
-        PK_myTable,
-        PK_refTable,
-        textField_myTable,
-        textField_refTable
-    }
-
-    #endregion
 
     public static class dataHelper
     {
@@ -187,7 +15,7 @@ namespace SqlDataGridViewEditor
         public static DataTable indexesDT { get; set; }
         public static DataTable indexColumnsDT { get; set; }
         public static DataTable comboDT { get; set; }
-        public static DataTable editingControlDT { get; set; }
+        public static DataTable lastFilterValuesDT { get; set; }
 
         public static void initializeDataTables()
         {
@@ -198,7 +26,35 @@ namespace SqlDataGridViewEditor
             indexesDT = new DataTable("indexesDT");
             indexColumnsDT = new DataTable("indexColumnsDT");
             comboDT = new DataTable("comboDT");
-            editingControlDT = new DataTable("editingControlDT");
+            lastFilterValuesDT = new DataTable("lastFilterValuesDT");
+            // Add columns to lastFilterValuesDt
+            LastFilterValuesDT_AddColumns();
+        }
+
+        private static void LastFilterValuesDT_AddColumns()
+        {
+            DataColumn dataColumn = new DataColumn("Table");
+            lastFilterValuesDT.Columns.Add(dataColumn);
+            dataColumn = new DataColumn("Mode");
+            lastFilterValuesDT.Columns.Add(dataColumn);
+            dataColumn = new DataColumn("cMF");
+            lastFilterValuesDT.Columns.Add(dataColumn);
+            for (int i = 0; i <= 8; i++)
+            {
+                DataColumn col1 = new DataColumn("cGFF" + i.ToString());
+                DataColumn col2 = new DataColumn("cGFV" + i.ToString());
+                lastFilterValuesDT.Columns.Add(col1);
+                lastFilterValuesDT.Columns.Add(col2);
+            }
+            DataColumn dataColumn3 = new DataColumn("cCTL");
+            lastFilterValuesDT.Columns.Add(dataColumn3);
+            for (int i = 0; i <= 5; i++)
+            {
+                DataColumn col1 = new DataColumn("lCFF" + i.ToString());
+                DataColumn col2 = new DataColumn("cCFV" + i.ToString());
+                lastFilterValuesDT.Columns.Add(col1);
+                lastFilterValuesDT.Columns.Add(col2);
+            }
         }
 
         public static string QualifiedFieldName(field fld)
@@ -348,12 +204,19 @@ namespace SqlDataGridViewEditor
         public static string errMsg = String.Empty;
         public static string errMsgParameter1 = String.Empty;
         public static string errMsgParameter2 = String.Empty;
-
+        private static Dictionary<ProgramMode, string> ModetoString = new Dictionary<ProgramMode, String>
+        {
+            [ProgramMode.add] = "add",
+            [ProgramMode.delete] = "delete",
+            [ProgramMode.edit] = "edit",
+            [ProgramMode.none] = "none",
+            [ProgramMode.view] = "view",
+        };
 
         public static bool TryParseToDbType(string str, DbType dbType)
         {
             DbTypeType dbTypeType = GetDbTypeType(dbType);
-            switch(dbTypeType)
+            switch (dbTypeType)
             {
                 case DbTypeType.isInteger:
                     int i;
@@ -368,9 +231,9 @@ namespace SqlDataGridViewEditor
                         errMsgParameter2 = "integer";
                         return false;
                     }
-                case DbTypeType.isDecimal: 
+                case DbTypeType.isDecimal:
                     Decimal dec;
-                    if(Decimal.TryParse(str, NumberStyles.Number ^ NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out dec))
+                    if (Decimal.TryParse(str, NumberStyles.Number ^ NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out dec))
                     {
                         return true;
                     }
@@ -445,6 +308,11 @@ namespace SqlDataGridViewEditor
             }
         }
 
+        public static DataRow getDataRowFromDataTable(string column, string columnValue, DataTable dt)
+        {
+            DataRow dr = dt.Select(string.Format("{0} = '{1}'", column, columnValue)).FirstOrDefault();
+            return dr;
+        }
 
         #region  Getting information from FieldDT: public (internal) methods
 
@@ -494,8 +362,8 @@ namespace SqlDataGridViewEditor
         public static int getStoredWidth(string tableName, string columnName, int defaultWidth)
         {
             DataRow dr = getDataRowFromFieldsDT(tableName, columnName);
-             int x = Int32.Parse(getColumnValueinDR(dr, "Width"));
-            if (x == 0) {  x = defaultWidth; }  
+            int x = Int32.Parse(getColumnValueinDR(dr, "Width"));
+            if (x == 0) { x = defaultWidth; }
             return x;
         }
 
@@ -521,15 +389,15 @@ namespace SqlDataGridViewEditor
 
         public static void setColumnValueInDR(DataRow dr, string columnName, object newValue)
         {
-            dr[dr.Table.Columns.IndexOf(columnName)]= newValue;
+            dr[dr.Table.Columns.IndexOf(columnName)] = newValue;
         }
 
 
-        public static void AddRowToFieldsDT( string TableName, int ColNum, string ColumnName, string ColumnDisplayName
+        public static void AddRowToFieldsDT(string TableName, int ColNum, string ColumnName, string ColumnDisplayName
             , string DataType, bool Nullable, bool _identity, bool is_PK, bool is_FK, bool is_DK, short MaxLength
-            , string RefTable, string RefPkColumn, string displayFields, int Width )
-        { 
-           DataRow newRow = fieldsDT.NewRow();
+            , string RefTable, string RefPkColumn, string displayFields, int Width)
+        {
+            DataRow newRow = fieldsDT.NewRow();
             newRow[0] = TableName;
             newRow[1] = ColNum;
             newRow[2] = ColumnName;
@@ -545,7 +413,7 @@ namespace SqlDataGridViewEditor
             newRow[12] = RefPkColumn;
             newRow[13] = displayFields;
             newRow[14] = Width;
-           fieldsDT.Rows.Add(newRow);
+            fieldsDT.Rows.Add(newRow);
         }
 
         #endregion
@@ -589,13 +457,13 @@ namespace SqlDataGridViewEditor
                 if (drs.Count() == 0)
                 {   // Table is a foreign key
                     DataRow[] drs3 = dataHelper.foreignKeysDT.Select(string.Format("RefTable = '{0}'", tableName));
-                    if(drs3.Count() > 0) 
-                    {  
+                    if (drs3.Count() > 0)
+                    {
                         NoDKList.Add(tableName);
                     }
                 }
                 else
-                { 
+                {
                     string indexName = string.Empty;
                     int dkRow = -1;
                     foreach (DataRow dr2 in drs)
@@ -617,9 +485,9 @@ namespace SqlDataGridViewEditor
                     }
                 }
             }
-            if(NoDKList.Count > 0 || NoPKList.Count>0)
-            { 
-            return "No DK: " + String.Join(", ", NoDKList) + " No PK: " + String.Join(", ", NoPKList);
+            if (NoDKList.Count > 0 || NoPKList.Count > 0)
+            {
+                return "No DK: " + String.Join(", ", NoDKList) + " No PK: " + String.Join(", ", NoPKList);
             }
             else { return string.Empty; }
         }
@@ -636,7 +504,7 @@ namespace SqlDataGridViewEditor
 
                 //Set is_PK 
                 field tablePkfield = getTablePrimaryKeyFoundational(rowField.table);
-                if (rowField.fieldName == tablePkfield.fieldName )      
+                if (rowField.fieldName == tablePkfield.fieldName)
                 {
                     dr[dr.Table.Columns.IndexOf("is_PK")] = true;
                 }
@@ -694,15 +562,15 @@ namespace SqlDataGridViewEditor
 
         private static bool isDisplayKeyFoundational(string tableName, string fieldName)  // Note 'private
         {
-            DataRow dr = dataHelper.tablesDT.Select(string.Format("TableName = '{0}'",tableName)).FirstOrDefault();
+            DataRow dr = dataHelper.tablesDT.Select(string.Format("TableName = '{0}'", tableName)).FirstOrDefault();
             if (dr != null) // always true 
             {
                 string DK_Index = dr["DK_Index"].ToString();
                 if (!String.IsNullOrEmpty(DK_Index))
                 {
                     // May be two indexes on same column
-                    DataRow[] drs = dataHelper.indexColumnsDT.Select(string.Format("TableName = '{0}' AND ColumnName = '{1}'", tableName,fieldName));
-                    foreach(DataRow dr2 in drs) 
+                    DataRow[] drs = dataHelper.indexColumnsDT.Select(string.Format("TableName = '{0}' AND ColumnName = '{1}'", tableName, fieldName));
+                    foreach (DataRow dr2 in drs)
                     {
                         if (dr2["IndexName"].ToString() == DK_Index)
                         {
@@ -718,6 +586,181 @@ namespace SqlDataGridViewEditor
 
     }
 
+
+    #region Helper classes - field, where, innerJoin, orderBy, enums: command, ProgramMode, DbTypeType, fieldType, comboValueType
+
+    public class field
+    {
+        public field(string table, string fieldName, DbType dbType, int size, fieldType fType)
+        {
+
+            // Only call this constructor with pseudoFields = true;
+            this.table = table;
+            this.tableAlias = table + "00";  //Default
+            this.fieldName = fieldName;
+            this.dbType = dbType;
+            this.size = size;
+            this.fType = fType;
+            // this.displayMember = fieldName;  // Set below when needed
+            this.ColumnName = fieldName;  // Default
+        }
+        public field(string table, string fieldName, DbType dbType, int size) :
+            this(table, fieldName, dbType, size, fieldType.regular)
+        { }
+
+        public string fieldName { get; }
+        public string table { get; set; }
+        public string tableAlias { get; set; }
+        public DbType dbType { get; set; }
+        public int size { get; set; }
+        public fieldType fType { get; set; }
+        public field ValueMember { get { return this; } }  //Field itself - ValueMember used when binding Combos to fields
+        public string ColumnName { get; set; }  // Name Microsoft puts at the top of the column
+        public List<field> FKancestors { get { return fkAncestors; } set { fkAncestors = value; } }
+        private List<field> fkAncestors = new List<field>();
+        public string displayMember
+        {
+            get
+            {
+                string lastTwoDigetOfTableAlias = tableAlias.Substring(tableAlias.Length - 2);
+                if (fType == fieldType.pseudo)
+                {
+                    return "PsuedoField";  // Should never see this
+                }
+                //else if (fType == fieldType.longName)   // Never used
+                //{
+                //    return tableAlias + ":" + fieldName;  
+                //}
+                else
+                {
+                    if (dataHelper.isTablePrimaryKeyField(this))
+                    {
+                        return "PK: " + dgvHelper.TranslateString(fieldName);
+                    }
+                    else if (dataHelper.isForeignKeyField(this))
+                    {
+                        return "FK: " + dgvHelper.TranslateString(fieldName);
+                    }
+                    else
+                    {
+                        if (lastTwoDigetOfTableAlias! == "00")
+                        {
+                            return dgvHelper.TranslateString(fieldName); ;
+                        }
+                        else
+                        {
+                            return lastTwoDigetOfTableAlias + ": " + dgvHelper.TranslateString(fieldName); ;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Key used to avoid needing to implement EqualityComparer<field> class - Used in dictionaries in sqlFactory
+        public Tuple<string, string, string> key { get { return Tuple.Create(this.tableAlias, this.table, this.fieldName); } }
+        public Tuple<string, string> baseKey { get { return Tuple.Create(this.table, this.fieldName); } }
+    }
+
+
+    public class where
+    {
+        public where(field fl, string whereValue)
+        {
+            this.fl = fl;
+            this.whereValue = whereValue;
+        }
+        public where(string table, string field, string whereValue, DbType dbType, int size)
+        {
+            this.fl = new field(table, field, dbType, size);
+            this.whereValue = whereValue;
+            this.DisplayMember = whereValue;
+        }
+
+        public field fl { get; set; }
+        public string whereValue { get; set; }
+
+        public string DisplayMember { get; set; }  // Used to display where in combo
+
+        public where ValueMember { get { return this; } }
+
+        public bool isSameWhereAs(where wh)
+        {
+            if (wh == null) { return false; }
+            if (this.fl.key.Equals(wh.fl.key) && this.whereValue == wh.whereValue)
+            { return true; }
+            else { return false; }
+        }
+    }
+
+    public class innerJoin
+    {
+        public field fkFld { get; set; }
+        public field pkRefFld { get; set; }
+        public innerJoin(field fkFld, field pkRefField)
+        {
+            this.fkFld = fkFld;
+            this.pkRefFld = pkRefField;
+        }
+    }
+
+    public class orderBy
+    {
+        public field fld;
+        public System.Windows.Forms.SortOrder sortOrder;
+
+        public orderBy(field fld, System.Windows.Forms.SortOrder sortOrder)
+        {
+            this.fld = fld;
+            this.sortOrder = sortOrder;
+        }
+    }
+
+    public enum command
+    {
+        select,
+        selectAll,
+        selectOneField,
+        count
+    }
+
+    public enum ProgramMode
+    {
+        none,
+        view,
+        edit,
+        add,
+        delete,
+        merge
+    }
+
+
+    public enum DbTypeType
+    {
+        isString,
+        isDecimal,
+        isInteger,
+        isDateTime,
+        isBoolean,
+        isBinary
+    }
+
+    public enum fieldType
+    {
+        regular,
+        longName,
+        pseudo
+    }
+
+    public enum comboValueType
+    {
+        // This enum is not actually needed, but using it to remember there are four returnComboSql cases
+        PK_myTable,
+        PK_refTable,
+        textField_myTable,
+        textField_refTable
+    }
+
+    #endregion
 
 
 

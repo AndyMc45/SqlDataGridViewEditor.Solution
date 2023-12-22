@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
@@ -9,8 +8,8 @@ namespace SqlDataGridViewEditor
     public class MsSqlWithDaDt
     {
         public MsSqlWithDaDt(string sqlString)
-        { 
-            errorMsg = MsSql.FillDataTable(da,dt,sqlString);
+        {
+            errorMsg = MsSql.FillDataTable(da, dt, sqlString);
         }
         public SqlDataAdapter da = new SqlDataAdapter();
         public DataTable dt = new DataTable();
@@ -20,6 +19,30 @@ namespace SqlDataGridViewEditor
 
     public static class MsSql
     {
+        public static bool BackupCurrentDatabase(string completeFilePath)
+        {
+            if (cn == null) { return false; }  // Also check this in call.
+
+            bool success = false;
+            try
+            {
+
+                var query = String.Format("BACKUP DATABASE [{0}] TO DISK='{1}'", cn.Database, completeFilePath);
+
+                using (var command = new SqlCommand(query, cn))
+                {
+                    command.ExecuteNonQuery();
+                }
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error backing up database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            return success;
+        }
+
         // Properties
         public static string databaseType = "MsSql";
         public static string trueString = "True";
@@ -28,12 +51,12 @@ namespace SqlDataGridViewEditor
         // Two connections
         public static SqlConnection cn { get; set; }
         public static SqlConnection noDatabaseConnection { get; set; }
- 
+
         // Three sql dataAdapters
         public static SqlDataAdapter currentDA { get; set; }
-        
-        // When using extraDT, be careful not to change it before executing any DA command on it.
-        public static SqlDataAdapter comboDA { get; set; } 
+
+        // Used in editing dropdown combo.
+        public static SqlDataAdapter comboDA { get; set; }
 
         // Used for all datatables that don't have own DataAdaptor - see "GetDataAdaptor" below 
         public static SqlDataAdapter readOnlyDA { get; set; }  // No update of table and so no need to keep adaptar, etc.
@@ -41,12 +64,12 @@ namespace SqlDataGridViewEditor
         // Methods
         private static SqlDataAdapter GetDataAdaptor(DataTable dataTable)
         {
-            if(dataTable == dataHelper.currentDT)
+            if (dataTable == dataHelper.currentDT)
             {
-                if(currentDA == null) { currentDA = new SqlDataAdapter(); }
+                if (currentDA == null) { currentDA = new SqlDataAdapter(); }
                 return currentDA;
             }
-            else if(dataTable == dataHelper.comboDT)
+            else if (dataTable == dataHelper.comboDT)
             {
                 if (comboDA == null) { comboDA = new SqlDataAdapter(); }
                 return comboDA;
@@ -62,7 +85,7 @@ namespace SqlDataGridViewEditor
         public static void SetUpdateCommand(List<field> fieldsToSet, DataTable dataTable)
         {
             if (fieldsToSet.Count > 0)  // Should always be true
-            { 
+            {
                 // Get data adapter
                 SqlDataAdapter da = GetDataAdaptor(dataTable);
                 SetUpdateCommand(fieldsToSet, da);
@@ -87,7 +110,7 @@ namespace SqlDataGridViewEditor
             string sqlUpdate = String.Format("UPDATE {0} SET {1} WHERE {2} = {3}", fieldsToSet[0].table, String.Join(",", setList), PK, "@" + PK);
             sqlCmd.CommandText = sqlUpdate;
             sqlCmd.Connection = MsSql.cn;
-            da.UpdateCommand = sqlCmd; 
+            da.UpdateCommand = sqlCmd;
 
         }
 
@@ -158,46 +181,46 @@ namespace SqlDataGridViewEditor
             string strSqlDbType = string.Empty;
             switch (strDbType.ToLower())
             {
-                case "int64" : 
+                case "int64":
                     strSqlDbType = "BigInt";
                     break;
-                case "boolean" :
+                case "boolean":
                     strSqlDbType = "Bit";
                     break;
-                case "ansistringfixedlength" :
+                case "ansistringfixedlength":
                     strSqlDbType = "Char";
                     break;
-                case "double" :
+                case "double":
                     strSqlDbType = "Float";
                     break;
-                case "int32" :
+                case "int32":
                     strSqlDbType = "Int";
                     break;
-                case "stringfixedlength" :
+                case "stringfixedlength":
                     strSqlDbType = "NChar";
                     break;
-                case "string" :
+                case "string":
                     strSqlDbType = "NVarChar";
                     break;
-                case "single" :
+                case "single":
                     strSqlDbType = "Real";
                     break;
-                case "int16" :
+                case "int16":
                     strSqlDbType = "SmallInt";
                     break;
-                case "object" :
+                case "object":
                     strSqlDbType = "Variant";
                     break;
-                case "byte" :
+                case "byte":
                     strSqlDbType = "TinyInt";
                     break;
-                case "guid" :
+                case "guid":
                     strSqlDbType = "UniqueIdentifier";
                     break;
-                case "binary" :
+                case "binary":
                     strSqlDbType = "VarBinary";
                     break;
-                case "ansistring" :
+                case "ansistring":
                     strSqlDbType = "VarChar";
                     break;
                 default:
@@ -233,7 +256,7 @@ namespace SqlDataGridViewEditor
                 cn.Open();  // May cause an error.  Message will be in 
             }
         }
-        
+
         public static void openNoDatabaseConnection(string connectionString)
         {
             if (noDatabaseConnection == null)   // may be false if using frmConnection
@@ -286,7 +309,6 @@ namespace SqlDataGridViewEditor
             readOnlyDA = null;
         }
 
-
         public static void CloseNoDatabaseConnection()
         {
             if (noDatabaseConnection != null)
@@ -301,7 +323,7 @@ namespace SqlDataGridViewEditor
 
         public static int GetRecordCount(string strSql)
         {
-            int result = 0; 
+            int result = 0;
             using (SqlCommand cmd = new SqlCommand(strSql, cn))
             {
                 result = (int)cmd.ExecuteScalar();
@@ -409,25 +431,25 @@ namespace SqlDataGridViewEditor
             return sqlParamter.DbType;
         }
 
-        public static string DeleteRowsFromDT(DataTable dt, where wh )   // Doing 1 where only, usually the PK & value
+        public static string DeleteRowsFromDT(DataTable dt, where wh)   // Doing 1 where only, usually the PK & value
         {
             try
             {
                 DataRow[] drs = dt.Select(string.Format("{0} = {1}", wh.fl.fieldName, wh.whereValue));
-                foreach (DataRow dr in drs) 
-                { 
+                foreach (DataRow dr in drs)
+                {
                     // Delete datarow from dataTable
                     dr.Delete();
                 }
                 DataRow[] drArray = new DataRow[drs.Count()];
                 for (int i = 0; i < drArray.Length; i++)
-                { 
+                {
                     drArray[i] = drs[i];
                 }
                 // Delete Command (set above) uses PK field of each dr to delete - should be first column of dt
                 // Again, the dt might have inner joins but these are ignored.  Delete acts on the PK of main table.
                 // A pledge - the dataTable must have an adaptor and its deleteCommand must be set
-                MsSql.GetDataAdaptor(dt).Update(drArray);  
+                MsSql.GetDataAdaptor(dt).Update(drArray);
                 return string.Empty;
             }
             catch (Exception ex)
@@ -439,8 +461,8 @@ namespace SqlDataGridViewEditor
 
         public static int ExecuteIntScalar(string sqlString)
         {
-            SqlCommand cmd = new SqlCommand(sqlString,cn);
-            int value = (int) cmd.ExecuteScalar();
+            SqlCommand cmd = new SqlCommand(sqlString, cn);
+            int value = (int)cmd.ExecuteScalar();
             return value;
         }
 

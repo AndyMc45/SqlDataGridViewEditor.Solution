@@ -66,6 +66,8 @@
             folderBrowserDialog1 = new FolderBrowserDialog();
             openFileDialog1 = new OpenFileDialog();
             saveFileDialog1 = new SaveFileDialog();
+            lblPathDatabaseFolder = new Label();
+            lblDatabaseFolder = new LinkLabel();
             tabControl1.SuspendLayout();
             tabActions.SuspendLayout();
             tabStudent.SuspendLayout();
@@ -88,9 +90,10 @@
             tabControl1.Controls.Add(tabExit);
             tabControl1.Dock = DockStyle.Top;
             tabControl1.Location = new Point(0, 0);
+            tabControl1.Margin = new Padding(4, 4, 4, 4);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1582, 723);
+            tabControl1.Size = new Size(1924, 904);
             tabControl1.TabIndex = 7;
             tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             tabControl1.Resize += tabControl1_Resize;
@@ -101,19 +104,20 @@
             tabActions.Controls.Add(btnPrintEnglishTranscript);
             tabActions.Controls.Add(btnPrintCourseRole);
             tabActions.Controls.Add(btnPrintTranscript);
-            tabActions.Location = new Point(4, 29);
+            tabActions.Location = new Point(4, 34);
+            tabActions.Margin = new Padding(4, 4, 4, 4);
             tabActions.Name = "tabActions";
-            tabActions.Size = new Size(1574, 690);
+            tabActions.Size = new Size(1916, 866);
             tabActions.TabIndex = 4;
             tabActions.Text = "Actions";
             tabActions.UseVisualStyleBackColor = true;
             // 
             // btnPrintCourseGrades
             // 
-            btnPrintCourseGrades.Location = new Point(320, 120);
-            btnPrintCourseGrades.Margin = new Padding(3, 4, 3, 4);
+            btnPrintCourseGrades.Location = new Point(400, 150);
+            btnPrintCourseGrades.Margin = new Padding(4, 5, 4, 5);
             btnPrintCourseGrades.Name = "btnPrintCourseGrades";
-            btnPrintCourseGrades.Size = new Size(250, 31);
+            btnPrintCourseGrades.Size = new Size(312, 39);
             btnPrintCourseGrades.TabIndex = 17;
             btnPrintCourseGrades.Text = "Print Course Grades";
             btnPrintCourseGrades.UseVisualStyleBackColor = true;
@@ -121,9 +125,10 @@
             // 
             // btnPrintEnglishTranscript
             // 
-            btnPrintEnglishTranscript.Location = new Point(320, 40);
+            btnPrintEnglishTranscript.Location = new Point(400, 50);
+            btnPrintEnglishTranscript.Margin = new Padding(4, 4, 4, 4);
             btnPrintEnglishTranscript.Name = "btnPrintEnglishTranscript";
-            btnPrintEnglishTranscript.Size = new Size(250, 29);
+            btnPrintEnglishTranscript.Size = new Size(312, 36);
             btnPrintEnglishTranscript.TabIndex = 16;
             btnPrintEnglishTranscript.Text = "列印英文成績單";
             btnPrintEnglishTranscript.UseVisualStyleBackColor = true;
@@ -131,9 +136,10 @@
             // 
             // btnPrintCourseRole
             // 
-            btnPrintCourseRole.Location = new Point(21, 120);
+            btnPrintCourseRole.Location = new Point(26, 150);
+            btnPrintCourseRole.Margin = new Padding(4, 4, 4, 4);
             btnPrintCourseRole.Name = "btnPrintCourseRole";
-            btnPrintCourseRole.Size = new Size(200, 29);
+            btnPrintCourseRole.Size = new Size(250, 36);
             btnPrintCourseRole.TabIndex = 15;
             btnPrintCourseRole.Text = "Print Course Role";
             btnPrintCourseRole.UseVisualStyleBackColor = true;
@@ -141,9 +147,10 @@
             // 
             // btnPrintTranscript
             // 
-            btnPrintTranscript.Location = new Point(21, 40);
+            btnPrintTranscript.Location = new Point(26, 50);
+            btnPrintTranscript.Margin = new Padding(4, 4, 4, 4);
             btnPrintTranscript.Name = "btnPrintTranscript";
-            btnPrintTranscript.Size = new Size(200, 29);
+            btnPrintTranscript.Size = new Size(250, 36);
             btnPrintTranscript.TabIndex = 14;
             btnPrintTranscript.Text = "列印成績單";
             btnPrintTranscript.UseVisualStyleBackColor = true;
@@ -153,9 +160,10 @@
             // 
             tabStudent.AutoScroll = true;
             tabStudent.Controls.Add(dgvStudent);
-            tabStudent.Location = new Point(4, 29);
+            tabStudent.Location = new Point(4, 34);
+            tabStudent.Margin = new Padding(4, 4, 4, 4);
             tabStudent.Name = "tabStudent";
-            tabStudent.Size = new Size(1574, 690);
+            tabStudent.Size = new Size(1970, 866);
             tabStudent.TabIndex = 3;
             tabStudent.Text = "Student";
             tabStudent.UseVisualStyleBackColor = true;
@@ -173,19 +181,21 @@
             dgvStudent.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvStudent.Dock = DockStyle.Top;
             dgvStudent.Location = new Point(0, 0);
+            dgvStudent.Margin = new Padding(4, 4, 4, 4);
             dgvStudent.Name = "dgvStudent";
             dgvStudent.RowHeadersWidth = 51;
             dgvStudent.RowTemplate.Height = 29;
-            dgvStudent.Size = new Size(1574, 209);
+            dgvStudent.Size = new Size(1970, 261);
             dgvStudent.TabIndex = 0;
             // 
             // tabTranscript
             // 
             tabTranscript.AutoScroll = true;
             tabTranscript.Controls.Add(dgvTranscript);
-            tabTranscript.Location = new Point(4, 29);
+            tabTranscript.Location = new Point(4, 34);
+            tabTranscript.Margin = new Padding(4, 4, 4, 4);
             tabTranscript.Name = "tabTranscript";
-            tabTranscript.Size = new Size(1574, 690);
+            tabTranscript.Size = new Size(1970, 866);
             tabTranscript.TabIndex = 2;
             tabTranscript.Text = "Transcript";
             tabTranscript.UseVisualStyleBackColor = true;
@@ -207,20 +217,22 @@
             dgvTranscript.Dock = DockStyle.Left;
             dgvTranscript.GridColor = Color.WhiteSmoke;
             dgvTranscript.Location = new Point(0, 0);
+            dgvTranscript.Margin = new Padding(4, 4, 4, 4);
             dgvTranscript.Name = "dgvTranscript";
             dgvTranscript.RowHeadersWidth = 51;
             dgvTranscript.RowTemplate.Height = 29;
-            dgvTranscript.Size = new Size(1574, 690);
+            dgvTranscript.Size = new Size(1968, 866);
             dgvTranscript.TabIndex = 0;
             // 
             // tabRequirements
             // 
             tabRequirements.AutoScroll = true;
             tabRequirements.Controls.Add(dgvRequirements);
-            tabRequirements.Location = new Point(4, 29);
+            tabRequirements.Location = new Point(4, 34);
+            tabRequirements.Margin = new Padding(4, 4, 4, 4);
             tabRequirements.Name = "tabRequirements";
-            tabRequirements.Padding = new Padding(3);
-            tabRequirements.Size = new Size(1574, 690);
+            tabRequirements.Padding = new Padding(4, 4, 4, 4);
+            tabRequirements.Size = new Size(1970, 866);
             tabRequirements.TabIndex = 1;
             tabRequirements.Text = "Requirements";
             tabRequirements.UseVisualStyleBackColor = true;
@@ -237,15 +249,18 @@
             dgvRequirements.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dgvRequirements.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvRequirements.Dock = DockStyle.Left;
-            dgvRequirements.Location = new Point(3, 3);
+            dgvRequirements.Location = new Point(4, 4);
+            dgvRequirements.Margin = new Padding(4, 4, 4, 4);
             dgvRequirements.Name = "dgvRequirements";
             dgvRequirements.RowHeadersWidth = 51;
             dgvRequirements.RowTemplate.Height = 29;
-            dgvRequirements.Size = new Size(1568, 684);
+            dgvRequirements.Size = new Size(1960, 858);
             dgvRequirements.TabIndex = 0;
             // 
             // tabOptions
             // 
+            tabOptions.Controls.Add(lblPathDatabaseFolder);
+            tabOptions.Controls.Add(lblDatabaseFolder);
             tabOptions.Controls.Add(lblPathCourseGradeTemplate);
             tabOptions.Controls.Add(lblPathEnglishTranscriptTemplate);
             tabOptions.Controls.Add(lblCourseGradesTemplate);
@@ -262,10 +277,11 @@
             tabOptions.Controls.Add(lblCourseRoleTemplate);
             tabOptions.Controls.Add(lblTranscriptTemplate);
             tabOptions.Controls.Add(lblOptions);
-            tabOptions.Location = new Point(4, 29);
+            tabOptions.Location = new Point(4, 34);
+            tabOptions.Margin = new Padding(4, 4, 4, 4);
             tabOptions.Name = "tabOptions";
-            tabOptions.Padding = new Padding(3);
-            tabOptions.Size = new Size(1574, 690);
+            tabOptions.Padding = new Padding(4, 4, 4, 4);
+            tabOptions.Size = new Size(1916, 866);
             tabOptions.TabIndex = 0;
             tabOptions.Text = "Options";
             tabOptions.UseVisualStyleBackColor = true;
@@ -275,9 +291,10 @@
             lblPathCourseGradeTemplate.AutoSize = true;
             lblPathCourseGradeTemplate.BorderStyle = BorderStyle.FixedSingle;
             lblPathCourseGradeTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPathCourseGradeTemplate.Location = new Point(258, 229);
+            lblPathCourseGradeTemplate.Location = new Point(322, 286);
+            lblPathCourseGradeTemplate.Margin = new Padding(4, 0, 4, 0);
             lblPathCourseGradeTemplate.Name = "lblPathCourseGradeTemplate";
-            lblPathCourseGradeTemplate.Size = new Size(187, 19);
+            lblPathCourseGradeTemplate.Size = new Size(228, 22);
             lblPathCourseGradeTemplate.TabIndex = 32;
             lblPathCourseGradeTemplate.Text = "Course Grades Template Path";
             // 
@@ -286,17 +303,19 @@
             lblPathEnglishTranscriptTemplate.AutoSize = true;
             lblPathEnglishTranscriptTemplate.BorderStyle = BorderStyle.FixedSingle;
             lblPathEnglishTranscriptTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPathEnglishTranscriptTemplate.Location = new Point(258, 177);
+            lblPathEnglishTranscriptTemplate.Location = new Point(322, 221);
+            lblPathEnglishTranscriptTemplate.Margin = new Padding(4, 0, 4, 0);
             lblPathEnglishTranscriptTemplate.Name = "lblPathEnglishTranscriptTemplate";
-            lblPathEnglishTranscriptTemplate.Size = new Size(204, 19);
+            lblPathEnglishTranscriptTemplate.Size = new Size(251, 22);
             lblPathEnglishTranscriptTemplate.TabIndex = 30;
             lblPathEnglishTranscriptTemplate.Text = "English Transcript Template Path";
             // 
             // lblCourseGradesTemplate
             // 
-            lblCourseGradesTemplate.Location = new Point(34, 225);
+            lblCourseGradesTemplate.Location = new Point(42, 281);
+            lblCourseGradesTemplate.Margin = new Padding(4, 0, 4, 0);
             lblCourseGradesTemplate.Name = "lblCourseGradesTemplate";
-            lblCourseGradesTemplate.Size = new Size(193, 23);
+            lblCourseGradesTemplate.Size = new Size(241, 29);
             lblCourseGradesTemplate.TabIndex = 29;
             lblCourseGradesTemplate.TabStop = true;
             lblCourseGradesTemplate.Text = "Course Grades Template:";
@@ -305,9 +324,10 @@
             // lblEnglishTranscriptTemplate
             // 
             lblEnglishTranscriptTemplate.AutoSize = true;
-            lblEnglishTranscriptTemplate.Location = new Point(30, 173);
+            lblEnglishTranscriptTemplate.Location = new Point(38, 216);
+            lblEnglishTranscriptTemplate.Margin = new Padding(4, 0, 4, 0);
             lblEnglishTranscriptTemplate.Name = "lblEnglishTranscriptTemplate";
-            lblEnglishTranscriptTemplate.Size = new Size(197, 20);
+            lblEnglishTranscriptTemplate.Size = new Size(233, 25);
             lblEnglishTranscriptTemplate.TabIndex = 28;
             lblEnglishTranscriptTemplate.TabStop = true;
             lblEnglishTranscriptTemplate.Text = "English Transcript Template :";
@@ -318,18 +338,20 @@
             lblPathDocumentFolder.AutoSize = true;
             lblPathDocumentFolder.BorderStyle = BorderStyle.FixedSingle;
             lblPathDocumentFolder.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPathDocumentFolder.Location = new Point(258, 325);
+            lblPathDocumentFolder.Location = new Point(322, 406);
+            lblPathDocumentFolder.Margin = new Padding(4, 0, 4, 0);
             lblPathDocumentFolder.Name = "lblPathDocumentFolder";
-            lblPathDocumentFolder.Size = new Size(143, 19);
+            lblPathDocumentFolder.Size = new Size(175, 22);
             lblPathDocumentFolder.TabIndex = 27;
             lblPathDocumentFolder.Text = "Document Folder Path";
             // 
             // lblDocumentFolder
             // 
             lblDocumentFolder.AutoSize = true;
-            lblDocumentFolder.Location = new Point(30, 323);
+            lblDocumentFolder.Location = new Point(38, 404);
+            lblDocumentFolder.Margin = new Padding(4, 0, 4, 0);
             lblDocumentFolder.Name = "lblDocumentFolder";
-            lblDocumentFolder.Size = new Size(131, 20);
+            lblDocumentFolder.Size = new Size(159, 25);
             lblDocumentFolder.TabIndex = 26;
             lblDocumentFolder.TabStop = true;
             lblDocumentFolder.Text = "Document Folder :";
@@ -338,9 +360,10 @@
             // lblRestartMsg
             // 
             lblRestartMsg.AutoSize = true;
-            lblRestartMsg.Location = new Point(258, 429);
+            lblRestartMsg.Location = new Point(322, 522);
+            lblRestartMsg.Margin = new Padding(4, 0, 4, 0);
             lblRestartMsg.Name = "lblRestartMsg";
-            lblRestartMsg.Size = new Size(490, 20);
+            lblRestartMsg.Size = new Size(585, 25);
             lblRestartMsg.TabIndex = 25;
             lblRestartMsg.Text = "After changing interface language, please close and restart this program.";
             // 
@@ -348,9 +371,10 @@
             // 
             cmbInterfaceLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbInterfaceLanguage.FormattingEnabled = true;
-            cmbInterfaceLanguage.Location = new Point(258, 379);
+            cmbInterfaceLanguage.Location = new Point(322, 474);
+            cmbInterfaceLanguage.Margin = new Padding(4, 4, 4, 4);
             cmbInterfaceLanguage.Name = "cmbInterfaceLanguage";
-            cmbInterfaceLanguage.Size = new Size(335, 28);
+            cmbInterfaceLanguage.Size = new Size(418, 33);
             cmbInterfaceLanguage.TabIndex = 24;
             cmbInterfaceLanguage.SelectedIndexChanged += cmbInterfaceLanguage_SelectedIndexChanged;
             // 
@@ -361,10 +385,10 @@
             lblLanguage.FlatStyle = FlatStyle.Flat;
             lblLanguage.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point);
             lblLanguage.ImeMode = ImeMode.NoControl;
-            lblLanguage.Location = new Point(30, 379);
-            lblLanguage.Margin = new Padding(3);
+            lblLanguage.Location = new Point(38, 474);
+            lblLanguage.Margin = new Padding(4, 4, 4, 4);
             lblLanguage.Name = "lblLanguage";
-            lblLanguage.Size = new Size(144, 20);
+            lblLanguage.Size = new Size(177, 25);
             lblLanguage.TabIndex = 23;
             lblLanguage.Text = "Interface Language";
             // 
@@ -373,9 +397,10 @@
             lblPathCourseRoleTemplate.AutoSize = true;
             lblPathCourseRoleTemplate.BorderStyle = BorderStyle.FixedSingle;
             lblPathCourseRoleTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPathCourseRoleTemplate.Location = new Point(258, 133);
+            lblPathCourseRoleTemplate.Location = new Point(322, 166);
+            lblPathCourseRoleTemplate.Margin = new Padding(4, 0, 4, 0);
             lblPathCourseRoleTemplate.Name = "lblPathCourseRoleTemplate";
-            lblPathCourseRoleTemplate.Size = new Size(172, 19);
+            lblPathCourseRoleTemplate.Size = new Size(210, 22);
             lblPathCourseRoleTemplate.TabIndex = 22;
             lblPathCourseRoleTemplate.Text = "Course Role Template Path";
             // 
@@ -384,9 +409,10 @@
             lblPathTemplateFolder.AutoSize = true;
             lblPathTemplateFolder.BorderStyle = BorderStyle.FixedSingle;
             lblPathTemplateFolder.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPathTemplateFolder.Location = new Point(258, 275);
+            lblPathTemplateFolder.Location = new Point(322, 344);
+            lblPathTemplateFolder.Margin = new Padding(4, 0, 4, 0);
             lblPathTemplateFolder.Name = "lblPathTemplateFolder";
-            lblPathTemplateFolder.Size = new Size(136, 19);
+            lblPathTemplateFolder.Size = new Size(167, 22);
             lblPathTemplateFolder.TabIndex = 21;
             lblPathTemplateFolder.Text = "Template Folder Path";
             // 
@@ -395,18 +421,20 @@
             lblPathTransTemplate.AutoSize = true;
             lblPathTransTemplate.BorderStyle = BorderStyle.FixedSingle;
             lblPathTransTemplate.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPathTransTemplate.Location = new Point(258, 83);
+            lblPathTransTemplate.Location = new Point(322, 104);
+            lblPathTransTemplate.Margin = new Padding(4, 0, 4, 0);
             lblPathTransTemplate.Name = "lblPathTransTemplate";
-            lblPathTransTemplate.Size = new Size(158, 19);
+            lblPathTransTemplate.Size = new Size(194, 22);
             lblPathTransTemplate.TabIndex = 20;
             lblPathTransTemplate.Text = "Transcript Template Path";
             // 
             // lblTemplateFolder
             // 
             lblTemplateFolder.AutoSize = true;
-            lblTemplateFolder.Location = new Point(30, 272);
+            lblTemplateFolder.Location = new Point(38, 340);
+            lblTemplateFolder.Margin = new Padding(4, 0, 4, 0);
             lblTemplateFolder.Name = "lblTemplateFolder";
-            lblTemplateFolder.Size = new Size(124, 20);
+            lblTemplateFolder.Size = new Size(147, 25);
             lblTemplateFolder.TabIndex = 19;
             lblTemplateFolder.TabStop = true;
             lblTemplateFolder.Text = "Template Folder :";
@@ -415,9 +443,10 @@
             // lblCourseRoleTemplate
             // 
             lblCourseRoleTemplate.AutoSize = true;
-            lblCourseRoleTemplate.Location = new Point(30, 131);
+            lblCourseRoleTemplate.Location = new Point(38, 164);
+            lblCourseRoleTemplate.Margin = new Padding(4, 0, 4, 0);
             lblCourseRoleTemplate.Name = "lblCourseRoleTemplate";
-            lblCourseRoleTemplate.Size = new Size(161, 20);
+            lblCourseRoleTemplate.Size = new Size(191, 25);
             lblCourseRoleTemplate.TabIndex = 16;
             lblCourseRoleTemplate.TabStop = true;
             lblCourseRoleTemplate.Text = "Course Role Template :";
@@ -426,9 +455,10 @@
             // lblTranscriptTemplate
             // 
             lblTranscriptTemplate.AutoSize = true;
-            lblTranscriptTemplate.Location = new Point(30, 80);
+            lblTranscriptTemplate.Location = new Point(38, 100);
+            lblTranscriptTemplate.Margin = new Padding(4, 0, 4, 0);
             lblTranscriptTemplate.Name = "lblTranscriptTemplate";
-            lblTranscriptTemplate.Size = new Size(146, 20);
+            lblTranscriptTemplate.Size = new Size(172, 25);
             lblTranscriptTemplate.TabIndex = 15;
             lblTranscriptTemplate.TabStop = true;
             lblTranscriptTemplate.Text = "Transcript Template :";
@@ -440,18 +470,19 @@
             lblOptions.BackColor = Color.Transparent;
             lblOptions.FlatStyle = FlatStyle.Flat;
             lblOptions.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point);
-            lblOptions.Location = new Point(30, 40);
-            lblOptions.Margin = new Padding(3);
+            lblOptions.Location = new Point(38, 50);
+            lblOptions.Margin = new Padding(4, 4, 4, 4);
             lblOptions.Name = "lblOptions";
-            lblOptions.Size = new Size(166, 20);
+            lblOptions.Size = new Size(201, 25);
             lblOptions.TabIndex = 6;
             lblOptions.Text = "Folders and Templates";
             // 
             // tabExit
             // 
-            tabExit.Location = new Point(4, 29);
+            tabExit.Location = new Point(4, 34);
+            tabExit.Margin = new Padding(4, 4, 4, 4);
             tabExit.Name = "tabExit";
-            tabExit.Size = new Size(1574, 690);
+            tabExit.Size = new Size(1970, 866);
             tabExit.TabIndex = 5;
             tabExit.Text = "Exit";
             tabExit.UseVisualStyleBackColor = true;
@@ -461,9 +492,9 @@
             toolStripBottom.Dock = DockStyle.Bottom;
             toolStripBottom.ImageScalingSize = new Size(20, 20);
             toolStripBottom.Items.AddRange(new ToolStripItem[] { toolStripBtnNarrow });
-            toolStripBottom.Location = new Point(0, 726);
+            toolStripBottom.Location = new Point(0, 907);
             toolStripBottom.Name = "toolStripBottom";
-            toolStripBottom.Size = new Size(1582, 27);
+            toolStripBottom.Size = new Size(1924, 34);
             toolStripBottom.TabIndex = 15;
             toolStripBottom.Text = "toolStrip1";
             // 
@@ -477,7 +508,7 @@
             toolStripBtnNarrow.ImageAlign = ContentAlignment.MiddleRight;
             toolStripBtnNarrow.ImageTransparentColor = Color.Magenta;
             toolStripBtnNarrow.Name = "toolStripBtnNarrow";
-            toolStripBtnNarrow.Size = new Size(62, 24);
+            toolStripBtnNarrow.Size = new Size(74, 29);
             toolStripBtnNarrow.Tag = "narrow";
             toolStripBtnNarrow.Text = "Narrow";
             toolStripBtnNarrow.Click += toolStripBtnNarrow_Click;
@@ -486,13 +517,38 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
+            // lblPathDatabaseFolder
+            // 
+            lblPathDatabaseFolder.AutoSize = true;
+            lblPathDatabaseFolder.BorderStyle = BorderStyle.FixedSingle;
+            lblPathDatabaseFolder.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            lblPathDatabaseFolder.Location = new Point(322, 596);
+            lblPathDatabaseFolder.Margin = new Padding(4, 0, 4, 0);
+            lblPathDatabaseFolder.Name = "lblPathDatabaseFolder";
+            lblPathDatabaseFolder.Size = new Size(185, 22);
+            lblPathDatabaseFolder.TabIndex = 34;
+            lblPathDatabaseFolder.Text = "Database backup Folder";
+            // 
+            // lblDatabaseFolder
+            // 
+            lblDatabaseFolder.AutoSize = true;
+            lblDatabaseFolder.Location = new Point(42, 593);
+            lblDatabaseFolder.Margin = new Padding(4, 0, 4, 0);
+            lblDatabaseFolder.Name = "lblDatabaseFolder";
+            lblDatabaseFolder.Size = new Size(213, 25);
+            lblDatabaseFolder.TabIndex = 33;
+            lblDatabaseFolder.TabStop = true;
+            lblDatabaseFolder.Text = "Database backup Folder :";
+            lblDatabaseFolder.LinkClicked += lblDatabaseFolder_LinkClicked;
+            // 
             // frmTranscriptOptions
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1582, 753);
+            ClientSize = new Size(1924, 941);
             Controls.Add(toolStripBottom);
             Controls.Add(tabControl1);
+            Margin = new Padding(4, 4, 4, 4);
             Name = "frmTranscriptOptions";
             Load += frmTranscriptOptions_Load;
             Resize += frmTranscriptOptions_Resize;
@@ -551,5 +607,7 @@
         private Button btnPrintCourseGrades;
         private Button btnPrintEnglishTranscript;
         private Label lblPathCourseGradeTemplate;
+        private Label lblPathDatabaseFolder;
+        private LinkLabel lblDatabaseFolder;
     }
 }

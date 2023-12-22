@@ -1,15 +1,10 @@
 ﻿using Microsoft.VisualBasic;
+using SqlDataGridViewEditor.Properties;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Text;
-using InfoBox;
-using System.Web;
-using System.Resources;
-using System.Threading;
 using System.Globalization;
-using SqlDataGridViewEditor.Properties;
-using System.Reflection.Metadata.Ecma335;
+using System.Text;
 
 namespace SqlDataGridViewEditor
 {
@@ -114,6 +109,9 @@ namespace SqlDataGridViewEditor
             }
             // Invoke delegate - this will load mainForm into all plugins
             dgvMainFormDelegate(this);
+            // Clone context menu items and add to "tools"
+            ToolStripItemCollection items = GridContextMenu.Items;
+            mnuTools.DropDownItems.AddRange(items);
         }
 
         private void DataGridViewForm_Load(object sender, EventArgs e)
@@ -137,7 +135,7 @@ namespace SqlDataGridViewEditor
 
             // 1. Set language
             // 2. Set pageSize
-            formOptions.pageSize = 200;
+            formOptions.pageSize = 100;
             string strPageSize = AppData.GetKeyValue("RPP");  // If not set, this will return string.Empty
             int newPageSize = 0;
             if (int.TryParse(strPageSize, out newPageSize))
@@ -161,7 +159,7 @@ namespace SqlDataGridViewEditor
 
             // 7. Open last connection 
             string msg = OpenConnection();  // Returns any error msg
-            if (msg != string.Empty) { msgText(msg); txtMessages.ForeColor = Color.Red; }
+            if (msg != string.Empty) { msgText(msg); txtMessages.ForeColor = System.Drawing.Color.Red; }
 
             // 8. Build English database - will do nothing if Boolean BuildingUpEnglishDatabase in MultiLingual.cs set to false
             programMode = ProgramMode.none;
@@ -390,7 +388,7 @@ namespace SqlDataGridViewEditor
             catch (System.Exception excep)
             {
                 sb.AppendLine("Error opening connection.");
-                InformationBox.Show("Error opening the connection. " + Environment.NewLine + excep.Message + Environment.NewLine + "Error Number: " + Information.Err().Number.ToString());
+                MessageBox.Show("Error opening the connection. " + Environment.NewLine + excep.Message + Environment.NewLine + "Error Number: " + Information.Err().Number.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CloseConnection();
             }
             return sb.ToString();
@@ -522,13 +520,13 @@ namespace SqlDataGridViewEditor
             if (formOptions.runTimer) { watch.Stop(); }
 
             //7. WriteGrid - next step
-            writeGrid_NewFilter();
+            writeGrid_NewFilter(false);
         }
 
-        internal void writeGrid_NewFilter()
+        internal void writeGrid_NewFilter(bool newLastFilter)
         {
             // 1. Updates currentSql.myWheres
-            callSqlWheres();
+            callSqlWheresAndWriteLastFilter(newLastFilter);
 
             // 2. Get record Count
             string strSql = currentSql.returnSql(command.count);
@@ -568,7 +566,11 @@ namespace SqlDataGridViewEditor
             // 3. Fill currentDT and Bind the Grid to it.
             dataHelper.currentDT = new DataTable();
             string errorMsg = MsSql.FillDataTable(dataHelper.currentDT, strSql);
-            if (errorMsg != string.Empty) { InformationBox.Show(errorMsg, "ERROR in WriteGrid_NewPage", InformationBoxIcon.Error); return; }
+            if (errorMsg != string.Empty)
+            {
+                MessageBox.Show(errorMsg, "ERROR in WriteGrid_NewPage", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             // Bind Grid
             tableOptions.writingTable = true;
             // Add all the columns - doing this manually because it is faster
@@ -583,7 +585,7 @@ namespace SqlDataGridViewEditor
                     // These have a width of 3 in narrow columns; 
                     if (formOptions.narrowColumns)
                     {
-                        column.DefaultCellStyle.ForeColor = Color.White;
+                        column.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
                     }
                 }
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
@@ -768,12 +770,13 @@ namespace SqlDataGridViewEditor
             {
                 height = cmbComboFilterValue_3.Top + cmbComboFilterValue_3.Height + 10;
             }
-
             tableLayoutPanel.Height = height;
             // Reposition the splitter
-            if (splitContainer1.Width > 0)  // trying to catch error: "Splitterdistance must be between panel1minsize and width and pan2minsize.
+            if (splitContainer1.Width > 0)
             {
-                this.splitContainer1.SplitterDistance = txtMessages.Height + tableLayoutPanel.Height;
+                // Catching error: "Splitterdistance must be between panel1minsize and width and pan2minsize.
+                try { this.splitContainer1.SplitterDistance = txtMessages.Height + tableLayoutPanel.Height; }
+                catch { }
             }
         }
 
@@ -941,18 +944,23 @@ namespace SqlDataGridViewEditor
                     cmbGridFilterValue[i].Enabled = true;
                     // Change Style - PK/FK --> DropDownlist, others-->DropDown
                     field gridFF = (field)cmbGridFilterFields[i].SelectedValue;  // Fill cmbGridFilterFieldList before this
-                    if (dataHelper.isForeignKeyField(gridFF) || dataHelper.isTablePrimaryKeyField(gridFF))
+                    if (gridFF != null)
                     {
-                        if (cmbGridFilterValue[i].DropDownStyle == ComboBoxStyle.DropDown)
+                        if (dataHelper.isForeignKeyField(gridFF) || dataHelper.isTablePrimaryKeyField(gridFF))
                         {
-                            cmbGridFilterValue[i].DropDownStyle = ComboBoxStyle.DropDownList;
+                            if (cmbGridFilterValue[i].DropDownStyle == ComboBoxStyle.DropDown)
+                            {
+                                cmbGridFilterValue[i].DropDownStyle = ComboBoxStyle.DropDownList;
+                                cmbGridFilterValue[i].FlatStyle = FlatStyle.Popup;
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (cmbGridFilterValue[i].DropDownStyle == ComboBoxStyle.DropDownList)
+                        else
                         {
-                            cmbGridFilterValue[i].DropDownStyle = ComboBoxStyle.DropDown;
+                            if (cmbGridFilterValue[i].DropDownStyle == ComboBoxStyle.DropDownList)
+                            {
+                                cmbGridFilterValue[i].DropDownStyle = ComboBoxStyle.DropDown;
+                                cmbGridFilterValue[i].FlatStyle = FlatStyle.Standard;
+                            }
                         }
                     }
                 }
@@ -1139,19 +1147,6 @@ namespace SqlDataGridViewEditor
             if (currentSql == null) { return; }
             showDuplicateDispayKeys();
         }
-        private void mnuTools_ShowITtools_Click(object sender, EventArgs e){ }
-
-        private void mnuTools_ShowITtools_CheckedChanged(object sender, EventArgs e)
-        {
-            mnuForeignKeyMissing.Visible = mnuTools_ShowITtools.Checked;
-            mnuDuplicateDisplayKeys.Visible = mnuTools_ShowITtools.Checked;
-            mnuOrderComboListsByPK.Visible = mnuTools_ShowITtools.Checked;
-            mnuPrintCurrentTable.Visible = mnuTools_ShowITtools.Checked;
-            rbMerge.Visible = mnuTools_ShowITtools.Checked;
-            mnuDatabaseInfo.Visible = mnuTools_ShowITtools.Checked;
-
-        }
-
         private void showDuplicateDispayKeys()
         {
             String filter = String.Format("TableName = '{0}' and is_DK = 'true'", currentSql.myTable);
@@ -1170,7 +1165,7 @@ namespace SqlDataGridViewEditor
             MsSqlWithDaDt DaDt = new MsSqlWithDaDt(sqlSelectDuplicates);
             if (DaDt.errorMsg != string.Empty)
             {
-                InformationBox.Show(DaDt.errorMsg, "ERROR in mnuToolDuplicateDisplayKeys_Click");
+                MessageBox.Show(DaDt.errorMsg, "ERROR in mnuToolDuplicateDisplayKeys_Click");
             }
             if (DaDt.dt.Rows.Count == 0)
             {
@@ -1180,8 +1175,8 @@ namespace SqlDataGridViewEditor
             msgText("Count: " + DaDt.dt.Rows.Count.ToString());
             if (!tableOptions.mergingDuplicateKeys)
             {
-                InformationBoxResult reply = InformationBox.Show("Do you want to merge duplicate display key rows?", InformationBoxButtons.YesNo, InformationBoxIcon.Question);
-                if (reply == InformationBoxResult.Yes) { tableOptions.mergingDuplicateKeys = true; }
+                DialogResult reply = MessageBox.Show("Do you want to merge duplicate display key rows?", "Merge Keys", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (reply == DialogResult.Yes) { tableOptions.mergingDuplicateKeys = true; }
             }
             List<String> andConditions = new List<String>();
             foreach (DataRow row in DaDt.dt.Rows)
@@ -1203,6 +1198,24 @@ namespace SqlDataGridViewEditor
             currentSql.strStaticWhereClause = " WHERE " + whereCondition;
             // tableOptions.strStaticWhereClause = currentSql.returnFixDatabaseSql(" WHERE " + whereCondition);
             writeGrid_NewPage();
+        }
+
+        private void mnuTools_ShowITtools_CheckedChanged(object sender, EventArgs e)
+        {
+            mnuForeignKeyMissing.Visible = mnuTools_ShowITtools.Checked;
+            mnuDuplicateDisplayKeys.Visible = mnuTools_ShowITtools.Checked;
+            mnuPrintCurrentTable.Visible = mnuTools_ShowITtools.Checked;
+            rbMerge.Visible = mnuTools_ShowITtools.Checked;
+            mnuDatabaseInfo.Visible = mnuTools_ShowITtools.Checked;
+            mnuToolsBackupDatabase.Visible = mnuTools_ShowITtools.Checked;
+
+            if (mnuTools_ShowITtools.Checked)
+            {
+                mnuTools.DropDown.Visible = true;
+
+            }
+
+
         }
 
         private void mnuToolsDatabaseInformation_Click(object sender, EventArgs e)
@@ -1284,19 +1297,6 @@ namespace SqlDataGridViewEditor
 
         }
 
-        private void mnuOrderComboListsByPK_Click(object sender, EventArgs e)
-        {
-            formOptions.orderComboListsByPK = mnuOrderComboListsByPK.Checked;
-            GridContextMenu_OrderCombolByPK.Checked = mnuOrderComboListsByPK.Checked;
-            writeGrid_NewTable(currentSql.myTable);
-        }
-        private void GridContextMenu_OrderCombolByPK_Click(object sender, EventArgs e)
-        {
-            formOptions.orderComboListsByPK = GridContextMenu_OrderCombolByPK.Checked;
-            mnuOrderComboListsByPK.Checked = GridContextMenu_OrderCombolByPK.Checked;
-            writeGrid_NewTable(currentSql.myTable);
-        }
-
         // Add Database - frmConnection
         internal void mnuAddDatabase_Click(Object eventSender, EventArgs eventArgs)
         {
@@ -1313,7 +1313,6 @@ namespace SqlDataGridViewEditor
                 if (msg != string.Empty) { msgTextError(msg); }
             }
         }
-
         internal void load_mnuDatabaseList()
         {
             //Get list from App.Data
@@ -1327,12 +1326,76 @@ namespace SqlDataGridViewEditor
             }
         }
 
+
+        private void mnuToolsBackupDatabase_Click(object sender, EventArgs e)
+        {
+            if (MsSql.cn != null)
+            {
+                // Get folder
+                string folder = AppData.GetKeyValue("DatabaseBackupFolder");
+                if (string.IsNullOrEmpty(folder) || !Path.Exists(folder))
+                {
+                    folder = SelectFolder(folder);  // Returns string.Empty if dialog canceled
+                    if (folder == string.Empty)
+                    {
+                        return;
+                    }
+                }
+
+                //Set complete path
+                string filename = string.Format("{0}-{1}.bak", MsSql.cn.Database, DateTime.Now.ToString("yyyy-MM-dd-hh-mm"));
+                string completeFilePath = Path.Combine(folder, filename);
+                DialogResult result = MessageBox.Show(String.Format("Backup database to {0}?", completeFilePath), "Backup Database", MessageBoxButtons.YesNo);
+                if (result == DialogResult.No)
+                {
+                    result = MessageBox.Show("Choose a different folder?", "Change folder", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.No)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        folder = SelectFolder(folder);
+                        if (folder == String.Empty)
+                        {
+                            return;
+                        }
+                        completeFilePath = Path.Combine(folder, filename);
+                    }
+                }
+                if (MsSql.BackupCurrentDatabase(completeFilePath))
+                {
+                    MessageBox.Show(String.Format("Saved Database to {0}.", completeFilePath), "Backup Database");
+                }
+            }
+        }
+
+        private string SelectFolder(string defaultFolder)
+        {
+            folderBrowserDialog1 = new FolderBrowserDialog();
+            folderBrowserDialog1.ShowNewFolderButton = true;
+            if (Path.Exists(defaultFolder))
+            {
+                folderBrowserDialog1.SelectedPath = defaultFolder;
+            }
+            DialogResult result = folderBrowserDialog1.ShowDialog();
+            string fbdPath = folderBrowserDialog1.SelectedPath;
+            if (result == DialogResult.Cancel) { return string.Empty; }
+            AppData.SaveKeyValue("DatabaseBackupFolder", fbdPath);
+            return fbdPath;
+        }
         #endregion
 
         //----------------------------------------------------------------------------------------------------------------------
         //----------------------------------------------------------------------------------------------------------------------
 
         #region EVENTS - Context Menu events
+        private void GridContextMenu_OrderCombolByPK_Click(object sender, EventArgs e)
+        {
+            formOptions.orderComboListsByPK = GridContextMenu_OrderCombolByPK.Checked;
+            writeGrid_NewTable(currentSql.myTable);
+        }
+
         private void GridContextMenu_SetAsMainFilter_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 1)
@@ -1404,7 +1467,7 @@ namespace SqlDataGridViewEditor
                         }
                         else
                         {
-                            InformationBox.Show("Unusual error in Find in Parent table", "Error", InformationBoxIcon.Error);
+                            MessageBox.Show("Unusual error in Find in Parent table", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
@@ -1420,7 +1483,7 @@ namespace SqlDataGridViewEditor
                 string sqlString = currentSql.returnSql(command.selectAll);
                 MsSqlWithDaDt dadt = new MsSqlWithDaDt(sqlString);
                 string errorMsg = dadt.errorMsg;
-                if (errorMsg != string.Empty) { InformationBox.Show(errorMsg, "ERROR in GridContextMenu_FindUsedFK_Click"); }
+                if (errorMsg != string.Empty) { MessageBox.Show(errorMsg, "ERROR in GridContextMenu_FindUsedFK_Click"); }
                 foreach (DataRow dr in dadt.dt.Rows)
                 {
                     // Get PK values
@@ -1487,7 +1550,7 @@ namespace SqlDataGridViewEditor
                     firstPKCount = firstPKCount + thisTableCount;
                 }
                 sb.Append(String.Format("Total : {0} times", firstPKCount.ToString()));
-                InformationBox.Show(sb.ToString());
+                MessageBox.Show(sb.ToString());
             }
         }
 
@@ -1504,10 +1567,291 @@ namespace SqlDataGridViewEditor
                 tableOptions.doNotRebindGridFV = true;
                 ClearAllComboFilterCombos(false);
                 tableOptions.doNotRebindGridFV = false;
-                writeGrid_NewFilter();
+                writeGrid_NewFilter(false);
             }
         }
 
+        private void GridContextMenu_RestoreFilters_Click(object sender, EventArgs e)
+        {
+            ComboBox[] cmbGridFilterFields = { cmbGridFilterFields_0, cmbGridFilterFields_1, cmbGridFilterFields_2, cmbGridFilterFields_3, cmbGridFilterFields_4, cmbGridFilterFields_5, cmbGridFilterFields_6, cmbGridFilterFields_7, cmbGridFilterFields_8 };
+            ComboBox[] cmbGridFilterValue = { cmbGridFilterValue_0, cmbGridFilterValue_1, cmbGridFilterValue_2, cmbGridFilterValue_3, cmbGridFilterValue_4, cmbGridFilterValue_5, cmbGridFilterValue_6, cmbGridFilterValue_7, cmbGridFilterValue_8 };
+            ComboBox[] cmbComboFilterValue = { cmbComboFilterValue_0, cmbComboFilterValue_1, cmbComboFilterValue_2, cmbComboFilterValue_3, cmbComboFilterValue_4, cmbComboFilterValue_5 };
+
+            if (tableOptions != null)  // Make sure there is a table selected
+            {
+                //Get last filter
+                DataRow lastFilterDR = dataHelper.getDataRowFromDataTable("Table", currentSql.myTable, dataHelper.lastFilterValuesDT);
+
+                if (lastFilterDR != null)
+                {
+                    // 1. Clear old filters
+                    formOptions.loadingMainFilter = true;
+                    cmbMainFilter.SelectedIndex = cmbMainFilter.Items.Count - 1;
+                    formOptions.loadingMainFilter = false;
+
+                    for (int i = 0; i < cmbComboFilterValue.Length; i++)
+                    {
+                        if (cmbComboFilterValue[i].Enabled) { cmbComboFilterValue[i].Text = string.Empty; }
+                    }
+
+                    tableOptions.doNotRebindGridFV = true;
+                    for (int i = 0; i < cmbGridFilterValue.Length; i++)
+                    {
+                        if (cmbGridFilterValue[i].Enabled && cmbGridFilterValue[i].Items.Count > 0)
+                        {
+                            cmbGridFilterValue[i].SelectedItem = cmbGridFilterValue[i].Items[0];
+                        }
+                    }
+                    tableOptions.doNotRebindGridFV = false;
+
+                    // 2. Set the main filter - I have stored the primary key value
+                    string mainFilter = dataHelper.getColumnValueinDR(lastFilterDR, "cMF");
+                    foreach (where item in cmbMainFilter.Items)
+                    {
+                        if (item.fl.table == currentSql.myTable && item.whereValue == mainFilter)
+                        {
+                            formOptions.loadingMainFilter = true;
+                            cmbMainFilter.SelectedItem = item;
+                            formOptions.loadingMainFilter = false;
+                            break;
+                        }
+                    }
+
+                    // 3. Set the cCTF - stored as field name;  cmbCombotableList values are fields
+                    string cCTL = dataHelper.getColumnValueinDR(lastFilterDR, "cCTL");
+                    foreach (field item in cmbComboTableList.Items)
+                    {
+                        if (item.fieldName == cCTL)
+                        {
+                            cmbComboTableList.SelectedItem = item;
+                            break;
+                        }
+                    }
+
+                    // 4. Set combo filters - comboFilters are always the text.  
+                    for (int i = 0; i < cmbComboFilterValue.Length; i++)
+                    {
+                        if (cmbComboFilterValue[i].Enabled)  // True off visible
+                        {
+                            if (cmbComboFilterValue[i].DataSource != null)  // Probably not needed but just in case 
+                            {
+                                string cCFVi = dataHelper.getColumnValueinDR(lastFilterDR, "cCFV" + i.ToString());
+                                // dataHelper.setColumnValueInDR(lastFilterDR, "lCFF" + i.ToString(), comboFF.fieldName);
+                                if (cCFVi != string.Empty)
+                                {
+                                    // ComboFV is a non - PK non - FK - the selected value is the text
+                                    cmbComboFilterValue[i].Text = cCFVi;
+                                }
+                            }
+                        }
+                    }
+
+                    //5. Set Grid filter values - most complex
+                    for (int i = 0; i < cmbGridFilterFields.Length; i++)
+                    {
+                        if (cmbGridFilterFields[i].Enabled)
+                        {
+                            string cGFFi = dataHelper.getColumnValueinDR(lastFilterDR, "cGFF" + i.ToString());
+                            string cGFVi = dataHelper.getColumnValueinDR(lastFilterDR, "cGFV" + i.ToString());
+                            field fld = null;
+                            if (cGFFi != string.Empty)
+                            {
+                                foreach (field item in cmbGridFilterFields[i].Items)
+                                {
+                                    if (item.fieldName == cGFFi)
+                                    {
+                                        cmbGridFilterFields[i].SelectedItem = item;
+                                        fld = item;
+                                        break;
+                                    }
+                                }
+                            }            // Select value may be text or a primary key of the table in the dropdownlist
+                            if (fld != null && cGFVi != string.Empty)
+                            {
+                                if (programMode != ProgramMode.add || dataHelper.isDisplayKey(fld))
+                                {
+                                    if (cmbGridFilterValue[i].DropDownStyle == ComboBoxStyle.DropDown)
+                                    {
+                                        cmbGridFilterValue[i].Text = cGFVi;
+                                    }
+                                    else
+                                    {
+                                        // DropDownList - value is always an integer
+                                        foreach (DataRowView vItem in cmbGridFilterValue[i].Items)
+                                        {
+                                            if (vItem.Row.ItemArray[1] != null)
+                                            {
+                                                string value = vItem.Row.ItemArray[1].ToString();  // Should be integer
+                                                if (value == cGFVi)
+                                                {
+                                                    tableOptions.doNotWriteGrid = true;
+                                                    cmbGridFilterValue[i].SelectedItem = vItem;
+                                                    tableOptions.doNotWriteGrid = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    writeGrid_NewFilter(true);
+                }
+            }
+        }
+
+        private void callSqlWheresAndWriteLastFilter(bool newLastFilter)
+        {
+            ComboBox[] cmbGridFilterFields = { cmbGridFilterFields_0, cmbGridFilterFields_1, cmbGridFilterFields_2, cmbGridFilterFields_3, cmbGridFilterFields_4, cmbGridFilterFields_5, cmbGridFilterFields_6, cmbGridFilterFields_7, cmbGridFilterFields_8 };
+            ComboBox[] cmbGridFilterValue = { cmbGridFilterValue_0, cmbGridFilterValue_1, cmbGridFilterValue_2, cmbGridFilterValue_3, cmbGridFilterValue_4, cmbGridFilterValue_5, cmbGridFilterValue_6, cmbGridFilterValue_7, cmbGridFilterValue_8 };
+            ComboBox[] cmbComboFilterValue = { cmbComboFilterValue_0, cmbComboFilterValue_1, cmbComboFilterValue_2, cmbComboFilterValue_3, cmbComboFilterValue_4, cmbComboFilterValue_5 };
+
+            // 1. Clear any old filters from currentSql
+            currentSql.myWheres.Clear();
+
+            // 2.  Add row to last filter if needed
+            DataRow lastFilterDR = dataHelper.getDataRowFromDataTable("Table", currentSql.myTable, dataHelper.lastFilterValuesDT);
+            if (lastFilterDR is null)
+            {
+                lastFilterDR = dataHelper.lastFilterValuesDT.NewRow();
+                dataHelper.setColumnValueInDR(lastFilterDR, "Table", currentSql.myTable);
+                dataHelper.lastFilterValuesDT.Rows.Add(lastFilterDR);
+            }
+
+            // Clear the old lastFilterDR values
+            if (newLastFilter)
+            {
+                for (int ic = 1; ic < lastFilterDR.ItemArray.Length; ic++)
+                {
+                    lastFilterDR.ItemArray[ic] = string.Empty;
+                }
+            }
+
+            //3. Main filter - add this where to the currentSql)
+            if (programMode != ProgramMode.add && cmbMainFilter.Enabled && cmbMainFilter.SelectedIndex != cmbMainFilter.Items.Count - 1)
+            {
+                where mfWhere = (where)cmbMainFilter.SelectedValue;
+                if (newLastFilter)
+                {
+                    dataHelper.setColumnValueInDR(lastFilterDR, "cMF", mfWhere.whereValue);
+                }
+                if (Convert.ToInt32(mfWhere.whereValue) > 0)
+                {
+                    // Check that the table and field is in the myFields
+                    field PkField = dataHelper.getTablePrimaryKeyField(currentSql.myTable);
+                    if (currentSql.MainFilterTableIsInMyTable(mfWhere.fl.table, out string tableAlias))
+                    {
+                        mfWhere.fl.tableAlias = tableAlias;
+                        currentSql.myWheres.Add(mfWhere);
+                    }
+                }
+            }
+
+            // 4. cmbGridFilterFields - Currently 9.
+            for (int i = 0; i < cmbGridFilterFields.Length; i++)
+            {
+                if (cmbGridFilterFields[i].Enabled)
+                {
+                    //cmbGridFilterFields - something is selected and all values are fields
+                    field selectedField = (field)cmbGridFilterFields[i].SelectedValue; // DropDownList so SelectedIndex > -1
+                    string whValue = string.Empty;
+                    bool addWhere = false;
+                    // On ProgramMode.add, we only filter on displayKeys.  In other modes, we filter on all of these
+                    if (programMode != ProgramMode.add || dataHelper.isDisplayKey(selectedField))
+                    {
+                        // ComboBoxStyle.DropDownList have integer values; for ComboStyle.DropDown the text is the value 
+                        if (cmbGridFilterValue[i].DropDownStyle == ComboBoxStyle.DropDown)
+                        {
+                            // User can add value - add second clause because selected value index 1 might be String.Empty
+                            if (cmbGridFilterValue[i].Text != string.Empty || cmbGridFilterValue[i].SelectedIndex > 0)
+                            {
+                                whValue = cmbGridFilterValue[i].Text;
+                                addWhere = true;
+                            }
+                            else
+                            {
+                                if (newLastFilter)
+                                {
+                                    dataHelper.setColumnValueInDR(lastFilterDR, "cGFF" + i.ToString(), string.Empty);
+                                    dataHelper.setColumnValueInDR(lastFilterDR, "cGFV" + i.ToString(), string.Empty);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (cmbGridFilterValue[i].SelectedIndex > 0) // 0 is the pseudo item
+                            {
+                                whValue = cmbGridFilterValue[i].SelectedValue.ToString();
+                                addWhere = true;
+                            }
+                            else
+                            {
+                                if (newLastFilter)
+                                {
+                                    dataHelper.setColumnValueInDR(lastFilterDR, "cGFF" + i.ToString(), string.Empty);
+                                    dataHelper.setColumnValueInDR(lastFilterDR, "cGFV" + i.ToString(), "0");
+                                }
+                            }
+                        }
+                        if (addWhere)
+                        {
+                            where wh = new where(selectedField, whValue);
+                            if (dataHelper.TryParseToDbType(wh.whereValue, selectedField.dbType))
+                            {
+                                currentSql.myWheres.Add(wh);
+                                if (newLastFilter)
+                                {
+                                    dataHelper.setColumnValueInDR(lastFilterDR, "cGFF" + i.ToString(), selectedField.fieldName);
+                                    dataHelper.setColumnValueInDR(lastFilterDR, "cGFV" + i.ToString(), wh.whereValue);
+                                }
+                            }
+                            else
+                            {
+                                string erroMsg = String.Format(dataHelper.errMsg, dataHelper.errMsgParameter1, dataHelper.errMsgParameter2);
+                                msgTextError(erroMsg);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 5. cmbComboFilterFields - Currently 6.
+            // cmbComboFilterFields  (6 fields)
+            for (int i = 0; i < cmbComboFilterValue.Length; i++)
+            {
+                if (cmbComboFilterValue[i].Enabled)  // True off visible
+                {
+                    if (cmbComboFilterValue[i].DataSource != null)  // Probably not needed but just in case 
+                    {
+                        // ComboFV is a non-PK non-FK.  The selected object is the text
+                        if (cmbComboFilterValue[i].Text != String.Empty)
+                        {
+                            field comboFF = (field)cmbComboFilterValue[i].Tag;
+                            where wh = new where(comboFF, cmbComboFilterValue[i].Text);
+                            if (dataHelper.TryParseToDbType(wh.whereValue, comboFF.dbType))
+                            {
+                                currentSql.myWheres.Add(wh);
+                                if (newLastFilter)
+                                {
+                                    dataHelper.setColumnValueInDR(lastFilterDR, "lCFF" + i.ToString(), comboFF.fieldName);
+                                    dataHelper.setColumnValueInDR(lastFilterDR, "cCFV" + i.ToString(), wh.whereValue);
+                                }
+                            }
+                            else
+                            {
+                                string erroMsg = String.Format(dataHelper.errMsg, dataHelper.errMsgParameter1, dataHelper.errMsgParameter2);
+                                msgTextError(erroMsg);
+                            }
+                        }
+                    }
+                }
+            }
+            if (newLastFilter && cmbComboTableList.SelectedIndex > -1)
+            {
+                field fl = (field)cmbComboTableList.SelectedValue;
+                dataHelper.setColumnValueInDR(lastFilterDR, "cCTL", fl.fieldName);
+            }
+        }
 
         #endregion
 
@@ -1520,7 +1864,7 @@ namespace SqlDataGridViewEditor
         {
             if (dataGridView1.IsCurrentCellDirty)
             {
-                InformationBox.Show("Current cell not yet saved. Click any cell to save.", "Change not saved");
+                MessageBox.Show("Current cell not yet saved. Click any cell to save.", "Change not saved");
             }
         }
 
@@ -1575,7 +1919,7 @@ namespace SqlDataGridViewEditor
                     for (int j = 0; j < dataHelper.currentDT.Rows.Count; j++)
                     {
                         FkComboCell fkCell = (FkComboCell)dataGridView1.Rows[j].Cells[index];
-                        fkCell.dataTable = dataHelper.comboDT;  // This extraDT goes across functions
+                        fkCell.dataTable = dataHelper.comboDT;
                     }
                     tableOptions.FkFieldInEditingControl = colField;
                 }
@@ -1675,7 +2019,7 @@ namespace SqlDataGridViewEditor
                 e.ThrowException = false;
             }
 
-            InformationBox.Show(sb.ToString());
+            MessageBox.Show(sb.ToString());
 
         }
 
@@ -1685,7 +2029,7 @@ namespace SqlDataGridViewEditor
             if (programMode == ProgramMode.edit) msgDebug(", BE");
             // Change colors
             DataGridViewCellStyle cs = new DataGridViewCellStyle();
-            cs.BackColor = Color.Aqua;
+            cs.BackColor = System.Drawing.Color.Aqua;
             dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Style = cs;
         }
 
@@ -1828,7 +2172,12 @@ namespace SqlDataGridViewEditor
                     foreach (ToolStripItem tsi in mnuOpenTables.DropDownItems)
                     {
                         SqlFactory sqlFac = new SqlFactory(tsi.Name, 0, 0);
-                        if (!sqlFac.MainFilterTableIsInMyTable(mfWhere.fl.table, out string tableAlias))
+                        if (sqlFac.MainFilterTableIsInMyTable(mfWhere.fl.table, out string tableAlias))
+                        {
+                            tsi.Visible = true;
+                            tsi.Enabled = true;
+                        }
+                        else
                         {
                             tsi.Visible = false;
                             tsi.Enabled = false;
@@ -1836,7 +2185,7 @@ namespace SqlDataGridViewEditor
                     }
                 }
                 //Write new filter
-                writeGrid_NewFilter();
+                writeGrid_NewFilter(true);
             }
         }
 
@@ -1862,17 +2211,20 @@ namespace SqlDataGridViewEditor
                             RebindOneGridFilterValueCombo(i, false);
                             tableOptions.doNotWriteGrid = false;
 
-                            // Then Change color - either pink or yellow
-                            field selectedField = (field)cmbGridFilterFields[i].SelectedValue;
-                            if (dataHelper.isTablePrimaryKeyField(selectedField))
+                            // Then Change color (first combo only) - either pink or yellow
+                            if (i == 0)
                             {
-                                cmbGridFilterFields[i].BackColor = formOptions.PrimaryKeyColor;
-                                cmbGridFilterValue[i].BackColor = formOptions.PrimaryKeyColor;
-                            }
-                            else  // Because everything except the primary key in this GridFFcombo is yellow
-                            {
-                                cmbGridFilterFields[i].BackColor = formOptions.DefaultColumnColor;
-                                cmbGridFilterValue[i].BackColor = formOptions.DefaultColumnColor;
+                                field selectedField = (field)cmbGridFilterFields[i].SelectedValue;
+                                if (dataHelper.isTablePrimaryKeyField(selectedField))
+                                {
+                                    cmbGridFilterFields[i].BackColor = formOptions.PrimaryKeyColor;
+                                    cmbGridFilterValue[i].BackColor = formOptions.PrimaryKeyColor;
+                                }
+                                else  // Because everything except the primary key in this GridFFcombo is yellow
+                                {
+                                    cmbGridFilterFields[i].BackColor = formOptions.DefaultColumnColor;
+                                    cmbGridFilterValue[i].BackColor = formOptions.DefaultColumnColor;
+                                }
                             }
                         }
                     }
@@ -1890,7 +2242,7 @@ namespace SqlDataGridViewEditor
                 {
                     if (!(tableOptions.writingTable || tableOptions.doNotWriteGrid))
                     {
-                        writeGrid_NewFilter();
+                        writeGrid_NewFilter(true);
                     }
                 }
             }
@@ -1995,7 +2347,7 @@ namespace SqlDataGridViewEditor
 
                 // Bind the combo
                 // Will not rewrite Grid because I set doNotRewriteGrid = true whenever I call this method
-                cmbGridFilterValue[i].DataSource = dataHelper.comboDT;  // Be careful not to use extraDt until finished loading
+                cmbGridFilterValue[i].DataSource = dataHelper.comboDT;
 
                 if (selectOriginalValueAfterBinding)
                 {
@@ -2022,7 +2374,7 @@ namespace SqlDataGridViewEditor
                                     return;
                                 }
                             }
-                            cmbGridFV.BackColor = Color.Red;
+                            cmbGridFV.BackColor = System.Drawing.Color.Red;
                             tableOptions.doNotRebindGridFV = true;   //doNotWriteGrid already true when this method called.
                             cmbGridFV.SelectedIndex = 0;
                             tableOptions.doNotRebindGridFV = false;   // Same value as entering this method - see above
@@ -2036,8 +2388,7 @@ namespace SqlDataGridViewEditor
         //                                      COMBO FILTERS COMBOS EVENTS          
         //----------------------------------------------------------------------------------------------------------------------
 
-        // Unbind all CFV, rebinding=true, set up and bind new CFV, rebind empty GFV and warn about others
-
+        // Unbind all CFV, set rebinding=true, set up and bind new CFV, rebind empty GFV and warn about others
         private void cmbComboTableList_SelectedIndexChanged(object sender, EventArgs e)
         {
             Label[] lblCmbFilterFields = { lblCmbFilterField_0, lblCmbFilterField_1, lblCmbFilterField_2, lblCmbFilterField_3, lblCmbFilterField_4, lblCmbFilterField_5 };
@@ -2268,7 +2619,7 @@ namespace SqlDataGridViewEditor
                     {   // Return to viewing after the merge
                         currentSql.strStaticWhereClause = string.Empty;
                         rbView.Checked = true;
-                        writeGrid_NewFilter();
+                        writeGrid_NewFilter(true);
                     }
                 }
             }
@@ -2294,13 +2645,13 @@ namespace SqlDataGridViewEditor
                 string errorMsg = MsSql.DeleteRowsFromDT(dataHelper.currentDT, wh);
                 if (errorMsg != string.Empty)
                 {
-                    InformationBox.Show(String.Format("Error deleting row: {0}", errorMsg), "Delete Error", InformationBoxIcon.Error);
+                    MessageBox.Show(String.Format("Error deleting row: {0}", errorMsg), "Delete Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
                     currentSql.strStaticWhereClause = string.Empty;
                     rbView.Checked = true;
-                    writeGrid_NewFilter();
+                    writeGrid_NewFilter(true);
                 }
             }
 
@@ -2323,7 +2674,7 @@ namespace SqlDataGridViewEditor
                             {
                                 if (i > 0)  // ignore the first yellow dropdown if empty
                                 {
-                                    InformationBox.Show(String.Format("Please select a value for {0}", cmbLabel), "Please select a value.", InformationBoxIcon.Information);
+                                    MessageBox.Show(String.Format("Please select a value for {0}", cmbLabel), "Please select a value.", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     return;
                                 }
                             }
@@ -2344,7 +2695,7 @@ namespace SqlDataGridViewEditor
                             {
                                 if (i > 0)  // ignore the first yellow dropdown if empty
                                 {
-                                    InformationBox.Show(String.Format("Please select a value for {0}", cmbLabel), "Please select a value.", InformationBoxIcon.Information);
+                                    MessageBox.Show(String.Format("Please select a value for {0}", cmbLabel), "Please select a value.", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     return;
                                 }
                             }
@@ -2375,17 +2726,17 @@ namespace SqlDataGridViewEditor
                     string errorMsg = dadt.errorMsg;
                     if (errorMsg != string.Empty)
                     {
-                        InformationBox.Show(errorMsg, "ERROR in btnDeleteAddMerge_Click (Add)", InformationBoxIcon.Error);
+                        MessageBox.Show(errorMsg, "ERROR in btnDeleteAddMerge_Click (Add)", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         currentSql.strStaticWhereClause = string.Empty;
                         return;
                     }
 
                     if (dadt.dt.Rows.Count > 0)
                     {
-                        InformationBox.Show(String.Format("You already have this object in your database!"), "Display key value array must be unique.", InformationBoxIcon.Error);
+                        MessageBox.Show(String.Format("You already have this object in your database!"), "Display key value array must be unique.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         currentSql.strStaticWhereClause = string.Empty;
                         rbView.Checked = true;
-                        writeGrid_NewFilter(); return;
+                        writeGrid_NewFilter(true); return;
                     }
                 }
 
@@ -2396,11 +2747,11 @@ namespace SqlDataGridViewEditor
                     MsSql.currentDA.InsertCommand.ExecuteNonQuery();
                     currentSql.strStaticWhereClause = string.Empty;
                     rbView.Checked = true;
-                    writeGrid_NewFilter();
+                    writeGrid_NewFilter(true);
                 }
                 catch (Exception ex)
                 {
-                    InformationBox.Show(ex.Message, "DATABASE ERROR", InformationBoxIcon.Error);
+                    MessageBox.Show(ex.Message, "DATABASE ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -2435,15 +2786,15 @@ namespace SqlDataGridViewEditor
                 else { PkToDelete = pk2; }
                 msgSB.AppendLine(String.Format("Deleting row with ID {0} will have no other effect on the Database.  ", PkToDelete));
                 msgSB.AppendLine(String.Format("Do you want us to delete the row with ID {0}?", PkToDelete));
-                InformationBoxResult reply = InformationBox.Show(msgSB.ToString(), "Delete one row", InformationBoxButtons.YesNo, InformationBoxIcon.Question);
-                if (reply == InformationBoxResult.Yes)
+                DialogResult reply = MessageBox.Show(msgSB.ToString(), "Delete one row", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (reply == DialogResult.Yes)
                 {
                     field PKField = dataHelper.getTablePrimaryKeyField(table);
                     where wh = new where(PKField, PkToDelete.ToString());
                     string errorMsg = MsSql.DeleteRowsFromDT(dataHelper.currentDT, wh);
                     if (errorMsg != string.Empty)   // Deleting the row unlikely to cause error, but just in case . . . 
                     {
-                        InformationBox.Show(msgSB.ToString(), "Error", InformationBoxIcon.Exclamation);
+                        MessageBox.Show(msgSB.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         return false;
                     }
                 }
@@ -2453,8 +2804,8 @@ namespace SqlDataGridViewEditor
                 msgSB.AppendLine(String.Format("Other tables use {0} as a foreign key.", table));
                 msgSB.AppendLine(String.Format("To merge these two rows, we will first replace {0} occurances of ID {1} with ID {2} in these tables.", firstPKCount, pk1, pk2));
                 msgSB.AppendLine(String.Format("Then we will delete the row {0} from this table.  Do you want to continue?", pk1));
-                InformationBoxResult reply = InformationBox.Show(msgSB.ToString(), "Merge two rows?", InformationBoxButtons.YesNo);
-                if (reply == InformationBoxResult.Yes)
+                DialogResult reply = MessageBox.Show(msgSB.ToString(), "Merge two rows?", MessageBoxButtons.YesNo);
+                if (reply == DialogResult.Yes)
                 {
                     foreach (DataRow dr in fieldsDTdrs)
                     {
@@ -2469,7 +2820,7 @@ namespace SqlDataGridViewEditor
                         {
                             msgSB.Clear();
                             msgSB.AppendLine(String.Format("Error filling datatable with table {0}.", TableWithFK));
-                            InformationBox.Show(msgSB.ToString(), "ERROR in btnDeleteAddMerge (Merge)", InformationBoxIcon.Error);
+                            MessageBox.Show(msgSB.ToString(), "ERROR in btnDeleteAddMerge (Merge)", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         txtMessages.Text = txtMessages.Text + "; " + dadt.dt.Rows.Count;
                         // 2. Update these rows in extraDT - loop through these rows and change the FK column)
@@ -2526,8 +2877,8 @@ namespace SqlDataGridViewEditor
                                     msgSB.AppendLine(String.Format("You need to merge rows in {0}.", TableWithFK, dadt2.dt.Rows.Count.ToString()));
                                     msgSB.AppendLine(String.Format("Rows that should be merged: {0}", String.Join(", ", fkTablePKs)));
                                     msgSB.AppendLine(String.Format("Do you want to see these rows?", String.Join(", ", fkTablePKs)));
-                                    InformationBoxResult result = InformationBox.Show(msgSB.ToString(), "Important message", InformationBoxButtons.YesNo, InformationBoxIcon.Exclamation);
-                                    if (result == InformationBoxResult.Yes)
+                                    DialogResult result = MessageBox.Show(msgSB.ToString(), "Important message", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                                    if (result == DialogResult.Yes)
                                     {
                                         List<string> orConditions = new List<string>();
                                         foreach (string strPkValue in fkTablePKs)
@@ -2556,7 +2907,7 @@ namespace SqlDataGridViewEditor
                             msgSB.Clear();
                             msgSB.AppendLine(String.Format("Error in updated table {0}.", TableWithFK));
                             msgSB.AppendLine("Database Error Messsage: " + ex.Message);
-                            InformationBox.Show(msgSB.ToString(), "Error", InformationBoxIcon.Exclamation);
+                            MessageBox.Show(msgSB.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             return false;
                         }
                     }
@@ -2658,7 +3009,7 @@ namespace SqlDataGridViewEditor
 
         private void btnReload_Click(object sender, EventArgs e)
         {
-            writeGrid_NewFilter();
+            writeGrid_NewFilter(true);
         }
 
         private void toolStripColumnWidth_Click(object sender, EventArgs e)
@@ -2686,24 +3037,11 @@ namespace SqlDataGridViewEditor
                 if (rpp > 9)
                 {
                     formOptions.pageSize = rpp;
+                    AppData.SaveKeyValue("RPP", rpp.ToString());
                 }
             }
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            if (currentSql != null)
-            {
-                int oneFifth = (int)Math.Ceiling((decimal)currentSql.TotalPages / 5);
-                int pageLeap = Math.Max(currentSql.myPage - oneFifth, 1);
-                if (currentSql.myPage != pageLeap)
-                {
-                    currentSql.myPage = pageLeap;
-                    writeGrid_NewPage();
-                }
-            }
-
-        }
         // Paging - <
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
@@ -2803,104 +3141,6 @@ namespace SqlDataGridViewEditor
             return 0;
         }
 
-        private void callSqlWheres()
-        {
-            ComboBox[] cmbGridFilterFields = { cmbGridFilterFields_0, cmbGridFilterFields_1, cmbGridFilterFields_2, cmbGridFilterFields_3, cmbGridFilterFields_4, cmbGridFilterFields_5, cmbGridFilterFields_6, cmbGridFilterFields_7, cmbGridFilterFields_8 };
-            ComboBox[] cmbGridFilterValue = { cmbGridFilterValue_0, cmbGridFilterValue_1, cmbGridFilterValue_2, cmbGridFilterValue_3, cmbGridFilterValue_4, cmbGridFilterValue_5, cmbGridFilterValue_6, cmbGridFilterValue_7, cmbGridFilterValue_8 };
-            ComboBox[] cmbComboFilterValue = { cmbComboFilterValue_0, cmbComboFilterValue_1, cmbComboFilterValue_2, cmbComboFilterValue_3, cmbComboFilterValue_4, cmbComboFilterValue_5 };
-
-            // 1. Clear any old filters from currentSql
-            currentSql.myWheres.Clear();
-
-
-            //Main filter - add this where to the currentSql)
-            if (programMode != ProgramMode.add && cmbMainFilter.Enabled && cmbMainFilter.SelectedIndex != cmbMainFilter.Items.Count - 1)
-            {
-                where mfWhere = (where)cmbMainFilter.SelectedValue;
-
-                if (Convert.ToInt32(mfWhere.whereValue) > 0)
-                {
-                    // Check that the table and field is in the myFields
-                    field PkField = dataHelper.getTablePrimaryKeyField(currentSql.myTable);
-                    if (currentSql.MainFilterTableIsInMyTable(mfWhere.fl.table, out string tableAlias))
-                    {
-                        mfWhere.fl.tableAlias = tableAlias;
-                        currentSql.myWheres.Add(mfWhere);
-                    }
-                }
-            }
-
-            // 2. cmbGridFilterFields - Currently 9.
-            for (int i = 0; i < cmbGridFilterFields.Length; i++)
-            {
-                if (cmbGridFilterFields[i].Enabled)
-                {
-                    field selectedField = (field)cmbGridFilterFields[i].SelectedValue; // DropDownList so SelectedIndex > -1
-                    string whValue = string.Empty;
-                    bool addWhere = false;
-                    // On programMode.add, only add displayKeys
-                    if (!(programMode == ProgramMode.add && !dataHelper.isDisplayKey(selectedField)))
-                    {
-                        // On ProgramMode.add, some of these are changed to ComboBoxStyle.DropDown.
-                        if (cmbGridFilterValue[i].DropDownStyle == ComboBoxStyle.DropDown)
-                        {
-                            // User can add value - add second clause because selected value index 1 might be String.Empty
-                            if (cmbGridFilterValue[i].Text != string.Empty || cmbGridFilterValue[i].SelectedIndex > 0)
-                            {
-                                whValue = cmbGridFilterValue[i].Text;
-                                addWhere = true;
-                            }
-                        }
-                        else if (cmbGridFilterValue[i].SelectedIndex > 0) // 0 is the pseudo item
-                        {
-                            whValue = cmbGridFilterValue[i].SelectedValue.ToString();
-                            addWhere = true;
-                        }
-                        if (addWhere)
-                        {
-                            where wh = new where(selectedField, whValue);
-                            if (dataHelper.TryParseToDbType(wh.whereValue, selectedField.dbType))
-                            {
-                                currentSql.myWheres.Add(wh);
-                            }
-                            else
-                            {
-                                string erroMsg = String.Format(dataHelper.errMsg, dataHelper.errMsgParameter1, dataHelper.errMsgParameter2);
-                                msgTextError(erroMsg);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 3. cmbComboFilterFields - Currently 6.
-            // cmbComboFilterFields  (6 fields)
-            for (int i = 0; i < cmbComboFilterValue.Length; i++)
-            {
-                if (cmbComboFilterValue[i].Enabled)  // True iff visible
-                {
-                    if (cmbComboFilterValue[i].DataSource != null)  // Probably not needed but just in case 
-                    {
-                        if (cmbComboFilterValue[i].Text != String.Empty) // ComboFV is a non-PK non-FK
-                        {
-                            field comboFF = (field)cmbComboFilterValue[i].Tag;
-                            // field PKcomboFF = dataHelper.getTablePrimaryKeyField(comboFF.table);
-                            // PKcomboFF.tableAlias = comboFF.tableAlias;
-                            where wh = new where(comboFF, cmbComboFilterValue[i].Text);
-                            if (dataHelper.TryParseToDbType(wh.whereValue, comboFF.dbType))
-                            {
-                                currentSql.myWheres.Add(wh);
-                            }
-                            else
-                            {
-                                string erroMsg = String.Format(dataHelper.errMsg, dataHelper.errMsgParameter1, dataHelper.errMsgParameter2);
-                                msgTextError(erroMsg);
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         private void callSqlWheresForCombo(field PkField)  // PK used to get inner joins 
         {   // Adds all the filters - FK, DK, non-Key and
@@ -2971,7 +3211,7 @@ namespace SqlDataGridViewEditor
             string strSql = currentSql.returnComboSql(fl, formOptions.orderComboListsByPK, cmbValueType);
             dataHelper.comboDT = new DataTable();
             string errorMsg = MsSql.FillDataTable(dataHelper.comboDT, strSql);
-            if (errorMsg != string.Empty) { InformationBox.Show(errorMsg, "ERROR in FillComboDT", InformationBoxIcon.Error); }
+            if (errorMsg != string.Empty) { MessageBox.Show(errorMsg, "ERROR in FillComboDT", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 
         }
 
@@ -3000,16 +3240,16 @@ namespace SqlDataGridViewEditor
 
         private void msgText(string text)
         {
-            txtMessages.ForeColor = Color.Navy;
+            txtMessages.ForeColor = System.Drawing.Color.Navy;
             string msg = text;
             txtMessages.Text = msg;
         }
 
         private void msgTextError(string text)
         {
-            txtMessages.ForeColor = Color.Red;
+            txtMessages.ForeColor = System.Drawing.Color.Red;
             msgText(text);
-            txtMessages.ForeColor = Color.Navy;
+            txtMessages.ForeColor = System.Drawing.Color.Navy;
         }
 
         private void msgTextAdd(string text)

@@ -104,7 +104,9 @@
             mnuDuplicateDisplayKeys = new ToolStripMenuItem();
             mnuForeignKeyMissing = new ToolStripMenuItem();
             mnuPrintCurrentTable = new ToolStripMenuItem();
-            mnuOrderComboListsByPK = new ToolStripMenuItem();
+            mnuToolsBackupDatabase = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
+            toolStripSeparator3 = new ToolStripSeparator();
             mnuHelp = new ToolStripMenuItem();
             mnuHelpFile = new ToolStripMenuItem();
             toolStripBottom = new ToolStrip();
@@ -113,6 +115,7 @@
             toolStripButton3 = new ToolStripButton();
             toolStripButton2 = new ToolStripButton();
             toolStripButtonColumnWidth = new ToolStripButton();
+            folderBrowserDialog1 = new FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -420,6 +423,7 @@
             // 
             GridContextMenu_RestoreFilters.Name = "GridContextMenu_RestoreFilters";
             resources.ApplyResources(GridContextMenu_RestoreFilters, "GridContextMenu_RestoreFilters");
+            GridContextMenu_RestoreFilters.Click += GridContextMenu_RestoreFilters_Click;
             // 
             // GridContextMenu_ClearFilters
             // 
@@ -791,7 +795,7 @@
             // 
             // mnuTools
             // 
-            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuTools_ShowITtools, mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuPrintCurrentTable, mnuOrderComboListsByPK });
+            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuTools_ShowITtools, mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuPrintCurrentTable, mnuToolsBackupDatabase, toolStripSeparator2, toolStripSeparator3 });
             mnuTools.Name = "mnuTools";
             resources.ApplyResources(mnuTools, "mnuTools");
             // 
@@ -827,12 +831,21 @@
             mnuPrintCurrentTable.Name = "mnuPrintCurrentTable";
             resources.ApplyResources(mnuPrintCurrentTable, "mnuPrintCurrentTable");
             // 
-            // mnuOrderComboListsByPK
+            // mnuToolsBackupDatabase
             // 
-            mnuOrderComboListsByPK.CheckOnClick = true;
-            mnuOrderComboListsByPK.Name = "mnuOrderComboListsByPK";
-            resources.ApplyResources(mnuOrderComboListsByPK, "mnuOrderComboListsByPK");
-            mnuOrderComboListsByPK.Click += mnuOrderComboListsByPK_Click;
+            mnuToolsBackupDatabase.Name = "mnuToolsBackupDatabase";
+            resources.ApplyResources(mnuToolsBackupDatabase, "mnuToolsBackupDatabase");
+            mnuToolsBackupDatabase.Click += mnuToolsBackupDatabase_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(toolStripSeparator2, "toolStripSeparator2");
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            resources.ApplyResources(toolStripSeparator3, "toolStripSeparator3");
             // 
             // mnuHelp
             // 
@@ -1008,13 +1021,17 @@
         private Button btnReload;
         private ToolStripMenuItem GridContextMenu_TimesUsedAsFK;
         private ToolStripButton toolStripButtonColumnWidth;
-        private ToolStripMenuItem mnuOrderComboListsByPK;
         private ToolStripSeparator GridContextMenu_Seperator;
         private ToolStripMenuItem GridContextMenu_RestoreFilters;
         private ToolStripMenuItem GridContextMenu_ClearFilters;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem GridContextMenu_OrderCombolByPK;
         private ToolStripMenuItem mnuTools_ShowITtools;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem backupDatabaseToolStripMenuItem;
+        private FolderBrowserDialog folderBrowserDialog1;
+        private ToolStripMenuItem mnuToolsBackupDatabase;
         //private Button button2;
     }
 }

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using DocumentFormat.OpenXml;
+﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using System.IO;
-using InfoBox;
+using System.Data;
+using System.Diagnostics;
+using System.Globalization;
+using System.Text;
 
 namespace SqlDataGridViewEditor.TranscriptPlugin
 {
@@ -30,30 +24,59 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         private static void InsertTextInTable(Table table, int intRow, int intCell, string text)
         {
             // Find the third cell in the row.
-            TableRow row = table.Elements<TableRow>().ElementAt(intRow); 
+            TableRow row = table.Elements<TableRow>().ElementAt(intRow);
             TableCell cell = row.Elements<TableCell>().ElementAt(intCell);
             // Find the first paragraph in the table cell.
             if (cell.Elements<Paragraph>().Count() == 0)
-            { 
+            {
                 Paragraph newPara = new Paragraph();
                 cell.AddChild(newPara);
             }
             Paragraph p = cell.Elements<Paragraph>().First();
             // Find the first run in the paragraph.
-            if(p.Elements<Run>().Count() == 0 ) 
+            if (p.Elements<Run>().Count() == 0)
             {
                 Run run = new Run();
                 p.AddChild(run);
             }
             Run r = p.Elements<Run>().First();
             if (r.Elements<Text>().Count() == 0)
-            { 
+            {
                 Text eText = new Text();
                 r.AddChild(eText);
             }
             // Set the text for the run.
             Text t = r.Elements<Text>().First();
             t.Text = text;
+        }
+
+        private static void RemoveInnerCellBoders(Table table, int intRow, int intStartCell, int intEndCell)
+        {
+            TableRow row = table.Elements<TableRow>().ElementAt(intRow);
+            for (int i = intStartCell + 1; i < intEndCell; i++)
+            {
+                TableCell cell = row.Elements<TableCell>().ElementAt(intStartCell);
+                // Find the first paragraph in the table cell.
+                // if (cell.Elements<TableCellProperties>().Count() == 0)
+                // {
+                TableCellBorders tableCellBorders = new TableCellBorders(
+                       new InsideVerticalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Nil) });
+                TableCellProperties tcp = new TableCellProperties();
+                tcp.AppendChild(tableCellBorders);
+                cell.AppendChild(tcp);
+                // }
+            }
+
+            //<w:tc>
+            //<w:tcPr>
+            //<w:tcW w:w="3325" w:type="dxa"/>
+            //<w:tcBorders>
+            //	<w:left w:val="nil"/>
+            //	<w:right w:val="nil"/>
+            //</w:tcBorders>
+            //<w:vAlign w:val="center"/>
+            //</w:tcPr>
+
         }
         public static void printTranscript(CultureInfo ci, ref StringBuilder sbErrors)
         {
@@ -112,6 +135,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                                         termDate = string.Format("{0} - {1}", startYear, endYear);
                                     }
                                     termDate = termDate + "年 ";
+                                    RemoveInnerCellBoders(table, currentRow, 2, 5);
                                     InsertTextInTable(table, currentRow, 2, termDate + termName);
                                     // Prepare for next row    
                                     TableRow newTermRow = new TableRow();
@@ -141,8 +165,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                                 InsertTextInTable(table, currentRow, 3, facultyName);
                                 InsertTextInTable(table, currentRow, 4, credits);
                                 InsertTextInTable(table, currentRow, 5, grade);
-                                if(reqNameDK != department) 
-                                { 
+                                if (reqNameDK != department)
+                                {
                                     InsertTextInTable(table, currentRow, 6, reqNameDK);
                                 }
 
@@ -193,17 +217,18 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                         }
                         // Save the stream to the disk
                         string myPath = AppData.GetKeyValue("DocumentFolder");
-                        myPath = myPath + "\\" + studentName.Replace(" ","_") + "." + DateTime.Now.Year.ToString() + "." + DateTime.Now.Month.ToString() + ".docx";
+                        myPath = myPath + "\\" + studentName.Replace(" ", "_") + "." + DateTime.Now.Year.ToString() + "." + DateTime.Now.Month.ToString() + ".docx";
                         try
                         {
                             byte[] newByteArray = UseBinaryReader(stream);
                             File.WriteAllBytes(myPath, newByteArray);
                         }
-                        catch (Exception ex){ InformationBox.Show(ex.Message);return; }
+                        catch (Exception ex) { MessageBox.Show(ex.Message); return; }
 
                         // Open microsoft word
-                        InformationBoxResult infoResult = InformationBox.Show("Do you want to open the transcript in Word?",InformationBoxIcon.Question, InformationBoxButtons.YesNo);
-                        if(infoResult == InformationBoxResult.Yes) 
+                        DialogResult infoResult = MessageBox.Show("Do you want to open the transcript in Word?", "Open Word", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        if (infoResult == DialogResult.Yes)
                         {
                             Process process = new Process();
                             process.StartInfo = new ProcessStartInfo(myPath)

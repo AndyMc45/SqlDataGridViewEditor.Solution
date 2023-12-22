@@ -1,12 +1,7 @@
 ﻿using System.Data;
-using System.Text;
-using InfoBox;
-using System.Resources;
 using System.Globalization;
-using System.ComponentModel;
-using SqlDataGridViewEditor;
-using SqlDataGridViewEditor.Properties;
-
+using System.Resources;
+using System.Text;
 
 namespace SqlDataGridViewEditor.TranscriptPlugin
 {
@@ -124,6 +119,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             // Load path options
             SetPathLabel(AppData.GetKeyValue("TemplateFolder"), lblPathTemplateFolder);
             SetPathLabel(AppData.GetKeyValue("DocumentFolder"), lblPathDocumentFolder);
+            SetPathLabel(AppData.GetKeyValue("DatabaseBackupFolder"), lblPathDatabaseFolder);
             SetPathLabel(AppData.GetKeyValue("TranscriptTemplate"), lblPathTransTemplate);
             SetPathLabel(AppData.GetKeyValue("CourseRoleTemplate"), lblPathCourseRoleTemplate);
             SetPathLabel(AppData.GetKeyValue("EnglishTranscriptTemplate"), lblPathEnglishTranscriptTemplate);
@@ -141,7 +137,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 TranscriptHelper.fillStudentDegreeDataRow(studentDegreeID, ref sbErrors);
                 if (sbErrors.Length > 0)
                 {
-                    InformationBox.Show(sbErrors.ToString(), "Warning", InformationBoxIcon.Warning);
+                    MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 else
                 {
@@ -155,7 +151,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     TranscriptHelper.fillStudentTranscriptTable(studentDegreeID, ref sbErrors);
                     if (sbErrors.Length > 0)
                     {
-                        InformationBox.Show(sbErrors.ToString(), "Warning", InformationBoxIcon.Warning);
+                        MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     else
                     {
@@ -171,7 +167,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                         TranscriptHelper.fillGradRequirementsDT(ref sbErrors);
                         if (sbErrors.Length > 0)
                         {
-                            InformationBox.Show(sbErrors.ToString(), "Warning", InformationBoxIcon.Warning);
+                            MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                         else
                         {
@@ -192,7 +188,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 TranscriptHelper.fillCourseTermDataRow(courseTermID, ref sbErrors);
                 if (sbErrors.Length > 0)
                 {
-                    InformationBox.Show(sbErrors.ToString(), "Warning", InformationBoxIcon.Warning);
+                    MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 else
                 {
@@ -210,7 +206,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     TranscriptHelper.fillCourseRoleTable(courseTermID, ref sbErrors);  // Will select transcripts rows which are in this course
                     if (sbErrors.Length > 0)
                     {
-                        InformationBox.Show(sbErrors.ToString(), "Warning", InformationBoxIcon.Warning);
+                        MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     else
                     {
@@ -350,8 +346,21 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             if (result == DialogResult.Cancel) { return; }
             lblPathDocumentFolder.Text = fbdPath;
             AppData.SaveKeyValue("DocumentFolder", fbdPath);
+        }
+        private void lblDatabaseFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            folderBrowserDialog1 = new FolderBrowserDialog
+            {
+                ShowNewFolderButton = true
+            };
+            DialogResult result = folderBrowserDialog1.ShowDialog();
+            string fbdPath = folderBrowserDialog1.SelectedPath;
+            if (result == DialogResult.Cancel) { return; }
+            lblPathDatabaseFolder.Text = fbdPath;
+            AppData.SaveKeyValue("DatabaseBackupFolder", fbdPath);
 
         }
+
         private void lblTranscriptTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string filePath = SelectTemplateFile();
@@ -473,6 +482,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             tabControl1.Height = this.Height - toolStripBottom.Height;
             tabControl1.Width = this.Width;
         }
+
 
         internal enum Job
         {

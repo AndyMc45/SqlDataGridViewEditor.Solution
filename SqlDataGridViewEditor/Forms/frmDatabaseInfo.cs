@@ -1,8 +1,4 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using System.Text;
-//using static System.ComponentModel.Design.ObjectSelectorEditor;
-
+﻿//using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace SqlDataGridViewEditor
 {
@@ -53,6 +49,11 @@ namespace SqlDataGridViewEditor
         {
             if (dataHelper.comboDT != null) { dgvMain.DataSource = dataHelper.comboDT; }
         }
+        private void cmdLastFilters_Click(object sender, EventArgs e)
+        {
+            if (dataHelper.lastFilterValuesDT != null) { dgvMain.DataSource = dataHelper.lastFilterValuesDT; }
+        }
+
 
         private void frmDatabaseInfo_FormClosed(object sender, FormClosedEventArgs e)
         {

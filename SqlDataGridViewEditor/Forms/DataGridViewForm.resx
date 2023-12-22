@@ -1,64 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <!--
-    Microsoft ResX Schema 
-
-    Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
-    associated with the data types.
-
-    Example:
-
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-
-    There are any number of "resheader" rows that contain simple
-    name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
-    mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
-    extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
-    read any of the formats listed below.
-
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
+﻿<root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -123,7 +63,11 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="splitContainer1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 29</value>
+    <value>0, 36</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="splitContainer1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="splitContainer1.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
     <value>Horizontal</value>
@@ -136,14 +80,13 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="lblMainFilter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 3</value>
+    <value>12, 4</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lblMainFilter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="lblMainFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 37</value>
+    <value>205, 46</value>
   </data>
   <data name="lblMainFilter.TabIndex" type="System.Int32, mscorlib">
     <value>107</value>
@@ -170,10 +113,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbMainFilter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>180, 3</value>
+    <value>225, 4</value>
+  </data>
+  <data name="cmbMainFilter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbMainFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>393, 28</value>
+    <value>489, 33</value>
   </data>
   <data name="cmbMainFilter.TabIndex" type="System.Int32, mscorlib">
     <value>110</value>
@@ -194,13 +140,13 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="lblGridFilter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 46</value>
+    <value>12, 58</value>
   </data>
   <data name="lblGridFilter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="lblGridFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 37</value>
+    <value>205, 46</value>
   </data>
   <data name="lblGridFilter.TabIndex" type="System.Int32, mscorlib">
     <value>135</value>
@@ -227,10 +173,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterFields_0.Location" type="System.Drawing.Point, System.Drawing">
-    <value>180, 46</value>
+    <value>225, 58</value>
+  </data>
+  <data name="cmbGridFilterFields_0.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterFields_0.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 28</value>
+    <value>276, 33</value>
   </data>
   <data name="cmbGridFilterFields_0.TabIndex" type="System.Int32, mscorlib">
     <value>129</value>
@@ -251,10 +200,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterFields_1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>579, 46</value>
+    <value>722, 58</value>
+  </data>
+  <data name="cmbGridFilterFields_1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterFields_1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 28</value>
+    <value>276, 33</value>
   </data>
   <data name="cmbGridFilterFields_1.TabIndex" type="System.Int32, mscorlib">
     <value>131</value>
@@ -275,10 +227,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterValue_3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>408, 89</value>
+    <value>509, 112</value>
+  </data>
+  <data name="cmbGridFilterValue_3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterValue_3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 33</value>
   </data>
   <data name="cmbGridFilterValue_3.TabIndex" type="System.Int32, mscorlib">
     <value>156</value>
@@ -299,10 +254,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterFields_4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>579, 89</value>
+    <value>722, 112</value>
+  </data>
+  <data name="cmbGridFilterFields_4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterFields_4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 28</value>
+    <value>276, 33</value>
   </data>
   <data name="cmbGridFilterFields_4.TabIndex" type="System.Int32, mscorlib">
     <value>158</value>
@@ -323,10 +281,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterValue_4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>807, 89</value>
+    <value>1006, 112</value>
+  </data>
+  <data name="cmbGridFilterValue_4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterValue_4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 33</value>
   </data>
   <data name="cmbGridFilterValue_4.TabIndex" type="System.Int32, mscorlib">
     <value>157</value>
@@ -347,10 +308,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterFields_5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>978, 89</value>
+    <value>1219, 112</value>
+  </data>
+  <data name="cmbGridFilterFields_5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterFields_5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 28</value>
+    <value>276, 33</value>
   </data>
   <data name="cmbGridFilterFields_5.TabIndex" type="System.Int32, mscorlib">
     <value>159</value>
@@ -371,10 +335,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterValue_1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>807, 46</value>
+    <value>1006, 58</value>
+  </data>
+  <data name="cmbGridFilterValue_1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterValue_1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 33</value>
   </data>
   <data name="cmbGridFilterValue_1.TabIndex" type="System.Int32, mscorlib">
     <value>155</value>
@@ -395,10 +362,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterValue_5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1206, 89</value>
+    <value>1503, 112</value>
+  </data>
+  <data name="cmbGridFilterValue_5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterValue_5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 33</value>
   </data>
   <data name="cmbGridFilterValue_5.TabIndex" type="System.Int32, mscorlib">
     <value>162</value>
@@ -419,10 +389,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterValue_2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1206, 46</value>
+    <value>1503, 58</value>
+  </data>
+  <data name="cmbGridFilterValue_2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterValue_2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 33</value>
   </data>
   <data name="cmbGridFilterValue_2.TabIndex" type="System.Int32, mscorlib">
     <value>163</value>
@@ -443,10 +416,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterFields_2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>978, 46</value>
+    <value>1219, 58</value>
+  </data>
+  <data name="cmbGridFilterFields_2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterFields_2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 28</value>
+    <value>276, 33</value>
   </data>
   <data name="cmbGridFilterFields_2.TabIndex" type="System.Int32, mscorlib">
     <value>133</value>
@@ -467,10 +443,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterValue_0.Location" type="System.Drawing.Point, System.Drawing">
-    <value>408, 46</value>
+    <value>509, 58</value>
+  </data>
+  <data name="cmbGridFilterValue_0.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterValue_0.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 33</value>
   </data>
   <data name="cmbGridFilterValue_0.TabIndex" type="System.Int32, mscorlib">
     <value>164</value>
@@ -491,10 +470,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterFields_3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>180, 89</value>
+    <value>225, 112</value>
+  </data>
+  <data name="cmbGridFilterFields_3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterFields_3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 28</value>
+    <value>276, 33</value>
   </data>
   <data name="cmbGridFilterFields_3.TabIndex" type="System.Int32, mscorlib">
     <value>165</value>
@@ -518,13 +500,13 @@
     <value>True</value>
   </data>
   <data name="rbMerge.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1166, 3</value>
+    <value>1455, 4</value>
   </data>
   <data name="rbMerge.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="rbMerge.Size" type="System.Drawing.Size, System.Drawing">
-    <value>73, 24</value>
+    <value>88, 29</value>
   </data>
   <data name="rbMerge.TabIndex" type="System.Int32, mscorlib">
     <value>121</value>
@@ -554,49 +536,49 @@
     <value>317, 1</value>
   </metadata>
   <data name="GridContextMenu_SetAsMainFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 24</value>
+    <value>304, 32</value>
   </data>
   <data name="GridContextMenu_SetAsMainFilter.Text" xml:space="preserve">
     <value>Set Item as main filter</value>
   </data>
   <data name="GridContextMenu_SetFKasMainFIlter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 24</value>
+    <value>304, 32</value>
   </data>
   <data name="GridContextMenu_SetFKasMainFIlter.Text" xml:space="preserve">
     <value>Set an FK as main filter</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>256, 6</value>
+    <value>301, 6</value>
   </data>
   <data name="GridContextMenu_TimesUsedAsFK.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 24</value>
+    <value>304, 32</value>
   </data>
   <data name="GridContextMenu_TimesUsedAsFK.Text" xml:space="preserve">
     <value>Times used as FK</value>
   </data>
   <data name="GridContextMenu_OrderCombolByPK.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 24</value>
+    <value>304, 32</value>
   </data>
   <data name="GridContextMenu_OrderCombolByPK.Text" xml:space="preserve">
     <value>Order dropdown lists by PK</value>
   </data>
   <data name="GridContextMenu_Seperator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>256, 6</value>
+    <value>301, 6</value>
   </data>
   <data name="GridContextMenu_RestoreFilters.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 24</value>
+    <value>304, 32</value>
   </data>
   <data name="GridContextMenu_RestoreFilters.Text" xml:space="preserve">
     <value>Restore last filter</value>
   </data>
   <data name="GridContextMenu_ClearFilters.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 24</value>
+    <value>304, 32</value>
   </data>
   <data name="GridContextMenu_ClearFilters.Text" xml:space="preserve">
     <value>Clear all filters</value>
   </data>
   <data name="GridContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 160</value>
+    <value>305, 208</value>
   </data>
   <data name="&gt;&gt;GridContextMenu.Name" xml:space="preserve">
     <value>GridContextMenu</value>
@@ -608,10 +590,13 @@
     <value>False</value>
   </data>
   <data name="btnDeleteAddMerge.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1042, 3</value>
+    <value>1298, 4</value>
+  </data>
+  <data name="btnDeleteAddMerge.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="btnDeleteAddMerge.Size" type="System.Drawing.Size, System.Drawing">
-    <value>94, 35</value>
+    <value>118, 44</value>
   </data>
   <data name="btnDeleteAddMerge.TabIndex" type="System.Int32, mscorlib">
     <value>127</value>
@@ -635,13 +620,13 @@
     <value>True</value>
   </data>
   <data name="rbAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>946, 3</value>
+    <value>1179, 4</value>
   </data>
   <data name="rbAdd.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="rbAdd.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 24</value>
+    <value>71, 29</value>
   </data>
   <data name="rbAdd.TabIndex" type="System.Int32, mscorlib">
     <value>119</value>
@@ -668,13 +653,13 @@
     <value>True</value>
   </data>
   <data name="rbDelete.Location" type="System.Drawing.Point, System.Drawing">
-    <value>822, 3</value>
+    <value>1027, 4</value>
   </data>
   <data name="rbDelete.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="rbDelete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>78, 24</value>
+    <value>92, 29</value>
   </data>
   <data name="rbDelete.TabIndex" type="System.Int32, mscorlib">
     <value>120</value>
@@ -701,13 +686,13 @@
     <value>True</value>
   </data>
   <data name="rbEdit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>719, 3</value>
+    <value>897, 4</value>
   </data>
   <data name="rbEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="rbEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 24</value>
+    <value>67, 29</value>
   </data>
   <data name="rbEdit.TabIndex" type="System.Int32, mscorlib">
     <value>118</value>
@@ -734,13 +719,13 @@
     <value>True</value>
   </data>
   <data name="rbView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>602, 3</value>
+    <value>752, 4</value>
   </data>
   <data name="rbView.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="rbView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>62, 24</value>
+    <value>74, 29</value>
   </data>
   <data name="rbView.TabIndex" type="System.Int32, mscorlib">
     <value>117</value>
@@ -764,13 +749,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="lblComboFilter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 189</value>
+    <value>12, 235</value>
   </data>
   <data name="lblComboFilter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="lblComboFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 35</value>
   </data>
   <data name="lblComboFilter.TabIndex" type="System.Int32, mscorlib">
     <value>153</value>
@@ -797,10 +782,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterFields_7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>579, 123</value>
+    <value>722, 153</value>
+  </data>
+  <data name="cmbGridFilterFields_7.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterFields_7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 28</value>
+    <value>276, 33</value>
   </data>
   <data name="cmbGridFilterFields_7.TabIndex" type="System.Int32, mscorlib">
     <value>184</value>
@@ -821,10 +809,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterValue_6.Location" type="System.Drawing.Point, System.Drawing">
-    <value>408, 123</value>
+    <value>509, 153</value>
+  </data>
+  <data name="cmbGridFilterValue_6.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterValue_6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 33</value>
   </data>
   <data name="cmbGridFilterValue_6.TabIndex" type="System.Int32, mscorlib">
     <value>186</value>
@@ -845,10 +836,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterFields_6.Location" type="System.Drawing.Point, System.Drawing">
-    <value>180, 123</value>
+    <value>225, 153</value>
+  </data>
+  <data name="cmbGridFilterFields_6.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterFields_6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 28</value>
+    <value>276, 33</value>
   </data>
   <data name="cmbGridFilterFields_6.TabIndex" type="System.Int32, mscorlib">
     <value>183</value>
@@ -869,10 +863,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterValue_7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>807, 123</value>
+    <value>1006, 153</value>
+  </data>
+  <data name="cmbGridFilterValue_7.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterValue_7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 33</value>
   </data>
   <data name="cmbGridFilterValue_7.TabIndex" type="System.Int32, mscorlib">
     <value>187</value>
@@ -893,10 +890,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterFields_8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>978, 123</value>
+    <value>1219, 153</value>
+  </data>
+  <data name="cmbGridFilterFields_8.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterFields_8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 28</value>
+    <value>276, 33</value>
   </data>
   <data name="cmbGridFilterFields_8.TabIndex" type="System.Int32, mscorlib">
     <value>185</value>
@@ -917,10 +917,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbGridFilterValue_8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1206, 123</value>
+    <value>1503, 153</value>
+  </data>
+  <data name="cmbGridFilterValue_8.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cmbGridFilterValue_8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 28</value>
+    <value>205, 33</value>
   </data>
   <data name="cmbGridFilterValue_8.TabIndex" type="System.Int32, mscorlib">
     <value>188</value>
@@ -944,13 +947,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="lblCmbFilterField_3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>407, 220</value>
+    <value>507, 274</value>
   </data>
   <data name="lblCmbFilterField_3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
   </data>
   <data name="lblCmbFilterField_3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 24</value>
+    <value>209, 30</value>
   </data>
   <data name="lblCmbFilterField_3.TabIndex" type="System.Int32, mscorlib">
     <value>174</value>
@@ -974,13 +977,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbComboFilterValue_3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>578, 223</value>
+    <value>720, 278</value>
   </data>
   <data name="cmbComboFilterValue_3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="cmbComboFilterValue_3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 28</value>
+    <value>209, 33</value>
   </data>
   <data name="cmbComboFilterValue_3.TabIndex" type="System.Int32, mscorlib">
     <value>180</value>
@@ -1004,13 +1007,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="lblCmbFilterField_4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>749, 220</value>
+    <value>933, 274</value>
   </data>
   <data name="lblCmbFilterField_4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
   </data>
   <data name="lblCmbFilterField_4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 24</value>
+    <value>209, 30</value>
   </data>
   <data name="lblCmbFilterField_4.TabIndex" type="System.Int32, mscorlib">
     <value>175</value>
@@ -1034,13 +1037,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbComboFilterValue_4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>920, 223</value>
+    <value>1146, 278</value>
   </data>
   <data name="cmbComboFilterValue_4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="cmbComboFilterValue_4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 28</value>
+    <value>209, 33</value>
   </data>
   <data name="cmbComboFilterValue_4.TabIndex" type="System.Int32, mscorlib">
     <value>181</value>
@@ -1064,13 +1067,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="lblCmbFilterField_5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1091, 220</value>
+    <value>1359, 274</value>
   </data>
   <data name="lblCmbFilterField_5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
   </data>
   <data name="lblCmbFilterField_5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 24</value>
+    <value>209, 30</value>
   </data>
   <data name="lblCmbFilterField_5.TabIndex" type="System.Int32, mscorlib">
     <value>176</value>
@@ -1094,13 +1097,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbComboFilterValue_5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1262, 223</value>
+    <value>1572, 278</value>
   </data>
   <data name="cmbComboFilterValue_5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="cmbComboFilterValue_5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 28</value>
+    <value>209, 33</value>
   </data>
   <data name="cmbComboFilterValue_5.TabIndex" type="System.Int32, mscorlib">
     <value>182</value>
@@ -1124,13 +1127,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="lblCmbFilterField_0.Location" type="System.Drawing.Point, System.Drawing">
-    <value>407, 186</value>
+    <value>507, 231</value>
   </data>
   <data name="lblCmbFilterField_0.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
   </data>
   <data name="lblCmbFilterField_0.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 24</value>
+    <value>209, 30</value>
   </data>
   <data name="lblCmbFilterField_0.TabIndex" type="System.Int32, mscorlib">
     <value>168</value>
@@ -1154,13 +1157,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbComboFilterValue_0.Location" type="System.Drawing.Point, System.Drawing">
-    <value>578, 189</value>
+    <value>720, 235</value>
   </data>
   <data name="cmbComboFilterValue_0.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="cmbComboFilterValue_0.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 28</value>
+    <value>209, 33</value>
   </data>
   <data name="cmbComboFilterValue_0.TabIndex" type="System.Int32, mscorlib">
     <value>177</value>
@@ -1184,13 +1187,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="lblCmbFilterField_1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>749, 186</value>
+    <value>933, 231</value>
   </data>
   <data name="lblCmbFilterField_1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
   </data>
   <data name="lblCmbFilterField_1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 24</value>
+    <value>209, 30</value>
   </data>
   <data name="lblCmbFilterField_1.TabIndex" type="System.Int32, mscorlib">
     <value>170</value>
@@ -1214,13 +1217,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbComboFilterValue_1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>920, 189</value>
+    <value>1146, 235</value>
   </data>
   <data name="cmbComboFilterValue_1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="cmbComboFilterValue_1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 28</value>
+    <value>209, 33</value>
   </data>
   <data name="cmbComboFilterValue_1.TabIndex" type="System.Int32, mscorlib">
     <value>178</value>
@@ -1244,13 +1247,13 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="lblCmbFilterField_2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1091, 186</value>
+    <value>1359, 231</value>
   </data>
   <data name="lblCmbFilterField_2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 2, 0</value>
   </data>
   <data name="lblCmbFilterField_2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 24</value>
+    <value>209, 30</value>
   </data>
   <data name="lblCmbFilterField_2.TabIndex" type="System.Int32, mscorlib">
     <value>172</value>
@@ -1274,13 +1277,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="cmbComboFilterValue_2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1262, 189</value>
+    <value>1572, 235</value>
   </data>
   <data name="cmbComboFilterValue_2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="cmbComboFilterValue_2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 28</value>
+    <value>209, 33</value>
   </data>
   <data name="cmbComboFilterValue_2.TabIndex" type="System.Int32, mscorlib">
     <value>179</value>
@@ -1301,13 +1304,13 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="cmbComboTableList.Location" type="System.Drawing.Point, System.Drawing">
-    <value>179, 189</value>
+    <value>223, 235</value>
   </data>
   <data name="cmbComboTableList.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="cmbComboTableList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 28</value>
+    <value>280, 33</value>
   </data>
   <data name="cmbComboTableList.TabIndex" type="System.Int32, mscorlib">
     <value>167</value>
@@ -1325,10 +1328,13 @@
     <value>40</value>
   </data>
   <data name="btnBlackLine.Location" type="System.Drawing.Point, System.Drawing">
-    <value>180, 172</value>
+    <value>225, 213</value>
+  </data>
+  <data name="btnBlackLine.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="btnBlackLine.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1086, 11</value>
+    <value>1358, 14</value>
   </data>
   <data name="btnBlackLine.TabIndex" type="System.Int32, mscorlib">
     <value>189</value>
@@ -1355,10 +1361,13 @@
     <value>Zoom</value>
   </data>
   <data name="btnReload.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1319, 3</value>
+    <value>1644, 4</value>
+  </data>
+  <data name="btnReload.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="btnReload.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 29</value>
+    <value>64, 36</value>
   </data>
   <data name="btnReload.TabIndex" type="System.Int32, mscorlib">
     <value>190</value>
@@ -1376,13 +1385,16 @@
     <value>42</value>
   </data>
   <data name="tableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 27</value>
+    <value>0, 34</value>
+  </data>
+  <data name="tableLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="tableLayoutPanel.RowCount" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1529, 285</value>
+    <value>1911, 356</value>
   </data>
   <data name="tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>108</value>
@@ -1400,7 +1412,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="lblMainFilter" Row="0" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="cmbMainFilter" Row="0" RowSpan="1" Column="4" ColumnSpan="7" /&gt;&lt;Control Name="lblGridFilter" Row="1" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_0" Row="1" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterFields_1" Row="1" RowSpan="1" Column="11" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_3" Row="2" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_4" Row="2" RowSpan="1" Column="11" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_4" Row="2" RowSpan="1" Column="15" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_5" Row="2" RowSpan="1" Column="18" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_1" Row="1" RowSpan="1" Column="15" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterValue_5" Row="2" RowSpan="1" Column="22" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterValue_2" Row="1" RowSpan="1" Column="22" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_2" Row="1" RowSpan="1" Column="18" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_0" Row="1" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_3" Row="2" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="rbMerge" Row="0" RowSpan="1" Column="21" ColumnSpan="2" /&gt;&lt;Control Name="btnDeleteAddMerge" Row="0" RowSpan="1" Column="19" ColumnSpan="2" /&gt;&lt;Control Name="rbAdd" Row="0" RowSpan="1" Column="17" ColumnSpan="2" /&gt;&lt;Control Name="rbDelete" Row="0" RowSpan="1" Column="15" ColumnSpan="2" /&gt;&lt;Control Name="rbEdit" Row="0" RowSpan="1" Column="13" ColumnSpan="2" /&gt;&lt;Control Name="rbView" Row="0" RowSpan="1" Column="11" ColumnSpan="2" /&gt;&lt;Control Name="lblComboFilter" Row="6" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_7" Row="3" RowSpan="1" Column="11" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_6" Row="3" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_6" Row="3" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_7" Row="3" RowSpan="1" Column="15" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_8" Row="3" RowSpan="1" Column="18" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_8" Row="3" RowSpan="1" Column="22" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_3" Row="7" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_3" Row="7" RowSpan="1" Column="11" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_4" Row="7" RowSpan="1" Column="14" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_4" Row="7" RowSpan="1" Column="17" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_5" Row="7" RowSpan="1" Column="20" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_5" Row="7" RowSpan="1" Column="23" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_0" Row="6" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_0" Row="6" RowSpan="1" Column="11" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_1" Row="6" RowSpan="1" Column="14" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_1" Row="6" RowSpan="1" Column="17" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_2" Row="6" RowSpan="1" Column="20" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_2" Row="6" RowSpan="1" Column="23" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboTableList" Row="6" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="btnBlackLine" Row="5" RowSpan="1" Column="4" ColumnSpan="22" /&gt;&lt;Control Name="btnReload" Row="0" RowSpan="1" Column="24" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,6,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,56,Absolute,58,Absolute,57,Absolute,57,Absolute,57,Absolute,57,Absolute,57,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,15,AutoSize,0,AutoSize,0,Absolute,27" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="lblMainFilter" Row="0" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="cmbMainFilter" Row="0" RowSpan="1" Column="4" ColumnSpan="7" /&gt;&lt;Control Name="lblGridFilter" Row="1" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_0" Row="1" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterFields_1" Row="1" RowSpan="1" Column="11" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_3" Row="2" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_4" Row="2" RowSpan="1" Column="11" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_4" Row="2" RowSpan="1" Column="15" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_5" Row="2" RowSpan="1" Column="18" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_1" Row="1" RowSpan="1" Column="15" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterValue_5" Row="2" RowSpan="1" Column="22" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterValue_2" Row="1" RowSpan="1" Column="22" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_2" Row="1" RowSpan="1" Column="18" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_0" Row="1" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_3" Row="2" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="rbMerge" Row="0" RowSpan="1" Column="21" ColumnSpan="2" /&gt;&lt;Control Name="btnDeleteAddMerge" Row="0" RowSpan="1" Column="19" ColumnSpan="2" /&gt;&lt;Control Name="rbAdd" Row="0" RowSpan="1" Column="17" ColumnSpan="2" /&gt;&lt;Control Name="rbDelete" Row="0" RowSpan="1" Column="15" ColumnSpan="2" /&gt;&lt;Control Name="rbEdit" Row="0" RowSpan="1" Column="13" ColumnSpan="2" /&gt;&lt;Control Name="rbView" Row="0" RowSpan="1" Column="11" ColumnSpan="2" /&gt;&lt;Control Name="lblComboFilter" Row="6" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_7" Row="3" RowSpan="1" Column="11" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_6" Row="3" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_6" Row="3" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_7" Row="3" RowSpan="1" Column="15" ColumnSpan="3" /&gt;&lt;Control Name="cmbGridFilterFields_8" Row="3" RowSpan="1" Column="18" ColumnSpan="4" /&gt;&lt;Control Name="cmbGridFilterValue_8" Row="3" RowSpan="1" Column="22" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_3" Row="7" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_3" Row="7" RowSpan="1" Column="11" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_4" Row="7" RowSpan="1" Column="14" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_4" Row="7" RowSpan="1" Column="17" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_5" Row="7" RowSpan="1" Column="20" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_5" Row="7" RowSpan="1" Column="23" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_0" Row="6" RowSpan="1" Column="8" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_0" Row="6" RowSpan="1" Column="11" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_1" Row="6" RowSpan="1" Column="14" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_1" Row="6" RowSpan="1" Column="17" ColumnSpan="3" /&gt;&lt;Control Name="lblCmbFilterField_2" Row="6" RowSpan="1" Column="20" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboFilterValue_2" Row="6" RowSpan="1" Column="23" ColumnSpan="3" /&gt;&lt;Control Name="cmbComboTableList" Row="6" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="btnBlackLine" Row="5" RowSpan="1" Column="4" ColumnSpan="22" /&gt;&lt;Control Name="btnReload" Row="0" RowSpan="1" Column="24" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,8,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,70,Absolute,72,Absolute,71,Absolute,71,Absolute,71,Absolute,71,Absolute,71,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,19,AutoSize,0,AutoSize,0,Absolute,34" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="txtMessages.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -1409,10 +1421,10 @@
     <value>0, 0</value>
   </data>
   <data name="txtMessages.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>2, 4, 2, 4</value>
   </data>
   <data name="txtMessages.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1776, 27</value>
+    <value>2220, 31</value>
   </data>
   <data name="txtMessages.TabIndex" type="System.Int32, mscorlib">
     <value>109</value>
@@ -1430,7 +1442,7 @@
     <value>1</value>
   </data>
   <data name="splitContainer1.Panel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 80, 0, 80</value>
+    <value>0, 100, 0, 100</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Panel1.Name" xml:space="preserve">
     <value>splitContainer1.Panel1</value>
@@ -1457,13 +1469,13 @@
     <value>0, 0</value>
   </data>
   <data name="dataGridView1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 4, 3, 4</value>
+    <value>4, 5, 4, 5</value>
   </data>
   <data name="dataGridView1.RowHeadersWidth" type="System.Int32, mscorlib">
     <value>51</value>
   </data>
   <data name="dataGridView1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1776, 326</value>
+    <value>2220, 408</value>
   </data>
   <data name="dataGridView1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1496,10 +1508,13 @@
     <value>3</value>
   </data>
   <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1776, 739</value>
+    <value>2220, 924</value>
   </data>
   <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
-    <value>409</value>
+    <value>511</value>
+  </data>
+  <data name="splitContainer1.SplitterWidth" type="System.Int32, mscorlib">
+    <value>5</value>
   </data>
   <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
     <value>77</value>
@@ -1520,103 +1535,109 @@
     <value>17, 1</value>
   </metadata>
   <data name="mnuConnectionList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 26</value>
+    <value>303, 34</value>
   </data>
   <data name="mnuConnectionList.Text" xml:space="preserve">
     <value>Recent Connections</value>
   </data>
   <data name="mnuBlankLine3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 26</value>
+    <value>303, 34</value>
   </data>
   <data name="mnuBlankLine3.Text" xml:space="preserve">
     <value>---------------------------</value>
   </data>
   <data name="mnuAddConnection.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 26</value>
+    <value>303, 34</value>
   </data>
   <data name="mnuAddConnection.Text" xml:space="preserve">
     <value>Add Connection</value>
   </data>
   <data name="mnuDeleteConnection.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 26</value>
+    <value>303, 34</value>
   </data>
   <data name="mnuDeleteConnection.Text" xml:space="preserve">
     <value>Delete Connection</value>
   </data>
   <data name="mnuConnections.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 26</value>
+    <value>212, 34</value>
   </data>
   <data name="mnuConnections.Text" xml:space="preserve">
     <value>Connections</value>
   </data>
   <data name="mnuClose.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 26</value>
+    <value>212, 34</value>
   </data>
   <data name="mnuClose.Text" xml:space="preserve">
     <value>&amp;Close</value>
   </data>
   <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 24</value>
+    <value>62, 29</value>
   </data>
   <data name="mnuFile.Text" xml:space="preserve">
     <value>Files</value>
   </data>
   <data name="mnuOpenTables.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 24</value>
+    <value>76, 29</value>
   </data>
   <data name="mnuOpenTables.Text" xml:space="preserve">
     <value>Tables</value>
   </data>
   <data name="mnuTools_ShowITtools.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+    <value>372, 34</value>
   </data>
   <data name="mnuTools_ShowITtools.Text" xml:space="preserve">
     <value>Show the IT tools</value>
   </data>
   <data name="mnuDatabaseInfo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+    <value>372, 34</value>
   </data>
   <data name="mnuDatabaseInfo.Text" xml:space="preserve">
     <value>Database Information</value>
   </data>
   <data name="mnuDuplicateDisplayKeys.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+    <value>372, 34</value>
   </data>
   <data name="mnuDuplicateDisplayKeys.Text" xml:space="preserve">
     <value>Check for Duplicate Display Keys</value>
   </data>
   <data name="mnuForeignKeyMissing.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+    <value>372, 34</value>
   </data>
   <data name="mnuForeignKeyMissing.Text" xml:space="preserve">
     <value>Prepare a new Foreign Key</value>
   </data>
   <data name="mnuPrintCurrentTable.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+    <value>372, 34</value>
   </data>
   <data name="mnuPrintCurrentTable.Text" xml:space="preserve">
     <value>Print Selection</value>
   </data>
-  <data name="mnuOrderComboListsByPK.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+  <data name="mnuToolsBackupDatabase.Size" type="System.Drawing.Size, System.Drawing">
+    <value>372, 34</value>
   </data>
-  <data name="mnuOrderComboListsByPK.Text" xml:space="preserve">
-    <value>Order Combo lists by Primary Key</value>
+  <data name="mnuToolsBackupDatabase.Text" xml:space="preserve">
+    <value>Backup Database</value>
+  </data>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>369, 6</value>
+  </data>
+  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>369, 6</value>
   </data>
   <data name="mnuTools.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 24</value>
+    <value>69, 29</value>
   </data>
   <data name="mnuTools.Text" xml:space="preserve">
     <value>Tools</value>
   </data>
   <data name="mnuHelpFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 26</value>
+    <value>179, 34</value>
   </data>
   <data name="mnuHelpFile.Text" xml:space="preserve">
     <value>Help file</value>
   </data>
   <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>55, 24</value>
+    <value>65, 29</value>
   </data>
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Help</value>
@@ -1625,10 +1646,10 @@
     <value>0, 0</value>
   </data>
   <data name="MainMenu1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 3, 0, 3</value>
+    <value>8, 4, 0, 4</value>
   </data>
   <data name="MainMenu1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1538, 30</value>
+    <value>1922, 37</value>
   </data>
   <data name="MainMenu1.TabIndex" type="System.Int32, mscorlib">
     <value>38</value>
@@ -1655,7 +1676,7 @@
     <value>Bottom</value>
   </data>
   <data name="txtRecordsPerPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 27</value>
+    <value>62, 34</value>
   </data>
   <data name="txtRecordsPerPage.Text" xml:space="preserve">
     <value>200</value>
@@ -1670,7 +1691,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripButton4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 24</value>
+    <value>34, 29</value>
   </data>
   <data name="toolStripButton4.Text" xml:space="preserve">
     <value>toolStripButton4</value>
@@ -1682,7 +1703,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripButton3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 24</value>
+    <value>70, 29</value>
   </data>
   <data name="toolStripButton3.Text" xml:space="preserve">
     <value>Page #</value>
@@ -1697,7 +1718,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripButton2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 24</value>
+    <value>34, 29</value>
   </data>
   <data name="toolStripButton2.Text" xml:space="preserve">
     <value>toolStripButton2</value>
@@ -1711,7 +1732,7 @@
   <data name="toolStripButtonColumnWidth.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAACRSURBVDhPY/j27dt/SjDYACcnJ7IwigEf3n8kCZNswPNb
+        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAACRSURBVDhPY/j27dt/SjDYACcnJ7IwigEf3n8kCZNswPNb
         J/+f6DYF0yA+yQac6Db5f6hWCmwIiE+mC0wIu2DS2Vf/F1x6DefjwlgNyNr34r/0wkdgTMgQDAOQNRNj
         CIoBOg0rMTTDMLIhIHbriZeYBmDTiIxBGkEYxge5liQDsGGQqykyAISpZwAlmIEywMAAAAc1/Jwvt6sN
         AAAAAElFTkSuQmCC
@@ -1727,10 +1748,10 @@
     <value>Narrow</value>
   </data>
   <data name="toolStripBottom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 768</value>
+    <value>0, 960</value>
   </data>
   <data name="toolStripBottom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1538, 27</value>
+    <value>1922, 34</value>
   </data>
   <data name="toolStripBottom.TabIndex" type="System.Int32, mscorlib">
     <value>75</value>
@@ -1750,6 +1771,9 @@
   <data name="&gt;&gt;toolStripBottom.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <metadata name="folderBrowserDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>524, 1</value>
+  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -1757,13 +1781,13 @@
     <value>53</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>8, 20</value>
+    <value>10, 25</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>1538, 795</value>
+    <value>1922, 994</value>
   </data>
   <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 5, 3, 5</value>
+    <value>4, 6, 4, 6</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>DataGridViewForm</value>
@@ -1900,11 +1924,23 @@
   <data name="&gt;&gt;mnuPrintCurrentTable.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuOrderComboListsByPK.Name" xml:space="preserve">
-    <value>mnuOrderComboListsByPK</value>
+  <data name="&gt;&gt;mnuToolsBackupDatabase.Name" xml:space="preserve">
+    <value>mnuToolsBackupDatabase</value>
   </data>
-  <data name="&gt;&gt;mnuOrderComboListsByPK.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuToolsBackupDatabase.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
+    <value>toolStripSeparator2</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator3.Name" xml:space="preserve">
+    <value>toolStripSeparator3</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuHelp.Name" xml:space="preserve">
     <value>mnuHelp</value>
@@ -1947,6 +1983,12 @@
   </data>
   <data name="&gt;&gt;toolStripButtonColumnWidth.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;folderBrowserDialog1.Name" xml:space="preserve">
+    <value>folderBrowserDialog1</value>
+  </data>
+  <data name="&gt;&gt;folderBrowserDialog1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FolderBrowserDialog, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>DataGridViewForm</value>
