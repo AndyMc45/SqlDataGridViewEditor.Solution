@@ -119,7 +119,7 @@ namespace SqlDataGridViewEditor
             }
             catch (Exception exc)
             {
-                MessageBox.Show("Error opening connection: " + exc.Message, "Error opening Connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Properties.MyResources.errorOpeningConnection + exc.Message, Properties.MyResources.errorOpeningConnection, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return strList;
         }

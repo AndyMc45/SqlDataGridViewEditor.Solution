@@ -36,7 +36,7 @@ namespace SqlDataGridViewEditor
         #region Variables
         private FormOptions? formOptions;
         private ConnectionOptions? connectionOptions;
-        private TableOptions? tableOptions;  // Many: writingTable, donotWriteTable, tableHasForiegnKeys, FKFieldInEditingControl, etc. 
+        private TableOptions? tableOptions;  // Many: writingTable, doNotWriteTable, tableHasForiegnKeys, FKFieldInEditingControl, etc. 
         internal ProgramMode programMode = ProgramMode.none;  //none, view, edit, add, delete, merge
         public SqlFactory? currentSql = null;  //builds the sql string via .myInnerJoins, .myFields, .myWheres, my.OrderBys
         internal BindingList<where>? MainFilterList;  // Use this to fill in past main filters in combo box
@@ -85,8 +85,10 @@ namespace SqlDataGridViewEditor
             dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dataGridView1.RowHeadersVisible = false;
 
-            // Define delegate
-            dgvMainFormDelegate = Plugins.ExportForm;  // The way to put this method into the delegate
+            // Define delegate for main form
+            dgvMainFormDelegate = Plugins.ExportForm;
+
+            // Add plugin menus if any
             if (pluginMenus.Items.Count > 0)
             {
                 // Translate plugin menus
@@ -104,22 +106,41 @@ namespace SqlDataGridViewEditor
                         }
                     }
                 }
-                // Add plugin menus
                 MainMenu1.Items.AddRange(pluginMenus.Items);
             }
+
             // Invoke delegate - this will load mainForm into all plugins
             dgvMainFormDelegate(this);
-            // Clone context menu items and add to "tools"
-            ToolStripItemCollection items = GridContextMenu.Items;
-            mnuTools.DropDownItems.AddRange(items);
+
+            // Clone context menu items and add them to Tools menu.
+            ToolStripItem[] items = new ToolStripItem[GridContextMenu.Items.Count];
+            foreach (ToolStripItem tsi in GridContextMenu.Items)
+            {
+                tsi.Tag = tsi.Name;
+                if (tsi is ToolStripSeparator)
+                {
+                    ToolStripSeparator tsiNew = new ToolStripSeparator();
+                    mnuTools.DropDownItems.Add(tsiNew);
+                }
+                else if (tsi is ToolStripMenuItem)
+                {
+                    ToolStripMenuItem tsiNew = new ToolStripMenuItem();
+                    tsiNew.Text = ((ToolStripMenuItem)tsi).Text;
+                    tsiNew.Click += mnuToolsMenuStripItem_Click;
+                    // Tag used to identify this tsi in the click event
+                    tsiNew.Tag = tsi.Name;
+                    mnuTools.DropDownItems.Add(tsiNew);
+                }
+            }
         }
+
 
         private void DataGridViewForm_Load(object sender, EventArgs e)
         {
+            // Set things that don't change even if connection changes
             formOptions = AppData.GetFormOptions();  // Sets initial option values
             formOptions.runTimer = false;  // Set to true when debugging to check what is slow
 
-            // Set things that don't change even if connection changes
             // 0.  Main filter datasource always a list of wheres and 'last' element always the same (i.e. "No Reasearch object")
             field fi = new field("none", "none", DbType.Int32, 4, fieldType.pseudo);
             where wh = new where(fi, "0");
@@ -133,8 +154,7 @@ namespace SqlDataGridViewEditor
             formOptions.loadingMainFilter = false;
             cmbMainFilter.Enabled = false;  // Enabled by EnableMainFilter() when more than one element
 
-            // 1. Set language
-            // 2. Set pageSize
+            // 1. Set pageSize
             formOptions.pageSize = 100;
             string strPageSize = AppData.GetKeyValue("RPP");  // If not set, this will return string.Empty
             int newPageSize = 0;
@@ -147,21 +167,20 @@ namespace SqlDataGridViewEditor
             }
             txtRecordsPerPage.Text = formOptions.pageSize.ToString();
 
-            // 3. Menu options from last save
-            // 4. Set font size
+            // 2. Set font size
             DesignControlsOnFormLoad();  // Set font size and other features of various controls
 
-            // 5. Load Database List (in files menu)
+            // 3. Load Database List (in files menu)
             load_mnuDatabaseList();  // Add previously open databases to databases menu dropdown list
 
-            // 6. Open Log file
+            // 4. Open Log file
             // openLogFile(); //errors ignored 
 
-            // 7. Open last connection 
+            // 5. Open last connection 
             string msg = OpenConnection();  // Returns any error msg
             if (msg != string.Empty) { msgText(msg); txtMessages.ForeColor = System.Drawing.Color.Red; }
 
-            // 8. Build English database - will do nothing if Boolean BuildingUpEnglishDatabase in MultiLingual.cs set to false
+            // 6. Set Mode and filters to "none".
             programMode = ProgramMode.none;
             SetAllFiltersByMode(); // Will disable filters and call SetTableLayoutPanelHeight();
 
@@ -387,8 +406,8 @@ namespace SqlDataGridViewEditor
             }
             catch (System.Exception excep)
             {
-                sb.AppendLine("Error opening connection.");
-                MessageBox.Show("Error opening the connection. " + Environment.NewLine + excep.Message + Environment.NewLine + "Error Number: " + Information.Err().Number.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                sb.AppendLine(Properties.MyResources.errorOpeningConnection);
+                MessageBox.Show(Properties.MyResources.errorOpeningConnection + Environment.NewLine + excep.Message + Environment.NewLine + "Error Number: " + Information.Err().Number.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CloseConnection();
             }
             return sb.ToString();
@@ -1075,6 +1094,20 @@ namespace SqlDataGridViewEditor
 
         #region EVENTS - Main Menu events
 
+        private void mnuToolsMenuStripItem_Click(object sender, EventArgs e)
+        {
+            foreach (ToolStripItem gtsi in GridContextMenu.Items)
+            {
+                if (gtsi is ToolStripMenuItem)
+                {
+                    ToolStripMenuItem tsi = (ToolStripMenuItem)sender;
+                    if (tsi.Tag == gtsi.Tag)
+                    {
+                        gtsi.PerformClick();
+                    }
+                }
+            }
+        }
         private void mnuClose_Click(object sender, EventArgs e)
         {
             AppData.StoreFormOptions(formOptions);
@@ -1132,7 +1165,7 @@ namespace SqlDataGridViewEditor
                         sbWhere.Append("))");
                         currentSql.strStaticWhereClause = sbWhere.ToString(); // Will change currentSql.returnSql();
                         // tableOptions.strStaticWhereClause = currentSql.returnFixDatabaseSql(sbWhere.ToString());
-                        msgText("Each of the rows has an empty foreign keys - (if there are no rows, there are no problem rows).");
+                        msgText(Properties.MyResources.eachOfDisplayedRowsHasEmptyFK + "  " + Properties.MyResources.ifNoDisplayedRowsNoEmptyFK);
                         writeGrid_NewPage();
                         //SELECT *  FROM [StudentDegrees] 
                         //WHERE(NOT EXISTS (SELECT studentID FROM Students WHERE[students].studentID = [StudentDegrees].studentID) )
@@ -1169,13 +1202,13 @@ namespace SqlDataGridViewEditor
             }
             if (DaDt.dt.Rows.Count == 0)
             {
-                msgTextError("Everything O.K. No duplicates!");
+                msgTextError(Properties.MyResources.EverythingOkNoDuplicates);
                 return;
             }
             msgText("Count: " + DaDt.dt.Rows.Count.ToString());
             if (!tableOptions.mergingDuplicateKeys)
             {
-                DialogResult reply = MessageBox.Show("Do you want to merge duplicate display key rows?", "Merge Keys", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult reply = MessageBox.Show(Properties.MyResources.doYouWantToMergeDuplicateKeyRows, "Merge Keys", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (reply == DialogResult.Yes) { tableOptions.mergingDuplicateKeys = true; }
             }
             List<String> andConditions = new List<String>();
@@ -1390,7 +1423,7 @@ namespace SqlDataGridViewEditor
         //----------------------------------------------------------------------------------------------------------------------
 
         #region EVENTS - Context Menu events
-        private void GridContextMenu_OrderCombolByPK_Click(object sender, EventArgs e)
+        private void GridContextMenu_OrderComboByPK_Click(object sender, EventArgs e)
         {
             formOptions.orderComboListsByPK = GridContextMenu_OrderCombolByPK.Checked;
             writeGrid_NewTable(currentSql.myTable);
@@ -1513,11 +1546,11 @@ namespace SqlDataGridViewEditor
                         cmbMainFilter.Enabled = true;
                         formOptions.loadingMainFilter = false;
                         writeGrid_NewTable(currentSql.myTable);  // Shows one row, which is selected
-                        txtMessages.Text = String.Format("The slected row is not the value of a foreign key.");
+                        txtMessages.Text = String.Format(Properties.MyResources.selectedRowIsNotValueOfForeignKey);
                         return;
                     }
                 }
-                msgTextError("All keys in this page are in use");
+                msgTextError(Properties.MyResources.allKeysInThisPageAreInUse);
             }
         }
 
@@ -1528,7 +1561,7 @@ namespace SqlDataGridViewEditor
             {
                 if (dataGridView1.SelectedRows.Count != 1)
                 {
-                    msgTextError("Please select exactly one row.");
+                    msgTextError(Properties.MyResources.selectExactlyOneRow);
                     return;
                 }
 
@@ -1969,7 +2002,7 @@ namespace SqlDataGridViewEditor
                     DataRow[] drArray = new DataRow[1];
                     drArray[0] = dr;
                     int i = MsSql.currentDA.Update(drArray);
-                    msgText("Rows Modified: ");
+                    msgText(Properties.MyResources.numberOfRowsModified + " : ");
                     msgTextAdd(i.ToString());
                     // Write the grid if this is a foreign key
                     if (i > 0)
@@ -2601,7 +2634,7 @@ namespace SqlDataGridViewEditor
                 }
                 if (dataGridView1.SelectedRows.Count != 2)
                 {
-                    msgTextError("Please select exactly two rows");
+                    msgTextError(Properties.MyResources.selectExactlyTwoRows);
                     return;
                 }
                 // Get two PK values
@@ -2628,7 +2661,7 @@ namespace SqlDataGridViewEditor
             {
                 if (dataGridView1.SelectedRows.Count != 1)
                 {
-                    msgTextError("Please select row to delete");
+                    msgTextError(Properties.MyResources.selectRowToDelete);
                     return;
                 }
                 // int index = dataGridView1.Rows.IndexOf(dataGridView1.SelectedRows[0]);
@@ -2636,7 +2669,7 @@ namespace SqlDataGridViewEditor
                 int colIndex = dataGridView1.Columns[PKfield.fieldName].Index;
                 if (colIndex != 0)
                 {
-                    msgTextError("The first column must be the primary key.");
+                    msgTextError(Properties.MyResources.firstColumnMustBePrimaryKey);
                     return;
                 }
                 int PKvalue = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[colIndex].Value);
@@ -2674,7 +2707,7 @@ namespace SqlDataGridViewEditor
                             {
                                 if (i > 0)  // ignore the first yellow dropdown if empty
                                 {
-                                    MessageBox.Show(String.Format("Please select a value for {0}", cmbLabel), "Please select a value.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    MessageBox.Show(String.Format(Properties.MyResources.pleaseSelectAvalueFor0, cmbLabel), Properties.MyResources.mustSelectAvalue, MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     return;
                                 }
                             }
@@ -2733,7 +2766,7 @@ namespace SqlDataGridViewEditor
 
                     if (dadt.dt.Rows.Count > 0)
                     {
-                        MessageBox.Show(String.Format("You already have this object in your database!"), "Display key value array must be unique.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(Properties.MyResources.youAlreadyHaveThisObjectInDatabase, Properties.MyResources.displayKeyValueArrayMustBeUnique, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         currentSql.strStaticWhereClause = string.Empty;
                         rbView.Checked = true;
                         writeGrid_NewFilter(true); return;
@@ -2874,9 +2907,9 @@ namespace SqlDataGridViewEditor
                                         fkTablePKs.Add(dr3[fkTablePKfield.fieldName].ToString());
                                     }
                                     msgSB.Clear();
-                                    msgSB.AppendLine(String.Format("You need to merge rows in {0}.", TableWithFK, dadt2.dt.Rows.Count.ToString()));
-                                    msgSB.AppendLine(String.Format("Rows that should be merged: {0}", String.Join(", ", fkTablePKs)));
-                                    msgSB.AppendLine(String.Format("Do you want to see these rows?", String.Join(", ", fkTablePKs)));
+                                    msgSB.AppendLine(String.Format(Properties.MyResources.youNeedtoMergeRowIn0, TableWithFK, dadt2.dt.Rows.Count.ToString()));
+                                    msgSB.AppendLine(String.Format(Properties.MyResources.rowsThatShouldBeMerged0, String.Join(", ", fkTablePKs)));
+                                    msgSB.AppendLine(String.Format(Properties.MyResources.doYouWantToSeeTheseRows, String.Join(", ", fkTablePKs)));
                                     DialogResult result = MessageBox.Show(msgSB.ToString(), "Important message", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
                                     if (result == DialogResult.Yes)
                                     {
@@ -2905,8 +2938,8 @@ namespace SqlDataGridViewEditor
                         catch (Exception ex)
                         {
                             msgSB.Clear();
-                            msgSB.AppendLine(String.Format("Error in updated table {0}.", TableWithFK));
-                            msgSB.AppendLine("Database Error Messsage: " + ex.Message);
+                            msgSB.AppendLine(String.Format(Properties.MyResources.errorInUpdatingTable0, TableWithFK));
+                            msgSB.AppendLine(Properties.MyResources.databaseErrorMessage + " : " + ex.Message);
                             MessageBox.Show(msgSB.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             return false;
                         }

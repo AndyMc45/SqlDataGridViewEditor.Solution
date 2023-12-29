@@ -1,4 +1,5 @@
-﻿<root>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -665,7 +666,7 @@
     <value>120</value>
   </data>
   <data name="rbDelete.Text" xml:space="preserve">
-    <value> Delete</value>
+    <value>Delete</value>
   </data>
   <data name="&gt;&gt;rbDelete.Name" xml:space="preserve">
     <value>rbDelete</value>
@@ -1679,7 +1680,7 @@
     <value>62, 34</value>
   </data>
   <data name="txtRecordsPerPage.Text" xml:space="preserve">
-    <value>200</value>
+    <value>100</value>
   </data>
   <data name="txtRecordsPerPage.TextBoxTextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
     <value>Center</value>

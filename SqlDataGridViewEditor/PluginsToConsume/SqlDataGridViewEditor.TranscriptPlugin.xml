@@ -51,7 +51,7 @@
         </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.btnPrintCourseGrades_Text">
             <summary>
-              Looks up a localized string similar to Print Course Grades.
+              Looks up a localized string similar to Print Course Grade Sheet.
             </summary>
         </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.btnPrintCourseRole_Text">
@@ -72,6 +72,11 @@
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.courseRole">
             <summary>
               Looks up a localized string similar to Course Role.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.doYouWantToOpenInWord">
+            <summary>
+              Looks up a localized string similar to Do you want to open the file in Word?.
             </summary>
         </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.ErrorFillingTranscriptTable0">
@@ -124,9 +129,34 @@
               Looks up a localized string similar to Transcript Template :.
             </summary>
         </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.openInWord">
+            <summary>
+              Looks up a localized string similar to Open in Word.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.selectCourseInTable01">
+            <summary>
+              Looks up a localized string similar to Select Course in {0} table (a descendant of the {1} table).
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.selectExactlyOneRow">
+            <summary>
+              Looks up a localized string similar to Please select exactly one row in the table.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.selectOneRowinTable0or1">
+            <summary>
+              Looks up a localized string similar to Please select 1 row in the {0} table or {1} table.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.selectStudentInTable01">
+            <summary>
+              Looks up a localized string similar to Select Student in {0} table (a descendant of the {1} table).
+            </summary>
+        </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.tabActions_Text">
             <summary>
-              Looks up a localized string similar to Actions.
+              Looks up a localized string similar to Print.
             </summary>
         </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.tabExit_Text">

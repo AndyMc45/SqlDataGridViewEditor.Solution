@@ -121,7 +121,7 @@
     <value>英文成績單列印</value>
   </data>
   <data name="btnPrintCourseGrades.Text" xml:space="preserve">
-    <value>課程成績單列印</value>
+    <value>課程成績單表列印</value>
   </data>
   <data name="btnPrintCourseRole.Text" xml:space="preserve">
     <value>點名表列印</value>
@@ -188,5 +188,23 @@
   </data>
   <data name="toolStripBtnNarrowWide.Text" xml:space="preserve">
     <value>放大 </value>
+  </data>
+  <data name="openInWord" xml:space="preserve">
+    <value>在 Word 中開啟</value>
+  </data>
+  <data name="selectCourseInTable01" xml:space="preserve">
+    <value>在 {0} 表（{1} 表的後代）中選擇課程</value>
+  </data>
+  <data name="selectExactlyOneRow" xml:space="preserve">
+    <value>請僅選擇表格中的一行</value>
+  </data>
+  <data name="selectOneRowinTable0or1" xml:space="preserve">
+    <value>請選擇 {0} 表或 {1} 表中的 1 行</value>
+  </data>
+  <data name="selectStudentInTable01" xml:space="preserve">
+    <value>在 {0} 表（{1} 表的後代）中選擇 學生</value>
+  </data>
+  <data name="doYouWantToOpenInWord" xml:space="preserve">
+    <value>您想在 Word 中開啟該檔案嗎？</value>
   </data>
 </root>

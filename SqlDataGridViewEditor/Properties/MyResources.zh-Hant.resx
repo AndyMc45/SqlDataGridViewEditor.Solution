@@ -117,8 +117,44 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="allKeysInThisPageAreInUse" xml:space="preserve">
+    <value>本頁所有主鍵均已使用</value>
+  </data>
+  <data name="databaseErrorMessage" xml:space="preserve">
+    <value>資料庫錯誤訊息</value>
+  </data>
+  <data name="displayKeyValueArrayMustBeUnique" xml:space="preserve">
+    <value>顯示鍵值數組必須是唯一的。</value>
+  </data>
+  <data name="doYouWantToMergeDuplicateKeyRows" xml:space="preserve">
+    <value>您想合併重複的顯示關鍵行嗎？</value>
+  </data>
+  <data name="doYouWantToSeeTheseRows" xml:space="preserve">
+    <value>您想查看這些行嗎？</value>
+  </data>
+  <data name="eachOfDisplayedRowsHasEmptyFK" xml:space="preserve">
+    <value>顯示的每一行都有一個空的外鍵。</value>
+  </data>
   <data name="EnterConnectionStringDirections" xml:space="preserve">
     <value>輸入連接字串。 括號 {} 中的數字代表上面給出的值。 密碼使用 {3}。</value>
+  </data>
+  <data name="errorBackingUpDatabase" xml:space="preserve">
+    <value>備份資料庫時發生錯誤。</value>
+  </data>
+  <data name="errorInUpdatingTable0" xml:space="preserve">
+    <value>更新表 {0} 時發生錯誤。</value>
+  </data>
+  <data name="errorOpeningConnection" xml:space="preserve">
+    <value>開啟連線時出錯</value>
+  </data>
+  <data name="EverythingOkNoDuplicates" xml:space="preserve">
+    <value>一切還好。 沒有重複！</value>
+  </data>
+  <data name="firstColumnMustBePrimaryKey" xml:space="preserve">
+    <value>第一列必須是主鍵。</value>
+  </data>
+  <data name="ifNoDisplayedRowsNoEmptyFK" xml:space="preserve">
+    <value>如果沒有顯示任何行，則表示沒有未使用的外鍵。</value>
   </data>
   <data name="MainFilterNotSet" xml:space="preserve">
     <value>沒有主要篩選</value>
@@ -127,9 +163,33 @@
   <data name="MustPassTestBeforeOKButton" xml:space="preserve">
     <value>您必須通過測試才能啟用 "OK "按鈕。</value>
   </data>
+  <data name="mustSelectAvalue" xml:space="preserve">
+    <value>必須選擇一個值</value>
+  </data>
   <data name="NoPreviousConnectionSet" xml:space="preserve">
     <value>沒有連結的紀錄</value>
     <comment>Used in datagridviewForm.cs</comment>
+  </data>
+  <data name="numberOfRowsModified" xml:space="preserve">
+    <value>修改的行數</value>
+  </data>
+  <data name="pleaseSelectAvalueFor0" xml:space="preserve">
+    <value>請為 {0} 選擇一個值</value>
+  </data>
+  <data name="rowsThatShouldBeMerged0" xml:space="preserve">
+    <value>應合併的行：{0}</value>
+  </data>
+  <data name="selectedRowIsNotValueOfForeignKey" xml:space="preserve">
+    <value>所選行不是外鍵的值。</value>
+  </data>
+  <data name="selectExactlyOneRow" xml:space="preserve">
+    <value>請僅選擇表格中的一行</value>
+  </data>
+  <data name="selectExactlyTwoRows" xml:space="preserve">
+    <value>請恰好選擇表格中的兩行</value>
+  </data>
+  <data name="selectRowToDelete" xml:space="preserve">
+    <value>請選擇要刪除的行</value>
   </data>
   <data name="warning" xml:space="preserve">
     <value>警 告</value>
@@ -137,5 +197,11 @@
   <data name="XrowsPageY" xml:space="preserve">
     <value>{0} 列, 第 {1} 頁</value>
     <comment>Used in form caption at the top of the form</comment>
+  </data>
+  <data name="youAlreadyHaveThisObjectInDatabase" xml:space="preserve">
+    <value>您的資料庫中已經有這個物件了！</value>
+  </data>
+  <data name="youNeedtoMergeRowIn0" xml:space="preserve">
+    <value>您需要合併 {0} 中的行。</value>
   </data>
 </root>

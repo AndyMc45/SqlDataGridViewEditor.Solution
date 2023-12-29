@@ -412,7 +412,7 @@
             GridContextMenu_OrderCombolByPK.CheckOnClick = true;
             GridContextMenu_OrderCombolByPK.Name = "GridContextMenu_OrderCombolByPK";
             resources.ApplyResources(GridContextMenu_OrderCombolByPK, "GridContextMenu_OrderCombolByPK");
-            GridContextMenu_OrderCombolByPK.Click += GridContextMenu_OrderCombolByPK_Click;
+            GridContextMenu_OrderCombolByPK.Click += GridContextMenu_OrderComboByPK_Click;
             // 
             // GridContextMenu_Seperator
             // 

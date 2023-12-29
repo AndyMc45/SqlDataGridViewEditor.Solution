@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
+﻿using System.Data;
 
 
 namespace SqlDataGridViewEditor
@@ -40,7 +35,7 @@ namespace SqlDataGridViewEditor
                 else if (myDisplayKey)
                 {
                     dkNumber++;  // Increase dkNumber
-                    if(dkNumber == formOptions.DkColorArray.Count()) { dkNumber = 0; }
+                    if (dkNumber == formOptions.DkColorArray.Count()) { dkNumber = 0; }
                     dgv.Columns[i].HeaderCell.Style.BackColor = formOptions.DkColorArray[dkNumber];
                     dgv.Columns[i].HeaderCell.Style.SelectionBackColor = formOptions.DkColorArray[dkNumber];
                     // Next two used below to handle a displaykey of foreign key
@@ -114,10 +109,10 @@ namespace SqlDataGridViewEditor
                     //case DbType.Int64:
                     case DbType.Byte:
                     case DbType.SByte:   // -127 to 127 - signed byte
-                    // case DbType.Double:
-                    // case DbType.Single:
-                    dgv.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    if (narrowColumns)
+                                         // case DbType.Double:
+                                         // case DbType.Single:
+                        dgv.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        if (narrowColumns)
                         {
                             if (dataHelper.isTablePrimaryKeyField(myFields[i]) || dataHelper.isForeignKeyField(myFields[i]))
                             {
@@ -146,10 +141,10 @@ namespace SqlDataGridViewEditor
                             {
                                 r = r + 1;
                                 if (r > 40) { break; }
-                                if (row.Cells[i].Value != null) 
-                                { 
-                                int thisItemWidth = (int)g.MeasureString(row.Cells[i].Value.ToString(), font).Width;
-                                longestWidth = Math.Max(thisItemWidth, longestWidth);
+                                if (row.Cells[i].Value != null)
+                                {
+                                    int thisItemWidth = (int)g.MeasureString(row.Cells[i].Value.ToString(), font).Width;
+                                    longestWidth = Math.Max(thisItemWidth, longestWidth);
                                 }
                             }
                         }
@@ -174,7 +169,7 @@ namespace SqlDataGridViewEditor
         {
             if (translate)
             {
-            // Rename the header rows (if a plugin has added some colHeaderTranslation.keys)
+                // Rename the header rows (if a plugin has added some colHeaderTranslation.keys)
                 foreach (DataGridViewColumn col in dgv.Columns)
                 {
                     string headerText = col.HeaderText;
@@ -206,9 +201,9 @@ namespace SqlDataGridViewEditor
                     returnValue = translations[englishKey.ToLower()];
                     return returnValue;
                 }
-                else if(englishKey.Length >2) 
+                else if (englishKey.Length > 2)
                 {
-                    if (englishKey.Substring(englishKey.Length - 2,2) == "ID")
+                    if (englishKey.Substring(englishKey.Length - 2, 2) == "ID")
                     {
                         string shortKey = englishKey.Substring(0, englishKey.Length - 2);
                         if (translations.ContainsKey(shortKey.ToLower()))

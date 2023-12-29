@@ -90,7 +90,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         }
 
         #region variables
-        internal Job myJob { get; set; }   // Must be loaded to do anything
+        public Job myJob { get; set; }   // Must be loaded to do anything
         public int studentDegreeID { get; set; }
         public int courseTermID { get; set; }
         public string uiCulture { get; set; }
@@ -121,105 +121,103 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             SetPathLabel(AppData.GetKeyValue("DocumentFolder"), lblPathDocumentFolder);
             SetPathLabel(AppData.GetKeyValue("DatabaseBackupFolder"), lblPathDatabaseFolder);
             SetPathLabel(AppData.GetKeyValue("TranscriptTemplate"), lblPathTransTemplate);
-            SetPathLabel(AppData.GetKeyValue("CourseRoleTemplate"), lblPathCourseRoleTemplate);
+            SetPathLabel(AppData.GetKeyValue("ClassRoleTemplate"), lblPathCourseRoleTemplate);
             SetPathLabel(AppData.GetKeyValue("EnglishTranscriptTemplate"), lblPathEnglishTranscriptTemplate);
-            SetPathLabel(AppData.GetKeyValue("CourseGradesTemplate"), lblPathCourseGradeTemplate);
-
-            toolStripBtnNarrow.Enabled = false;  // Viewing options
-            if (myJob == Job.options)
+            SetPathLabel(AppData.GetKeyValue("CourseGradeSheetTemplate"), lblPathCourseGradeTemplate);
+            toolStripBtnNarrow.Enabled = false;  // default value
+            if (myJob == frmTranscriptOptions.Job.options)
             {
                 // 1. - Nothing to do
                 tabControl1.SelectedTab = tabOptions;
             }
-            else if (myJob == Job.printTranscript)
+            else
             {
-                // 2.1 Fill studentDegree dgv
-                TranscriptHelper.fillStudentDegreeDataRow(studentDegreeID, ref sbErrors);
-                if (sbErrors.Length > 0)
+                if (myJob == frmTranscriptOptions.Job.printTranscript)
                 {
-                    MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                else
-                {
-                    // Load DGV
-                    dgvStudent.DataSource = PrintToWord.studentDegreeInfoDT;
-                    sqlStudentDegrees = new SqlFactory(TableName.studentDegrees, 0, 0);  // Only needed to allow following
-                    dgvHelper.SetHeaderColorsOnWritePage(dgvStudent, sqlStudentDegrees.myTable, sqlStudentDegrees.myFields);
-                    dgvHelper.SetNewColumnWidths(dgvStudent, sqlStudentDegrees.myFields, true);
-                    dgvHelper.TranslateHeaders(dgvStudent);
-                    // 2.2 Fill transcript
-                    TranscriptHelper.fillStudentTranscriptTable(studentDegreeID, ref sbErrors);
+                    // 2.1 Fill studentDegree dgv
+                    TranscriptHelper.fillStudentDegreeDataRow(studentDegreeID, ref sbErrors);
                     if (sbErrors.Length > 0)
                     {
                         MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     else
                     {
-                        // Load DGV
-                        dgvTranscript.DataSource = PrintToWord.transcriptDT;
-                        sqlTranscript = new SqlFactory(TableName.transcript, 0, 0, false); // Danger: must be same as in fillStudentTranscript
-                        dgvHelper.SetHeaderColorsOnWritePage(dgvTranscript, sqlTranscript.myTable, sqlTranscript.myFields);
-                        dgvHelper.SetNewColumnWidths(dgvTranscript, sqlTranscript.myFields, true);
-
-                        dgvHelper.TranslateHeaders(dgvTranscript);
-
-                        //2.3 Fill Grad Requirements DT
-                        TranscriptHelper.fillGradRequirementsDT(ref sbErrors);
+                        // Load student info DGV
+                        dgvStudent.DataSource = PrintToWord.studentDegreeInfoDT;
+                        sqlStudentDegrees = new SqlFactory(TableName.studentDegrees, 0, 0);  // Only needed to allow following
+                        dgvHelper.SetHeaderColorsOnWritePage(dgvStudent, sqlStudentDegrees.myTable, sqlStudentDegrees.myFields);
+                        dgvHelper.SetNewColumnWidths(dgvStudent, sqlStudentDegrees.myFields, true);
+                        dgvHelper.TranslateHeaders(dgvStudent);
+                        // 2.2 Fill transcript
+                        TranscriptHelper.fillStudentTranscriptTable(studentDegreeID, ref sbErrors);
                         if (sbErrors.Length > 0)
                         {
                             MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                         else
                         {
-                            // Load dgv
-                            dgvRequirements.DataSource = PrintToWord.studentReqDT;
-                            sqlGradReq = new SqlFactory("StudentReq", 0, 0);
-                            dgvHelper.SetHeaderColorsOnWritePage(dgvRequirements, sqlGradReq.myTable, sqlGradReq.myFields);
-                            dgvHelper.SetNewColumnWidths(dgvRequirements, sqlGradReq.myFields, true);
-                            dgvHelper.TranslateHeaders(dgvRequirements);
-                            tabControl1.SelectedTab = tabTranscript;   // Enables proper buttons - do after above
+                            // Load student transcript DGV
+                            dgvTranscript.DataSource = PrintToWord.transcriptDT;
+                            sqlTranscript = new SqlFactory(TableName.transcript, 0, 0, false); // Danger: must be same as in fillStudentTranscript
+                            dgvHelper.SetHeaderColorsOnWritePage(dgvTranscript, sqlTranscript.myTable, sqlTranscript.myFields);
+                            dgvHelper.SetNewColumnWidths(dgvTranscript, sqlTranscript.myFields, true);
+                            dgvHelper.TranslateHeaders(dgvTranscript);
+
+                            //2.3 Fill Grad Requirements DT
+                            TranscriptHelper.fillGradRequirementsDT(ref sbErrors);
+                            if (sbErrors.Length > 0)
+                            {
+                                MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                            else
+                            {
+                                // Load student requirements dgv
+                                dgvRequirements.DataSource = PrintToWord.studentReqDT;
+                                sqlGradReq = new SqlFactory("StudentReq", 0, 0);
+                                dgvHelper.SetHeaderColorsOnWritePage(dgvRequirements, sqlGradReq.myTable, sqlGradReq.myFields);
+                                dgvHelper.SetNewColumnWidths(dgvRequirements, sqlGradReq.myFields, true);
+                                dgvHelper.TranslateHeaders(dgvRequirements);
+                            }
                         }
                     }
                 }
-            }
-            else if (myJob == Job.printClassRole)
-            {
-                // 3.1 Fill DT and then coureRole dgv - using 1st dgv panel (dgvStudent)
-                TranscriptHelper.fillCourseTermDataRow(courseTermID, ref sbErrors);
-                if (sbErrors.Length > 0)
+                else if (myJob == frmTranscriptOptions.Job.printClassList)
                 {
-                    MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                else
-                {
-                    // Fill dgv
-                    dgvStudent.DataSource = PrintToWord.courseTermInfoDT;  // using dgvStudent, i.e. 1st tab.
-                    tabStudent.Text = "Course";
-                    sqlCourseTermInfo = new SqlFactory(TableName.courseTerms, 0, 0);  // Only needed to allow following
-                    // Using the first dgv which is called 'dgvStudent'
-                    dgvHelper.SetHeaderColorsOnWritePage(dgvStudent, sqlCourseTermInfo.myTable, sqlCourseTermInfo.myFields);
-                    dgvHelper.SetNewColumnWidths(dgvStudent, sqlCourseTermInfo.myFields, true);
-
-                    dgvHelper.TranslateHeaders(dgvStudent);
-
-                    // 3.2 Fill CourseRoletable
-                    TranscriptHelper.fillCourseRoleTable(courseTermID, ref sbErrors);  // Will select transcripts rows which are in this course
+                    // 3.1 Fill DT and then coureRole dgv - using 1st dgv panel (dgvStudent)
+                    TranscriptHelper.fillCourseTermDataRow(courseTermID, ref sbErrors);
                     if (sbErrors.Length > 0)
                     {
                         MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     else
                     {
-                        // Load DGV
-                        dgvTranscript.DataSource = PrintToWord.transcriptDT;
-                        tabTranscript.Text = "Course Role";
-                        SqlFactory sqlTranscript = new SqlFactory(TableName.transcript, 0, 0, false); // Danger: must be same as in fillStudentTranscript
-                        dgvHelper.SetHeaderColorsOnWritePage(dgvTranscript, sqlTranscript.myTable, sqlTranscript.myFields);
-                        dgvHelper.SetNewColumnWidths(dgvTranscript, sqlTranscript.myFields, true);
-                        dgvHelper.TranslateHeaders(dgvTranscript);
-                        tabControl1.SelectedTab = tabTranscript;
+                        // Fill course Term info dgv
+                        dgvStudent.DataSource = PrintToWord.courseTermInfoDT;  // using dgvStudent, i.e. 1st tab.
+                        sqlCourseTermInfo = new SqlFactory(TableName.courseTerms, 0, 0);  // Only needed to allow following
+                        // Using the first dgv which is called 'dgvStudent'
+                        dgvHelper.SetHeaderColorsOnWritePage(dgvStudent, sqlCourseTermInfo.myTable, sqlCourseTermInfo.myFields);
+                        dgvHelper.SetNewColumnWidths(dgvStudent, sqlCourseTermInfo.myFields, true);
+
+                        dgvHelper.TranslateHeaders(dgvStudent);
+
+                        // 3.2 Fill Course role table
+                        TranscriptHelper.fillCourseRoleTable(courseTermID, ref sbErrors);  // Will select transcripts rows which are in this course
+                        if (sbErrors.Length > 0)
+                        {
+                            MessageBox.Show(sbErrors.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        else
+                        {
+                            // Load course transcript DGV
+                            dgvTranscript.DataSource = PrintToWord.transcriptDT;
+                            sqlTranscript = new SqlFactory(TableName.transcript, 0, 0, false); // Danger: must be same as in fillStudentTranscript
+                            dgvHelper.SetHeaderColorsOnWritePage(dgvTranscript, sqlTranscript.myTable, sqlTranscript.myFields);
+                            dgvHelper.SetNewColumnWidths(dgvTranscript, sqlTranscript.myFields, true);
+                            dgvHelper.TranslateHeaders(dgvTranscript);
+                        }
                     }
                 }
+                tabControl1_SelectedIndexChanged();
             }
         }
 
@@ -244,6 +242,11 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            tabControl1_SelectedIndexChanged();
+        }
+        private void tabControl1_SelectedIndexChanged()
+        {
+
             toolStripBtnNarrow.Enabled = false;  // Default
             dgvCurrentlyViewing = null; // default
             sqlCurrentlyViewing = null; // default
@@ -256,13 +259,18 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             {
                 btnPrintCourseRole.Enabled = false;
                 btnPrintTranscript.Enabled = false;
-                if (myJob == Job.printTranscript && sqlStudentDegrees != null)
+                btnPrintCourseGrades.Enabled = false;
+                btnPrintEnglishTranscript.Enabled = false;
+
+                if (myJob == frmTranscriptOptions.Job.printTranscript && sqlStudentDegrees != null)
                 {
                     btnPrintTranscript.Enabled = true;
+                    btnPrintEnglishTranscript.Enabled = true;
                 }
-                if (myJob == Job.printClassRole && sqlCourseTermInfo != null)
+                else if (myJob == frmTranscriptOptions.Job.printClassList && sqlCourseTermInfo != null)
                 {
                     btnPrintCourseRole.Enabled = true;
+                    btnPrintCourseGrades.Enabled = true;
                 }
             }
             else if (tabControl1.SelectedTab == tabStudent)  // May be Printing Transcript or printing Course Role
@@ -306,18 +314,35 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
         private void btnPrintTranscript_Click(object sender, EventArgs e)
         {
-            PrintToWord.printTranscript(uiCultureFull, ref sbErrors);
-        }
-        private void btnPrintCourseRole_Click(object sender, EventArgs e)
-        {
-
+            PrintToWord.printTranscript(PrintJob.printTranscript, ref sbErrors);
+            if (sbErrors.Length > 0)
+            {
+                MessageBox.Show(sbErrors.ToString(), "Errors", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void btnPrintEnglishTranscript_Click(object sender, EventArgs e)
         {
-
+            PrintToWord.printTranscript(PrintJob.printEnglishTranscript, ref sbErrors);
+            if (sbErrors.Length > 0)
+            {
+                MessageBox.Show(sbErrors.ToString(), "Errors", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void btnPrintClassRole_Click(object sender, EventArgs e)
+        {
+            PrintToWord.printCourseStudentList(PrintJob.printClassRole, ref sbErrors);
+            if (sbErrors.Length > 0)
+            {
+                MessageBox.Show(sbErrors.ToString(), "Errors", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void btnPrintCourseGrades_Click(object sender, EventArgs e)
         {
+            PrintToWord.printCourseStudentList(PrintJob.printCourseGradeSheet, ref sbErrors);
+            if (sbErrors.Length > 0)
+            {
+                MessageBox.Show(sbErrors.ToString(), "Errors", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
         }
 
@@ -378,7 +403,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             if (filePath != String.Empty)
             {
                 lblPathCourseRoleTemplate.Text = filePath;
-                AppData.SaveKeyValue("CourseRoleTemplate", filePath);
+                AppData.SaveKeyValue("ClassRoleTemplate", filePath);
             }
         }
         private void lblEnglishTranscriptTemplate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -398,7 +423,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             if (filePath != String.Empty)
             {
                 lblPathCourseGradeTemplate.Text = filePath;
-                AppData.SaveKeyValue("CourseGradesTemplate", filePath);
+                AppData.SaveKeyValue("CourseGradeSheetTemplate", filePath);
             }
 
         }
@@ -446,11 +471,19 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
         private void translateForm()
         {
-            tabStudent.Text = Properties.PluginResources.tabStudent_Text;
+            if (myJob == frmTranscriptOptions.Job.printTranscript)
+            {
+                tabStudent.Text = Properties.PluginResources.tabStudent_Text;
+                tabTranscript.Text = Properties.PluginResources.tabTranscript_Text;
+            }
+            else
+            {
+                tabStudent.Text = Properties.PluginResources.course;
+                tabTranscript.Text = Properties.PluginResources.courseRole;
+            }
             tabOptions.Text = Properties.PluginResources.tabOptions_Text;
             tabRequirements.Text = Properties.PluginResources.tabRequirements_Text;
             tabActions.Text = Properties.PluginResources.tabActions_Text;
-            tabTranscript.Text = Properties.PluginResources.tabTranscript_Text;
             tabExit.Text = Properties.PluginResources.tabExit_Text;
 
             btnPrintCourseRole.Text = Properties.PluginResources.btnPrintCourseRole_Text;
@@ -484,13 +517,11 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         }
 
 
-        internal enum Job
+        public enum Job
         {
             options,
             printTranscript,
-            printClassRole
+            printClassList
         }
-
-
     }
 }

@@ -339,9 +339,6 @@
   <data name="rbDelete.Size" type="System.Drawing.Size, System.Drawing">
     <value>70, 24</value>
   </data>
-  <data name="rbDelete.Text" xml:space="preserve">
-    <value>刪  除</value>
-  </data>
   <data name="rbEdit.Location" type="System.Drawing.Point, System.Drawing">
     <value>620, 3</value>
   </data>
@@ -580,7 +577,7 @@
     <value>83, 24</value>
   </data>
   <data name="mnuTools.Text" xml:space="preserve">
-    <value>IT工具列</value>
+    <value>工具列</value>
   </data>
   <data name="mnuDatabaseInfo.Size" type="System.Drawing.Size, System.Drawing">
     <value>314, 26</value>
@@ -647,5 +644,65 @@
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>1538, 795</value>
+  </data>
+  <data name="mnuTools_ShowITtools.Text" xml:space="preserve">
+    <value>展示 IT 工具</value>
+  </data>
+  <data name="mnuDatabaseInfo.Text" xml:space="preserve">
+    <value>資料庫資訊</value>
+  </data>
+  <data name="mnuDuplicateDisplayKeys.Text" xml:space="preserve">
+    <value>檢查重複的顯示鍵</value>
+  </data>
+  <data name="mnuForeignKeyMissing.Text" xml:space="preserve">
+    <value>準備新的外鍵</value>
+  </data>
+  <data name="mnuToolsBackupDatabase.Text" xml:space="preserve">
+    <value>備份資料庫</value>
+  </data>
+  <data name="mnuPrintCurrentTable.Text" xml:space="preserve">
+    <value>列印選擇</value>
+  </data>
+  <data name="txtRecordsPerPage.ToolTipText" xml:space="preserve">
+    <value>每頁記錄數</value>
+  </data>
+  <data name="txtRecordsPerPage.Text" xml:space="preserve">
+    <value>100</value>
+  </data>
+  <data name="toolStripButton4.Text" xml:space="preserve">
+    <value>toolStripButton4</value>
+  </data>
+  <data name="toolStripButton4.ToolTipText" xml:space="preserve">
+    <value>下一頁</value>
+  </data>
+  <data name="toolStripButton2.ToolTipText" xml:space="preserve">
+    <value>前一頁</value>
+  </data>
+  <data name="toolStripButtonColumnWidth.Text" xml:space="preserve">
+    <value>狹窄的</value>
+  </data>
+  <data name="toolStripBottom.Text" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>DataGridViewForm</value>
+  </data>
+  <data name="toolStripButton3.Text" xml:space="preserve">
+    <value>頁碼</value>
+  </data>
+  <data name="toolStripButton3.ToolTipText" xml:space="preserve">
+    <value>選擇頁碼</value>
+  </data>
+  <data name="toolStripButton2.Text" xml:space="preserve">
+    <value>toolStripButton2</value>
+  </data>
+  <data name="mnuBlankLine3.Text" xml:space="preserve">
+    <value>---------------------------</value>
+  </data>
+  <data name="btnBlackLine.Text" xml:space="preserve">
+    <value>No Text</value>
+  </data>
+  <data name="rbDelete.Text" xml:space="preserve">
+    <value>刪除</value>
   </data>
 </root>

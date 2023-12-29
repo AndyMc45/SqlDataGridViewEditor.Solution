@@ -34,7 +34,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             var tupleList = new List<(String, String)>
             {
                 ("Print Transcript", "printTranscript"),
-                ("Print Course Role", "printCourseRole"),
+                ("Print Class List", "printClassList"),
                 ("Options", "options")
             };
 
@@ -77,7 +77,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     fOptions.ShowDialog();    // 
                 }
             }
-            else if (e.Value == "printCourseRole")
+            // The only difference between class role and grade sheet is the template that is used
+            else if (e.Value == "printClassList")
             {
                 int courseTermID = SetCourseTermDegreeID();  // Shows error message if any
                 if (courseTermID == 0)
@@ -87,7 +88,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 else
                 {
                     frmTranscriptOptions fOptions = new frmTranscriptOptions();
-                    fOptions.myJob = frmTranscriptOptions.Job.printClassRole;
+                    fOptions.myJob = frmTranscriptOptions.Job.printClassList;
                     fOptions.courseTermID = courseTermID;
                     fOptions.headerTranslations = columnHeaderTranslations;
                     fOptions.translationCultureName = translationCultureName;
@@ -128,18 +129,18 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 }
                 else if (dgvForm.currentSql.myTable == TableName.students)
                 {
-                    string err = String.Format("Select Student in {0} table (a descendant of the {1} table)", TableName.studentDegrees, TableName.students);
+                    string err = String.Format(Properties.PluginResources.selectStudentInTable01, TableName.studentDegrees, TableName.students);
                     sbError.AppendLine(err);
                 }
                 else
                 {
-                    string err = String.Format("Please select 1 row in the {0} table or {1} table", TableName.transcript, TableName.studentDegrees);
+                    string err = String.Format(Properties.PluginResources.selectOneRowinTable0or1, TableName.transcript, TableName.studentDegrees);
                     sbError.AppendLine(err);
                 }
             }
             else
             {
-                sbError.AppendLine("Please select exactly one row in the table");
+                sbError.AppendLine(Properties.PluginResources.selectExactlyOneRow);
             }
 
             if (sbError.Length > 0)
@@ -178,18 +179,18 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 }
                 else if (dgvForm.currentSql.myTable == TableName.courses)
                 {
-                    string err = String.Format("Select Course in {0} table (a descendant of the {1} table)", TableName.courseTerms, TableName.courses);
+                    string err = String.Format(Properties.PluginResources.selectCourseInTable01, TableName.courseTerms, TableName.courses);
                     sbError.AppendLine(err);
                 }
                 else
                 {
-                    string err = String.Format("Please select 1 row in the {0} table or {1} table", TableName.transcript, TableName.courseTerms);
+                    string err = String.Format(Properties.PluginResources.selectOneRowinTable0or1, TableName.transcript, TableName.courseTerms);
                     sbError.AppendLine(err);
                 }
             }
             else
             {
-                sbError.AppendLine("Please select exactly one row in the table");
+                sbError.AppendLine(Properties.PluginResources.selectExactlyOneRow);
             }
 
             if (sbError.Length > 0)

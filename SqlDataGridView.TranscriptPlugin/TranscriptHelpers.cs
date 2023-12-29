@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Data;
 using System.Text;
-using System.Data;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
-using SqlDataGridViewEditor;
-using System.Diagnostics.Eventing.Reader;
 
 namespace SqlDataGridViewEditor.TranscriptPlugin
 {
@@ -22,22 +15,22 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             string sqlString = sqlFactory.returnSql(command.selectAll);
             DataTable dt = new DataTable();
             string strError = MsSql.FillDataTable(dt, sqlString);
-            if(strError != string.Empty) { sbErrors.AppendLine(strError); }
+            if (strError != string.Empty) { sbErrors.AppendLine(strError); }
             return dt;
         }
         internal static Dictionary<string, string> GetPkRowColumnValues(string tableName, int pkValue, List<string> columnNames, ref StringBuilder sbErrors)
         {
             var columnValues = new Dictionary<string, string>();
-            DataTable dt = GetOneRowDataTable(tableName, pkValue, ref sbErrors);                 
+            DataTable dt = GetOneRowDataTable(tableName, pkValue, ref sbErrors);
             SqlFactory sqlFactory = new SqlFactory(tableName, 0, 0);
             // Should be exactly one row in requirementNameDaDt.dt
-            if(dt.Rows.Count != 1) 
-            { 
+            if (dt.Rows.Count != 1)
+            {
                 sbErrors.AppendLine(String.Format("Error: {0} rows in {1} with primary {2}", dt.Rows.Count.ToString(), tableName, pkValue.ToString()));
             }
             if (dt.Rows.Count > 0)
             {
-                foreach( string colName in  columnNames )
+                foreach (string colName in columnNames)
                 {
                     string colValue = dataHelper.getColumnValueinDR(dt.Rows[0], colName);
                     columnValues.Add(colName, colValue);
@@ -209,7 +202,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 int rDeliveryMethodID = Int32.Parse(dataHelper.getColumnValueinDR(drGradReq, "rDeliveryMethodID"));
 
                 //6b. requirementNameID - Get information from gradRequirmentType Table
-                List<string> rReqNameTableColNames = new List<string> {"reqNameDK", "reqName", "eReqName" };
+                List<string> rReqNameTableColNames = new List<string> { "reqNameDK", "reqName", "eReqName" };
                 Dictionary<string, string> rReqNameTableColValues = TranscriptHelper.GetPkRowColumnValues(
                     TableName.requirementName, rRequirementNameID, rReqNameTableColNames, ref sbErrors);
                 string rReqNameDK = rReqNameTableColValues["reqNameDK"];
@@ -320,7 +313,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
 
                     // CourseName - 
                     // int cCourseID = Int32.Parse(cCourseTermColValues["courseID"]);
-                    List<string> cCourseNamesColNames = new List<string> { "courseName", "eCourseName"};
+                    List<string> cCourseNamesColNames = new List<string> { "courseName", "eCourseName" };
                     Dictionary<string, string> cCourseNamesColValues = TranscriptHelper.GetPkRowColumnValues(
                         TableName.courseNames, cCourseNameID, cCourseNamesColNames, ref sbErrors);
                     string cCourseName = cCourseNamesColValues["courseName"];  // Used in error messages only, i.e. doesn't affect requirements
@@ -373,7 +366,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                                 totalQpaCredits = totalQpaCredits + cCredits;
                             }
                             if (cEarnedCredits && firstLoop)
-                            { 
+                            {
                                 totalCreditsEarned = totalCreditsEarned + cCredits;
                             }
                             if (!fakeRow)
@@ -467,7 +460,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     PrintToWord.studentReqDT.Rows.Add(dr);
                     firstLoop = false;
                 }
-                if (fakeRow) { break; } 
+                if (fakeRow) { break; }
             }
             // Update student QPA and total Credits - not yet committed to database
             DataRow studentDegreeInfoRow = PrintToWord.studentDegreeInfoDT.Rows[0];
@@ -483,7 +476,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             // Save these three changes down to the database - start over from scratch.
             field pkField = dataHelper.getTablePrimaryKeyField(TableName.studentDegrees);
             string pk = dataHelper.getColumnValueinDR(studentDegreeInfoRow, pkField.fieldName);
-            sqlString = String.Format("Select * from {0} where {1} = '{2}'", TableName.studentDegrees,pkField.fieldName,pk);
+            sqlString = String.Format("Select * from {0} where {1} = '{2}'", TableName.studentDegrees, pkField.fieldName, pk);
             MsSqlWithDaDt dadt = new MsSqlWithDaDt(sqlString);
             List<field> fieldsToUpdate = new List<field>();
             fieldsToUpdate.Add(dataHelper.getFieldFromFieldsDT(TableName.studentDegrees, "creditsEarned"));
@@ -512,8 +505,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("courseterm", "課程學季");
             columnHeaderTranslations.Add("coursetermsection", "學季課程班");
             columnHeaderTranslations.Add("creditlimit", "學分限制");
-            columnHeaderTranslations.Add("credits", "學分"); 
-            columnHeaderTranslations.Add("creditsearned", "總學分"); 
+            columnHeaderTranslations.Add("credits", "學分");
+            columnHeaderTranslations.Add("creditsearned", "總學分");
             columnHeaderTranslations.Add("creditsinqpa", "學分在QPA");
             columnHeaderTranslations.Add("creditsource", "學分來源");
             columnHeaderTranslations.Add("degree", "學位");
@@ -591,7 +584,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             // My menu items    
             columnHeaderTranslations.Add("transcripts", "成績單");
             columnHeaderTranslations.Add("print transcript", "列印成績單");
-            columnHeaderTranslations.Add("print course role", "列印點名表");
+            columnHeaderTranslations.Add("print class list", "列印課程學生");
             columnHeaderTranslations.Add("options", "選類");
 
             return columnHeaderTranslations;
@@ -606,26 +599,26 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         // Names of the tables <string>
         internal static string courseNames { get => "CourseNames"; }
         internal static string courses { get => "Courses"; }
-        internal static string courseTerms { get =>  "CourseTerms";}
+        internal static string courseTerms { get => "CourseTerms"; }
         internal static string courseTermSection { get => "CourseTermSection"; }
-        internal static string degreeLevel { get =>  "DegreeLevel";}
-        internal static string degrees { get =>  "Degrees";}
-        internal static string deliveryMethod { get =>  "DeliveryMethod";}
-        internal static string departments { get =>  "Departments";}
-        internal static string faculty { get =>  "Faculty";}
-        internal static string grades { get =>  "Grades";}
+        internal static string degreeLevel { get => "DegreeLevel"; }
+        internal static string degrees { get => "Degrees"; }
+        internal static string deliveryMethod { get => "DeliveryMethod"; }
+        internal static string departments { get => "Departments"; }
+        internal static string faculty { get => "Faculty"; }
+        internal static string grades { get => "Grades"; }
         internal static string gradRequirements { get => "GradRequirements"; }
         internal static string gradRequirementType { get => "GradRequirementType"; }
-        internal static string gradeStatus { get =>   "GradeStatus";}
-        internal static string handbooks { get =>   "Handbooks";}
+        internal static string gradeStatus { get => "GradeStatus"; }
+        internal static string handbooks { get => "Handbooks"; }
         internal static string studentDegrees { get => "StudentDegrees"; }
         internal static string requirementName { get => "RequirementName"; }
-        internal static string section { get =>   "Section";}
-        internal static string studentGradReq { get =>   "StudentGradReq";}   
-        internal static string students { get =>   "Students";}
-        internal static string terms { get =>   "Terms";}
-        internal static string transcript { get =>   "Transcript";}
-        internal static string transferCredits { get =>   "TransferCredits";}
+        internal static string section { get => "Section"; }
+        internal static string studentGradReq { get => "StudentGradReq"; }
+        internal static string students { get => "Students"; }
+        internal static string terms { get => "Terms"; }
+        internal static string transcript { get => "Transcript"; }
+        internal static string transferCredits { get => "TransferCredits"; }
 
 
     }

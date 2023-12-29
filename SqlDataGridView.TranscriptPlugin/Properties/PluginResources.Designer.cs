@@ -70,7 +70,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Print Course Grades.
+        ///   Looks up a localized string similar to Print Course Grade Sheet.
         /// </summary>
         public static string btnPrintCourseGrades_Text {
             get {
@@ -111,6 +111,15 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         public static string courseRole {
             get {
                 return ResourceManager.GetString("courseRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to open the file in Word?.
+        /// </summary>
+        public static string doYouWantToOpenInWord {
+            get {
+                return ResourceManager.GetString("doYouWantToOpenInWord", resourceCulture);
             }
         }
         
@@ -205,7 +214,52 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Actions.
+        ///   Looks up a localized string similar to Open in Word.
+        /// </summary>
+        public static string openInWord {
+            get {
+                return ResourceManager.GetString("openInWord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Course in {0} table (a descendant of the {1} table).
+        /// </summary>
+        public static string selectCourseInTable01 {
+            get {
+                return ResourceManager.GetString("selectCourseInTable01", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select exactly one row in the table.
+        /// </summary>
+        public static string selectExactlyOneRow {
+            get {
+                return ResourceManager.GetString("selectExactlyOneRow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select 1 row in the {0} table or {1} table.
+        /// </summary>
+        public static string selectOneRowinTable0or1 {
+            get {
+                return ResourceManager.GetString("selectOneRowinTable0or1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Student in {0} table (a descendant of the {1} table).
+        /// </summary>
+        public static string selectStudentInTable01 {
+            get {
+                return ResourceManager.GetString("selectStudentInTable01", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print.
         /// </summary>
         public static string tabActions_Text {
             get {

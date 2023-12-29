@@ -37,7 +37,7 @@ namespace SqlDataGridViewEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error backing up database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, Properties.MyResources.errorBackingUpDatabase, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return success;
