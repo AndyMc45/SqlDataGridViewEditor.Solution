@@ -187,7 +187,7 @@
             tableLayoutPanel.Controls.Add(cmbComboFilterValue_2, 23, 6);
             tableLayoutPanel.Controls.Add(cmbComboTableList, 4, 6);
             tableLayoutPanel.Controls.Add(btnBlackLine, 4, 5);
-            tableLayoutPanel.Controls.Add(btnReload, 24, 0);
+            tableLayoutPanel.Controls.Add(btnReload, 23, 0);
             tableLayoutPanel.Name = "tableLayoutPanel";
             // 
             // lblMainFilter
