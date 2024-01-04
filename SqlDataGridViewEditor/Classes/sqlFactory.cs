@@ -1,11 +1,6 @@
 // using Microsoft.Office.Interop.Word;
-using Microsoft.VisualBasic;
 using System.Data;
-using System.Diagnostics.Eventing.Reader;
-using System.Security.Cryptography;
-using System.Security.Cryptography.Pkcs;
 using System.Text;
-using System.Web;
 
 namespace SqlDataGridViewEditor
 {
@@ -40,13 +35,13 @@ namespace SqlDataGridViewEditor
         public List<orderBy> myOrderBys = new List<orderBy>();
         public List<where> myWheres = new List<where>();
         // Used to get the sql for a combo box dropdown items 
-        public List<where> myComboWheres = new List<where>();  
+        public List<where> myComboWheres = new List<where>();
 
         // PKs_OstensiveDictionary - the fields that the table will show in the main grid or the combos.
         // "OstensiveDictionary" means the human understandable fields that identify the PK.
         // For example the OstensiveDefinition of "StudentDegreeID" = 32  might be the Student name field and the degree name field
         // There should be unique index on the table for the OstensiveDefinition fields.
-        public Dictionary<Tuple<string,string,string>, List<field>> PKs_OstensiveDictionary = new Dictionary<Tuple<string, string, string>, List<field>>();
+        public Dictionary<Tuple<string, string, string>, List<field>> PKs_OstensiveDictionary = new Dictionary<Tuple<string, string, string>, List<field>>();
 
         // Pks_InnerjoinMap - map from and PK_SomeTable.key to all innerJoins in SomeTable.
         // Each inner join is an FK in the table and the reference table it refers to.
@@ -61,7 +56,7 @@ namespace SqlDataGridViewEditor
         {
             // If true, very slow in datagridview, if we make this true for transcripts - 89 columns;
             // Database call is fast, only the display is slow;
-            this.includeAllColumnsInAllTables = includeAllColumnsInAllTables;   
+            this.includeAllColumnsInAllTables = includeAllColumnsInAllTables;
             myTable = table;
             myPage = page;
             myPageSize = pageSize;
@@ -69,7 +64,7 @@ namespace SqlDataGridViewEditor
             SqlFactoryFinishConstructor();
         }
 
-       public void SqlFactoryFinishConstructor()
+        public void SqlFactoryFinishConstructor()
         {
             errorMsg = addFieldsAndInnerJoins();
 
@@ -91,7 +86,7 @@ namespace SqlDataGridViewEditor
                     }
                 }
             }
-        
+
         }
 
         // addInnerJoin is complex - it stores somewhere everything about the table that the program needs to know 
@@ -159,7 +154,7 @@ namespace SqlDataGridViewEditor
                         {
                             myFields.Add(drField);
                             // drField is a foreign key, so we can get the Primary Key of the Reference (Child) table
-                            field pkRefTable = dataHelper.getForeignKeyRefField(drField);                           
+                            field pkRefTable = dataHelper.getForeignKeyRefField(drField);
                             bool stillSeekingDisplayKey = seekingDisplayKeys && dataHelper.isDisplayKey(drField);
                             // Add inner join to this tables inner joins
                             innerJoin new_ij = new innerJoin(drField, pkRefTable);
@@ -209,7 +204,7 @@ namespace SqlDataGridViewEditor
         {
             return returnSql(cmd, false);
         }
-        
+
         public string returnSql(command cmd, bool strict)
         {
             // The main function of this class - used for tables and combos.
@@ -227,13 +222,13 @@ namespace SqlDataGridViewEditor
             else if (cmd == command.select)
             {
                 // Sql 2012 required for this "Fetch" clause paging - works even when (recordCount <= offset + myPageSize)
-                sqlString = "SELECT " + SqlStatic.sqlFieldString(myFields) + " FROM " + sqlTableString() + SqlStatic.sqlWhereString(myWheres, strStaticWhereClause, strict) + SqlStatic.sqlOrderByStr(myOrderBys) + MsSql.GetFetchString(offset,myPageSize);
+                sqlString = "SELECT " + SqlStatic.sqlFieldString(myFields) + " FROM " + sqlTableString() + SqlStatic.sqlWhereString(myWheres, strStaticWhereClause, strict) + SqlStatic.sqlOrderByStr(myOrderBys) + MsSql.GetFetchString(offset, myPageSize);
             }
             return sqlString;
         }
 
         // This factory is still the currentSql factory
-       public string returnComboSql(field cmbField, bool includePKinDisplayMember, comboValueType cmbValueType)  // Return all Display keys
+        public string returnComboSql(field cmbField, bool includePKinDisplayMember, comboValueType cmbValueType)  // Return all Display keys
         {
             string sqlString = string.Empty;
 
@@ -241,7 +236,7 @@ namespace SqlDataGridViewEditor
             // This displayMember is used in combos to identifies the row; and similarly in mainFilter dropdown items
             // If includePKinDisplayMember is true, the displayMember will begin with PK and be ordered by PK
             if (cmbValueType == comboValueType.PK_myTable || cmbValueType == comboValueType.PK_refTable)  // no distinction between these two
-            { 
+            {
                 StringBuilder sqlFieldStringSB = new StringBuilder();
                 List<field> fls = PKs_OstensiveDictionary[cmbField.key];  // Error if not present
                 // If myTable has no display keys, make the primary field the display key
@@ -307,7 +302,7 @@ namespace SqlDataGridViewEditor
             return sqlString;
         }
 
-       public string returnOneFieldSql(field fld)
+        public string returnOneFieldSql(field fld)
         {
             string sqlString = "SELECT " + dataHelper.QualifiedAliasFieldName(fld) + " FROM " + sqlTableString() + " " + SqlStatic.sqlWhereString(myWheres, strStaticWhereClause, true) + SqlStatic.sqlOrderByStr(myOrderBys) + " ";
             return sqlString;
@@ -342,23 +337,23 @@ namespace SqlDataGridViewEditor
                 ts = "([" + ij.pkRefFld.table + "] AS " + ij.pkRefFld.tableAlias + " INNER JOIN " + ts + " ON " + condition + ")";
                 // Recursive step - loop through innerjoins of the pkRefFld 
                 if (PKs_InnerjoinMap.Keys.Contains(ij.pkRefFld.key))
-                { 
+                {
                     List<innerJoin> RefTable_ijs = PKs_InnerjoinMap[ij.pkRefFld.key];
                     ts = sqlExtendTableStringByInnerJoins(RefTable_ijs, ts);
                 }
             }
             return ts;
         }
-  
+
         public bool TableIsInMyInnerJoins(field PkField, string tableAliasName)
         {
             if (tableAliasName == PkField.tableAlias)  // Table can be filtered on itself 
-            { 
-                return true; 
-            } 
+            {
+                return true;
+            }
             Tuple<string, string, string> key = Tuple.Create(PkField.tableAlias, PkField.table, PkField.fieldName);
             if (PKs_InnerjoinMap.ContainsKey(key))
-            { 
+            {
                 foreach (innerJoin ij in PKs_InnerjoinMap[key])
                 {
                     // Recursive call
@@ -378,7 +373,7 @@ namespace SqlDataGridViewEditor
             foreach (Tuple<string, string, string> key in PKs_InnerjoinMap.Keys)
             {
                 if (key.Item2 == mainFilterTable)
-                { 
+                {
                     tableAlias = key.Item1;
                     return true;
                 }
@@ -386,7 +381,7 @@ namespace SqlDataGridViewEditor
             tableAlias = string.Empty;
             return false;
         }
-        
+
         // Start with the table in the combo, and recursively trace all PK's that are inner-joins under it.
         public bool MainFilterTableIsInComboSql(where mainFilter, field PkField, out string tableAlias)
         {
@@ -417,7 +412,7 @@ namespace SqlDataGridViewEditor
         {
             List<field> inAncestors = new List<field>();
             List<field> notInAncestors = new List<field>();
-            return getColumn(fld,inAncestors, notInAncestors);    
+            return getColumn(fld, inAncestors, notInAncestors);
         }
 
         // Find index with unknown Alias - Use this method if there may be more than one field with same table and fieldName.
@@ -442,7 +437,7 @@ namespace SqlDataGridViewEditor
                     List<Tuple<string, string>> ancestorTuples = new List<Tuple<string, string>>();
                     foreach (field f in myFields[i].FKancestors) { ancestorTuples.Add(f.baseKey); }
                     // Do the 1st check
-                    foreach (Tuple<string,string> t in inAncestorTuples)
+                    foreach (Tuple<string, string> t in inAncestorTuples)
                     {
                         if (!ancestorTuples.Contains(t)) { ancestorCheck = false; break; }
                     }
@@ -453,32 +448,32 @@ namespace SqlDataGridViewEditor
                         {
                             if (ancestorTuples.Contains(t)) { ancestorCheck = false; break; }
                         }
-                        if (ancestorCheck){ return i; }
+                        if (ancestorCheck) { return i; }
                     }
                 }
             }
-             return 0;  // An error
+            return 0;  // An error
         }
 
         public int getColumn(field fld, field fkToCheck, bool inAncestorCheck)
-        { 
+        {
             List<field> emptyList = new List<field>();
             List<field> checkFields = new List<field>();
             checkFields.Add(fkToCheck);
             if (inAncestorCheck) { return getColumn(fld, checkFields, emptyList); }
             else { return getColumn(fld, emptyList, checkFields); }
         }
-        
+
 
         // Class in class to note the static methods - but not consistently applied to all static methods
-       public static class SqlStatic
+        public static class SqlStatic
         {
             // strStaticWhereClause - use this where clause -- ignore the whereList
             // strict -- A string must be an exact match (non-strict uses "Like")
-           public static string sqlWhereString(List<where> whereList, string strStaticWhereClause, bool strict)
+            public static string sqlWhereString(List<where> whereList, string strStaticWhereClause, bool strict)
             {
                 // Return the static string
-                if(strStaticWhereClause != string.Empty) { return strStaticWhereClause; }
+                if (strStaticWhereClause != string.Empty) { return strStaticWhereClause; }
                 // Make a list of the conditions
                 List<string> WhereStrList = new List<string>();
                 foreach (where ws in whereList)
@@ -538,7 +533,7 @@ namespace SqlDataGridViewEditor
                 }
             }
 
-           public static string sqlFieldString(List<field> fieldList)
+            public static string sqlFieldString(List<field> fieldList)
             {
                 // Make a list of the qualified fields, i.e. [table].[field]
                 List<string> fieldStrList = new List<string>();
@@ -550,7 +545,7 @@ namespace SqlDataGridViewEditor
                 return String.Join(",", fieldStrList);
             }
 
-           public static string sqlOrderByStr(List<orderBy> orderByList)
+            public static string sqlOrderByStr(List<orderBy> orderByList)
             {
                 if (orderByList.Count == 0) { return ""; }
                 //Make a list of order by clauses

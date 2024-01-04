@@ -132,6 +132,7 @@ namespace SqlDataGridViewEditor
                     mnuTools.DropDownItems.Add(tsiNew);
                 }
             }
+            SetTableLayoutPanelWidth();  // Shrink tableLayoutPanel for smaller screens
         }
 
 
@@ -176,13 +177,13 @@ namespace SqlDataGridViewEditor
             // 4. Open Log file
             // openLogFile(); //errors ignored 
 
-            // 5. Open last connection 
+            //// 5. Set Mode and filters to "none".
+            //programMode = ProgramMode.none; // 
+            //SetAllFiltersByMode(); // Will disable filters and call SetTableLayoutPanelHeight();
+
+            // 6. Open last connection 
             string msg = OpenConnection();  // Returns any error msg
             if (msg != string.Empty) { msgText(msg); txtMessages.ForeColor = System.Drawing.Color.Red; }
-
-            // 6. Set Mode and filters to "none".
-            programMode = ProgramMode.none;
-            SetAllFiltersByMode(); // Will disable filters and call SetTableLayoutPanelHeight();
 
             mnuTools_ShowITtools.Checked = false;
         }
@@ -407,7 +408,9 @@ namespace SqlDataGridViewEditor
             catch (System.Exception excep)
             {
                 sb.AppendLine(Properties.MyResources.errorOpeningConnection);
-                MessageBox.Show(Properties.MyResources.errorOpeningConnection + Environment.NewLine + excep.Message + Environment.NewLine + "Error Number: " + Information.Err().Number.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Properties.MyResources.errorOpeningConnection + Environment.NewLine +
+                    excep.Message + Environment.NewLine + "Error Number: " +
+                    Microsoft.VisualBasic.Information.Err().Number.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CloseConnection();
             }
             return sb.ToString();
@@ -415,6 +418,14 @@ namespace SqlDataGridViewEditor
 
         private void CloseConnection()
         {
+            if (dataGridView1.DataSource != null)
+            {
+                tableOptions.writingTable = true;
+                dataGridView1.DataSource = null;  // Will resize columns
+                tableOptions.writingTable = false;
+            }
+            this.dataGridView1.Rows.Clear();
+            this.dataGridView1.Columns.Clear();
             MsSql.CloseDataAdapters();
             MsSql.CloseConnection();
 
@@ -427,7 +438,7 @@ namespace SqlDataGridViewEditor
                 mnuOpenTables.DropDownItems.Clear();
             }
             // Hide special menus
-            mnuForeignKeyMissing.Enabled = false;
+            mnuCreateForeignKey.Enabled = false;
 
         }
 
@@ -526,14 +537,22 @@ namespace SqlDataGridViewEditor
             }
 
             //5. Set programMode to ProgramMode.view
-            rbView.Checked = true;
+            if (!rbView.Checked)
+            {
+                rbView.Checked = true;
+            }
+            else
+            {
+                rbView.Checked = false;
+                rbView.Checked = true;
+            }
 
 
             //6.  Enable or disable menu items
             GridContextMenu_SetFKasMainFIlter.Enabled = tableOptions.tableHasForeignKeys;
             DataRow[] drs2 = dataHelper.fieldsDT.Select(String.Format("RefTable = '{0}'", currentSql.myTable));
             GridContextMenu_SetAsMainFilter.Enabled = (drs2.Count() > 0);
-            mnuForeignKeyMissing.Enabled = true;
+            mnuCreateForeignKey.Enabled = true;
 
             msgTimer(" NewTable: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
             if (formOptions.runTimer) { watch.Stop(); }
@@ -726,14 +745,12 @@ namespace SqlDataGridViewEditor
             msgTimer(" NewPage5: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
 
             // e. Set Column widths  - done when adding columns above
-            tableOptions.writingTable = true;
-            // SetToStoredColumnWidths();  // Takes too long for transcripts
-            tableOptions.writingTable = false;
+            // Takes too long for transcripts so skip it here
+
             tableOptions.firstTimeWritingTable = false;
 
             if (formOptions.runTimer) { watch.Stop(); };
             msgTimer(" NewPage6: " + Math.Round(watch.Elapsed.TotalMilliseconds, 2).ToString() + ". ");
-
         }
 
         internal void SetToStoredColumnWidths()
@@ -761,6 +778,22 @@ namespace SqlDataGridViewEditor
         //----------------------------------------------------------------------------------------------------------------------
 
         #region Setting up Filters, Colors, TablePanel
+
+        private void SetTableLayoutPanelWidth()
+        {
+            decimal screenWidth = Screen.FromControl(this).Bounds.Width;
+            if (screenWidth > 0 && screenWidth < 2090)
+            {
+                decimal dCellWidth = Math.Round(screenWidth / 29);
+                int cellWidth = Int32.Parse(dCellWidth.ToString());
+                cellWidth = Math.Max(50, cellWidth);
+                for (int i = 1; i < 30; i++)
+                {
+                    tableLayoutPanel.ColumnStyles[i].Width = cellWidth;
+                }
+            }
+        }
+
         private void SetTableLayoutPanelHeight()
         {
             int height = 2;
@@ -1108,13 +1141,14 @@ namespace SqlDataGridViewEditor
                 }
             }
         }
+
         private void mnuClose_Click(object sender, EventArgs e)
         {
             AppData.StoreFormOptions(formOptions);
             this.Close();
         }
 
-        private void mnuForeignKeyMissing_Click(object sender, EventArgs e)
+        private void mnuToolCreateForeignKey_Click(object sender, EventArgs e)
         {
             // Get list of Non-foriegn keys - with perhaps one intended as foreign key
             DataRow[] drs = dataHelper.fieldsDT.Select(String.Format("TableName = '{0}' AND is_PK = 'False' AND is_FK = 'False' AND DataType = 'int'", currentSql.myTable));
@@ -1157,6 +1191,7 @@ namespace SqlDataGridViewEditor
                         // Get two inner join fields
                         field refField = dataHelper.getTablePrimaryKeyField(selectedRefTable);
                         field nonFkField = dataHelper.getFieldFromFieldsDT(currentSql.myTable, selectedNonFK);
+                        //SELECT *  FROM [StudentDegrees] WHERE(NOT EXISTS (SELECT studentID FROM Students WHERE[students].studentID = [StudentDegrees].studentID) )
                         StringBuilder sbWhere = new StringBuilder();
                         sbWhere.Append(" WHERE (NOT EXISTS (SELECT ");
                         sbWhere.Append(refField.fieldName + " FROM " + refField.table + " AS " + refField.tableAlias);
@@ -1164,28 +1199,140 @@ namespace SqlDataGridViewEditor
                         sbWhere.Append(dataHelper.QualifiedAliasFieldName(refField) + " = " + dataHelper.QualifiedAliasFieldName(nonFkField));
                         sbWhere.Append("))");
                         currentSql.strStaticWhereClause = sbWhere.ToString(); // Will change currentSql.returnSql();
-                        // tableOptions.strStaticWhereClause = currentSql.returnFixDatabaseSql(sbWhere.ToString());
-                        msgText(Properties.MyResources.eachOfDisplayedRowsHasEmptyFK + "  " + Properties.MyResources.ifNoDisplayedRowsNoEmptyFK);
-                        writeGrid_NewPage();
-                        //SELECT *  FROM [StudentDegrees] 
-                        //WHERE(NOT EXISTS (SELECT studentID FROM Students WHERE[students].studentID = [StudentDegrees].studentID) )
+                        string countSql = currentSql.returnSql(command.count);
+                        int intRecords = MsSql.GetRecordCount(countSql);
+                        if (intRecords > 0)
+                        {
+                            MessageBox.Show(Properties.MyResources.eachOfDisplayedRowsHasEmptyFK);
+                            msgText(Properties.MyResources.eachOfDisplayedRowsHasEmptyFK);
+                            writeGrid_NewPage();
+                        }
+                        else
+                        {
+                            // Make this a foreign key in fields table
+                            DataRow drNonFk = dataHelper.getDataRowFromFieldsDT(nonFkField.table, nonFkField.fieldName);
+                            drNonFk[drNonFk.Table.Columns.IndexOf("is_FK")] = true;  // Only displays itself
+                            drNonFk[drNonFk.Table.Columns.IndexOf("RefTable")] = refField.table;  // Only displays itself
+                            drNonFk[drNonFk.Table.Columns.IndexOf("RefPkColumn")] = refField.fieldName;  // Only displays itself
+                            DialogResult result = MessageBox.Show("Do you want to add this foreign key to the database?", "Change database?", MessageBoxButtons.YesNo);
+                            if (result == DialogResult.Yes)
+                            {
+                                string error = MsSql.CreateForeignKey(nonFkField.table, nonFkField.fieldName, refField.table, refField.fieldName);
+                                if (error != string.Empty)
+                                {
+                                    MessageBox.Show(error, "Error creating foreign key.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
+                            writeGrid_NewTable(currentSql.myTable);
+                        }
                     }
                 }
             }
         }
 
-        private void mnuToolDuplicateDisplayKeys_Click(object sender, EventArgs e)
+        private void mnuToolCreateDuplicateDisplayKeys_Click(object sender, EventArgs e)
         {
-            // Get display key list of strings from fields table
             if (currentSql == null) { return; }
-            showDuplicateDispayKeys();
+
+            // Ask user to select display keys
+            List<string> allFields = new List<string>();
+            DataRow[] drsAllColumns = dataHelper.fieldsDT.Select(String.Format("TableName = '{0}'", currentSql.myTable));
+            foreach (DataRow row in drsAllColumns)
+            {
+                allFields.Add(row["ColumnName"].ToString());
+            }
+            List<string> dkFields = new List<string>();
+            String filter = String.Format("TableName = '{0}' and is_DK = 'true'", currentSql.myTable);
+            DataRow[] drsDKFieldsDT = dataHelper.fieldsDT.Select(filter);
+            foreach (DataRow row in drsDKFieldsDT)
+            {
+                dkFields.Add(row["ColumnName"].ToString());
+            }
+            frmListItems fieldsListForm = new frmListItems();
+            fieldsListForm.Text = String.Format("DK_fields in {0}", currentSql.myTable);
+            fieldsListForm.myList = allFields;
+            fieldsListForm.mySelectedList = dkFields;
+            fieldsListForm.myJob = frmListItems.job.SelectMultipleStrings;
+            fieldsListForm.ShowDialog();
+            // Form Modifies mySelectedList on "OK" selected
+            List<string> dkFieldsNew = fieldsListForm.mySelectedList;
+            int returnIndex = fieldsListForm.returnIndex; // -1 if cancelled
+            fieldsListForm = null;
+            if (returnIndex > -1)  // User has selected "OK"
+            {
+                if (returnIndex == 0) // User has not selected any items
+                {
+                    // Doing nothing - could ask if they want to delete the current Dk_Index
+                }
+                else
+                {
+                    // Get index name from database - used twice below
+                    DataRow dr = dataHelper.getDataRowFromDataTable("TableName", currentSql.myTable, dataHelper.tablesDT);
+                    string DK_Index = String.Empty;
+                    if (dr != null)
+                    {
+                        if (dr["DK_Index"] != null)
+                        {
+                            DK_Index = dr["DK_Index"].ToString();
+                        }
+                    }
+                    // Get differences
+                    List<string> fieldsAdded = dkFieldsNew.Except(dkFields).ToList();
+                    List<string> fieldsDeleted = dkFields.Except(dkFieldsNew).ToList();
+                    if (fieldsAdded.Count == 0 && fieldsDeleted.Count == 0)
+                    {
+                        if (DK_Index == String.Empty)
+                        {
+                            PushDisplayKeyToDatabase(dkFieldsNew, DK_Index);
+                        }
+                    }
+                    else // User has changed display keys
+                    {
+                        // Redo the internal database information
+                        foreach (string addedField in fieldsAdded)
+                        {
+                            DataRow drAdded = dataHelper.getDataRowFromFieldsDT(currentSql.myTable, addedField);
+                            drAdded["is_DK"] = true;
+                        }
+                        foreach (string deletedField in fieldsDeleted)
+                        {
+                            DataRow drDeleted = dataHelper.getDataRowFromFieldsDT(currentSql.myTable, deletedField);
+                            drDeleted["is_DK"] = false;
+                        }
+                        // Get duplicates
+                        PushDisplayKeyToDatabase(dkFieldsNew, DK_Index);
+                    }
+                }
+            }
         }
-        private void showDuplicateDispayKeys()
+
+        private void PushDisplayKeyToDatabase(List<string> dkFieldsNew, string DK_Index)
+        {
+            // Get duplicates
+            DataTable duplicateDKsDT = CountDuplicateDisplayKeys();
+            if (duplicateDKsDT == null) { return; }
+            if (duplicateDKsDT.Rows.Count > 0)
+            {
+                MessageBox.Show(String.Format("There are {0} duplicates for this display key.", duplicateDKsDT.Rows.Count.ToString()), "Duplicate display keys", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ShowDuplicateDisplayKeys(duplicateDKsDT);
+            }
+            else
+            {
+                // Ask user about pushing this to the database
+                DialogResult result = MessageBox.Show("Do you want to push this Display Key index into the database?", "Push to Database", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    string error = MsSql.CreateUniqueIndex(currentSql.myTable, dkFieldsNew, DK_Index);
+                }
+            }
+        }
+
+        private DataTable? CountDuplicateDisplayKeys()
         {
             String filter = String.Format("TableName = '{0}' and is_DK = 'true'", currentSql.myTable);
             DataRow[] drsDKFieldsDT = dataHelper.fieldsDT.Select(filter);
 
-            if (drsDKFieldsDT.Count() == 0) { msgText("No display keys!"); return; }
+            if (drsDKFieldsDT.Count() == 0) { msgText("No display keys!"); return null; }
 
             List<String> dkFields = new List<String>();
             foreach (DataRow row in drsDKFieldsDT)
@@ -1199,20 +1346,29 @@ namespace SqlDataGridViewEditor
             if (DaDt.errorMsg != string.Empty)
             {
                 MessageBox.Show(DaDt.errorMsg, "ERROR in mnuToolDuplicateDisplayKeys_Click");
+                return null;
             }
-            if (DaDt.dt.Rows.Count == 0)
-            {
-                msgTextError(Properties.MyResources.EverythingOkNoDuplicates);
-                return;
-            }
-            msgText("Count: " + DaDt.dt.Rows.Count.ToString());
+            return DaDt.dt;
+        }
+
+        private void ShowDuplicateDisplayKeys(DataTable duplicatesDT)
+        {
             if (!tableOptions.mergingDuplicateKeys)
             {
                 DialogResult reply = MessageBox.Show(Properties.MyResources.doYouWantToMergeDuplicateKeyRows, "Merge Keys", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (reply == DialogResult.Yes) { tableOptions.mergingDuplicateKeys = true; }
             }
+            // Get DK_fields
+            String filter = String.Format("TableName = '{0}' and is_DK = 'true'", currentSql.myTable);
+            DataRow[] drsDKFieldsDT = dataHelper.fieldsDT.Select(filter);
+            List<String> dkFields = new List<string>();
+            foreach (DataRow fieldDataRow in drsDKFieldsDT)
+            {
+                dkFields.Add(fieldDataRow[fieldDataRow.Table.Columns.IndexOf("columnName")].ToString());
+            }
+            // Construct the where clause from the duplicate rows - only do 1 row if we are merging
             List<String> andConditions = new List<String>();
-            foreach (DataRow row in DaDt.dt.Rows)
+            foreach (DataRow row in duplicatesDT.Rows)
             {
                 List<String> atomicStatements = new List<String>();
                 foreach (string dkField in dkFields)
@@ -1228,15 +1384,15 @@ namespace SqlDataGridViewEditor
                 }
             }
             string whereCondition = String.Join(" OR ", andConditions);
+            // Set the where clause and write new page
             currentSql.strStaticWhereClause = " WHERE " + whereCondition;
-            // tableOptions.strStaticWhereClause = currentSql.returnFixDatabaseSql(" WHERE " + whereCondition);
             writeGrid_NewPage();
         }
 
         private void mnuTools_ShowITtools_CheckedChanged(object sender, EventArgs e)
         {
-            mnuForeignKeyMissing.Visible = mnuTools_ShowITtools.Checked;
-            mnuDuplicateDisplayKeys.Visible = mnuTools_ShowITtools.Checked;
+            mnuCreateForeignKey.Visible = mnuTools_ShowITtools.Checked;
+            mnuCreateDisplayKey.Visible = mnuTools_ShowITtools.Checked;
             mnuPrintCurrentTable.Visible = mnuTools_ShowITtools.Checked;
             rbMerge.Visible = mnuTools_ShowITtools.Checked;
             mnuDatabaseInfo.Visible = mnuTools_ShowITtools.Checked;
@@ -1268,21 +1424,23 @@ namespace SqlDataGridViewEditor
             }
             frmListItems databaseListForm = new frmListItems();
             databaseListForm.myList = strCsList;
+            databaseListForm.Text = "Delete Database connection.";
             databaseListForm.myJob = frmListItems.job.DeleteConnections;
             databaseListForm.ShowDialog();
-            string returnString = databaseListForm.returnString;
+            int returnIndex = databaseListForm.returnIndex;
             databaseListForm = null;
-            if (returnString != null)
+            if (returnIndex > -1)
             {
-                foreach (connectionString cs in csList)
-                {
-                    string strCS = String.Format(cs.comboString, cs.server, cs.databaseName, cs.user, "*******");
-                    if (strCS == returnString)
-                    {
-                        csList.Remove(cs);
-                        break;   // Only remove the first one or you will get an error
-                    }
-                }
+                csList.RemoveAt(returnIndex);
+                //foreach (connectionString cs in csList)
+                //{
+                //    string strCS = String.Format(cs.comboString, cs.server, cs.databaseName, cs.user, "*******");
+                //    if (strCS == returnString)
+                //    {
+                //        csList.Remove(cs);
+                //        break;   // Only remove the first one or you will get an error
+                //    }
+                //}
                 AppData.storeConnectionStringList(csList);
                 load_mnuDatabaseList();
             }
@@ -1293,8 +1451,12 @@ namespace SqlDataGridViewEditor
         private void mnuOpenTables_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             string tableName = e.ClickedItem.Name;  // the text can be translated.  Set Name = Text when adding ToolStripMenuItem
-            //Open a new table
+                                                    //Open a new table
             writeGrid_NewTable(tableName);
+        }
+
+        private void mnuConnectionList_Click(object sender, EventArgs e)
+        {
         }
 
         private void mnuDatabaseList_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -1325,9 +1487,10 @@ namespace SqlDataGridViewEditor
                 AppData.storeConnectionStringList(csList);
             }
             //2. Open connection - this reads the index 0 settings.  Main use of openConnection
+            //programMode = ProgramMode.none;
             string msg = OpenConnection();
             if (msg != string.Empty) { msgTextError(msg); }
-
+            load_mnuDatabaseList();
         }
 
         // Add Database - frmConnection
@@ -1342,10 +1505,12 @@ namespace SqlDataGridViewEditor
             if (connectionAdded)
             {
                 load_mnuDatabaseList();
+                //programMode = ProgramMode.none;
                 string msg = OpenConnection();
                 if (msg != string.Empty) { msgTextError(msg); }
             }
         }
+
         internal void load_mnuDatabaseList()
         {
             //Get list from App.Data
@@ -1358,7 +1523,6 @@ namespace SqlDataGridViewEditor
                 mnuConnectionList.DropDownItems.Add(csString);
             }
         }
-
 
         private void mnuToolsBackupDatabase_Click(object sender, EventArgs e)
         {
@@ -1417,6 +1581,7 @@ namespace SqlDataGridViewEditor
             AppData.SaveKeyValue("DatabaseBackupFolder", fbdPath);
             return fbdPath;
         }
+
         #endregion
 
         //----------------------------------------------------------------------------------------------------------------------
@@ -1480,7 +1645,7 @@ namespace SqlDataGridViewEditor
                     if (selectedFKindex > -1 && !String.IsNullOrEmpty(selectedFK))
                     {
                         // 1.  Get Where for Parent table 
-                        field fieldInCurrentTable = foreignKeys[selectedFKindex];
+                        field fieldInCurrentTable = foreignKeys[selectedFKindex]; // Index in form same as index in foreignKeys list
                         string refTableOfSelectedFK = dataHelper.getForeignKeyRefField(fieldInCurrentTable).table;
                         int dgColumnIndex = currentSql.getColumn(fieldInCurrentTable);
                         if (dgColumnIndex > -1)  // A needless check
@@ -2116,7 +2281,7 @@ namespace SqlDataGridViewEditor
         private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             System.Windows.Forms.SortOrder newSortOrder = System.Windows.Forms.SortOrder.Ascending;   // default
-            // Check for same column ascending and change to descending  
+                                                                                                      // Check for same column ascending and change to descending  
             if (currentSql.myOrderBys.Count > 0)
             {
                 if (currentSql.myOrderBys[0].fld == currentSql.myFields[e.ColumnIndex])  // New column is the same as the old.
@@ -2462,7 +2627,7 @@ namespace SqlDataGridViewEditor
                         cmbComboFilterValue[comboNumber].Visible = true;
                         cmbComboFilterValue[comboNumber].Enabled = true;
                         cmbComboFilterValue[comboNumber].Tag = fi;  // Used in program - a foreign key
-                        // Bind ComboFilterValue[comboNumber] - but wait to end to bind grid filter values (see below)
+                                                                    // Bind ComboFilterValue[comboNumber] - but wait to end to bind grid filter values (see below)
                         tableOptions.doNotRebindGridFV = true;
                         RebindOneComboFilterValueCombo(comboNumber);
                         tableOptions.doNotRebindGridFV = false;
@@ -2642,14 +2807,24 @@ namespace SqlDataGridViewEditor
                 int secondPK = Convert.ToInt32(dataGridView1.SelectedRows[1].Cells[0].Value);
                 if (MergeTwoRows(currentSql.myTable, firstPK, secondPK))
                 {
-                    // User has asked to see dublicate keys and choosen to merge.
-                    // ShowDublicateDisplayKeys will write an strStaticWhereClause to show dublicate keys
+                    // User has asked to see duplicate keys and chosen to merge.
+                    // ShowDuplicateDisplayKeys will write an strStaticWhereClause to show duplicate keys
                     if (tableOptions.mergingDuplicateKeys)
                     {
-                        showDuplicateDispayKeys();
+                        DataTable dt = CountDuplicateDisplayKeys();
+                        if (dt != null && dt.Rows.Count > 0)
+                        {
+                            ShowDuplicateDisplayKeys(dt);
+                        }
+                        else
+                        {
+                            currentSql.strStaticWhereClause = string.Empty;
+                            rbView.Checked = true;
+                            writeGrid_NewFilter(true);
+                        }
                     }
                     else
-                    {   // Return to viewing after the merge
+                    {   // Return to viewing after the p
                         currentSql.strStaticWhereClause = string.Empty;
                         rbView.Checked = true;
                         writeGrid_NewFilter(true);
@@ -2795,7 +2970,6 @@ namespace SqlDataGridViewEditor
             // Set delete command, delete from currentDT and then call "update" to update the database
             MsSql.SetDeleteCommand(table, dataHelper.currentDT);
 
-            txtMessages.Text = String.Format(" {0} is the first and {1} is the second", pk1, pk2);
             //  From dataHelper.fieldsDT, get all the tables that have an FK for this table 
             DataRow[] fieldsDTdrs = dataHelper.fieldsDT.Select(String.Format("RefTable = '{0}'", table));
             // Count how many rows the firstPK and secondPK as FK's in other tables
@@ -3007,7 +3181,7 @@ namespace SqlDataGridViewEditor
                 btnDeleteAddMerge.Enabled = false;
                 SetAllFiltersByMode();
                 writeGrid_NewPage();  // Needed to add FK_cols
-                // Select the original row
+                                      // Select the original row
                 if (selectedRow > 0 && dataGridView1.Rows.Count > selectedRow)
                 {
                     dataGridView1.Rows[selectedRow].Selected = true;
@@ -3405,6 +3579,11 @@ namespace SqlDataGridViewEditor
         }
 
         #endregion
+
+        private void tableLayoutPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
 
     }
 }

@@ -142,6 +142,9 @@
   <data name="EnterConnectionStringDirections" xml:space="preserve">
     <value>Enter Connection String. Numbers in brackets {} represent values given above.  Use {3} for password.</value>
   </data>
+  <data name="enterUserNameOrNoUserString2" xml:space="preserve">
+    <value>Enter a user name or choose a connection string without {2}.</value>
+  </data>
   <data name="errorBackingUpDatabase" xml:space="preserve">
     <value>Error backing up the database.</value>
   </data>
@@ -209,6 +212,9 @@
   <data name="selectRowToDelete" xml:space="preserve">
     <value>Please select row to delete</value>
   </data>
+  <data name="testPassed" xml:space="preserve">
+    <value>Tess passed!</value>
+  </data>
   <data name="warning" xml:space="preserve">
     <value>Warning</value>
   </data>
@@ -218,6 +224,9 @@
   </data>
   <data name="youAlreadyHaveThisObjectInDatabase" xml:space="preserve">
     <value>You already have this object in your database!</value>
+  </data>
+  <data name="youMustEnterServerName" xml:space="preserve">
+    <value>You must enter a Server name</value>
   </data>
   <data name="youNeedtoMergeRowIn0" xml:space="preserve">
     <value>You need to merge rows in {0}.</value>

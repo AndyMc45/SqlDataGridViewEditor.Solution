@@ -134,6 +134,15 @@ namespace SqlDataGridViewEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter a user name or choose a connection string without {2}..
+        /// </summary>
+        public static string enterUserNameOrNoUserString2 {
+            get {
+                return ResourceManager.GetString("enterUserNameOrNoUserString2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error backing up the database..
         /// </summary>
         public static string errorBackingUpDatabase {
@@ -337,6 +346,15 @@ namespace SqlDataGridViewEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tess passed!.
+        /// </summary>
+        public static string testPassed {
+            get {
+                return ResourceManager.GetString("testPassed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
         public static string warning {
@@ -360,6 +378,15 @@ namespace SqlDataGridViewEditor.Properties {
         public static string youAlreadyHaveThisObjectInDatabase {
             get {
                 return ResourceManager.GetString("youAlreadyHaveThisObjectInDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must enter a Server name.
+        /// </summary>
+        public static string youMustEnterServerName {
+            get {
+                return ResourceManager.GetString("youMustEnterServerName", resourceCulture);
             }
         }
         

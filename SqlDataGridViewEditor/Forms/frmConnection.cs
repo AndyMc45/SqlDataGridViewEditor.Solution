@@ -45,7 +45,7 @@ namespace SqlDataGridViewEditor
             cmbStrings.Items.Clear();
             cmbStrings.Items.AddRange(defaultComboItems.ToArray());
 
-            // Select the first - this will set the 3 txtboxes
+            // Select the first - this will set the 3 text boxes
             cmbStrings.SelectedIndex = 0;
         }
 
@@ -54,11 +54,11 @@ namespace SqlDataGridViewEditor
             StringBuilder sb = new StringBuilder();
             if (this.txtServer.Text == "")
             {
-                sb.AppendLine("You must enter a Server name");
+                sb.AppendLine(MyResources.youMustEnterServerName);
             }
             if (cmbStrings.Text.IndexOf("{2}") > -1 && this.txtUserId.Text == string.Empty)
             {
-                sb.AppendLine("Enter a user name or choose a connection string without {2}.");
+                sb.AppendLine(MyResources.enterUserNameOrNoUserString2);
             }
             if (sb.Length > 0)
             {
@@ -92,8 +92,8 @@ namespace SqlDataGridViewEditor
                     //frmDeleteDatabase used to show databases
                     frmListItems databaseListForm = new frmListItems();
                     databaseListForm.myList = databaseList;
-                    databaseListForm.formCaption = "Hello";
                     databaseListForm.myJob = frmListItems.job.SelectString;
+                    databaseListForm.Text = "Delete Database";
                     databaseListForm.ShowDialog();
                     if (databaseListForm.returnString != string.Empty)
                     {
@@ -148,14 +148,14 @@ namespace SqlDataGridViewEditor
             {
                 MsSql.CloseConnection();
                 MsSql.openConnection(cs);  // No error handling in openConnection(cs)
-                MessageBox.Show("Test passed.", "Success");
+                MessageBox.Show(MyResources.testPassed, "Success");
                 cmdOK.Enabled = true;
                 success = true;
             }
             catch (System.Exception excep)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine("Error opening connection.");
+                sb.AppendLine(MyResources.errorOpeningConnection);
                 sb.AppendLine(excep.Message);
                 MessageBox.Show(sb.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 cmdOK.Enabled = false;
@@ -173,7 +173,7 @@ namespace SqlDataGridViewEditor
             // Create connection String object
             connectionString conString = new connectionString(cmbStrings.Text, this.txtServer.Text, this.txtUserId.Text,
                         this.txtDatabase.Text, MsSql.databaseType);
-            // Remove old occurences from stored list of strings - csList is filled of form load.
+            // Remove old occurrences from stored list of strings - csList is filled of form load.
             foreach (connectionString cs in csList)
             {
                 if (AppData.sameConnectionString(cs, conString))

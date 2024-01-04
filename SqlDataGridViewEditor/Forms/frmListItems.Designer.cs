@@ -15,7 +15,7 @@ namespace SqlDataGridViewEditor
         //Required by the Windows Form Designer
         private System.ComponentModel.IContainer components;
         public ToolTip ToolTipMain;
-        public Button cmdExit;
+        public Button cmdOK;
         public ListBox listBox1;
         //NOTE: The following procedure is required by the Windows Form Designer
         //It can be modified using the Windows Form Designer.
@@ -25,26 +25,26 @@ namespace SqlDataGridViewEditor
         {
             components = new System.ComponentModel.Container();
             ToolTipMain = new ToolTip(components);
-            cmdExit = new Button();
+            cmdOK = new Button();
             listBox1 = new ListBox();
             SuspendLayout();
             // 
-            // cmdExit
+            // cmdOK
             // 
-            cmdExit.AllowDrop = true;
-            cmdExit.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            cmdExit.BackColor = SystemColors.Control;
-            cmdExit.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-            cmdExit.ForeColor = SystemColors.ControlText;
-            cmdExit.Location = new Point(224, 217);
-            cmdExit.Name = "cmdExit";
-            cmdExit.RightToLeft = RightToLeft.No;
-            cmdExit.Size = new Size(89, 40);
-            cmdExit.TabIndex = 1;
-            cmdExit.Text = "resExit";
-            cmdExit.TextImageRelation = TextImageRelation.ImageAboveText;
-            cmdExit.UseVisualStyleBackColor = false;
-            cmdExit.Click += cmdExit_Click;
+            cmdOK.AllowDrop = true;
+            cmdOK.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            cmdOK.BackColor = SystemColors.Control;
+            cmdOK.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+            cmdOK.ForeColor = SystemColors.ControlText;
+            cmdOK.Location = new Point(224, 217);
+            cmdOK.Name = "cmdOK";
+            cmdOK.RightToLeft = RightToLeft.No;
+            cmdOK.Size = new Size(89, 40);
+            cmdOK.TabIndex = 1;
+            cmdOK.Text = "resOK";
+            cmdOK.TextImageRelation = TextImageRelation.ImageAboveText;
+            cmdOK.UseVisualStyleBackColor = false;
+            cmdOK.Click += cmdOK_Click;
             // 
             // listBox1
             // 
@@ -52,22 +52,21 @@ namespace SqlDataGridViewEditor
             listBox1.BackColor = SystemColors.Window;
             listBox1.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
             listBox1.ForeColor = SystemColors.WindowText;
-            listBox1.ItemHeight = 17;
+            listBox1.ItemHeight = 20;
             listBox1.Location = new Point(24, 24);
             listBox1.Name = "listBox1";
             listBox1.RightToLeft = RightToLeft.No;
-            listBox1.Size = new Size(345, 157);
+            listBox1.Size = new Size(345, 144);
             listBox1.TabIndex = 0;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
             // frmListItems
             // 
             AllowDrop = true;
-            AutoScaleDimensions = new SizeF(8F, 17F);
+            AutoScaleDimensions = new SizeF(10F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
             ClientSize = new Size(397, 268);
-            Controls.Add(cmdExit);
+            Controls.Add(cmdOK);
             Controls.Add(listBox1);
             Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
             Location = new Point(3, 22);
