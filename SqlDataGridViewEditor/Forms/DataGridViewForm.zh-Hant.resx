@@ -118,163 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="splitContainer1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 29</value>
-  </data>
-  <data name="tableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 27</value>
-  </data>
-  <data name="tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1529, 285</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="txtMessages.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="txtMessages.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1776, 27</value>
-  </data>
-  <data name="splitContainer1.Panel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 80, 0, 80</value>
-  </data>
   <data name="GridContextMenu.Size" type="System.Drawing.Size, System.Drawing">
     <value>223, 160</value>
   </data>
-  <data name="dataGridView1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 4, 3, 4</value>
-  </data>
   <data name="dataGridView1.Size" type="System.Drawing.Size, System.Drawing">
     <value>1776, 326</value>
-  </data>
-  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1776, 739</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
     <value>409</value>
   </data>
-  <data name="splitContainer1.SplitterWidth" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="lblMainFilter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 3</value>
-  </data>
-  <data name="lblMainFilter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="lblMainFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 37</value>
-  </data>
   <data name="lblMainFilter.Text" xml:space="preserve">
     <value>主要篩選：</value>
-  </data>
-  <data name="cmbMainFilter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>158, 2</value>
-  </data>
-  <data name="cmbMainFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>344, 28</value>
-  </data>
-  <data name="lblGridFilter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 46</value>
-  </data>
-  <data name="lblGridFilter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="lblGridFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 37</value>
   </data>
   <data name="lblGridFilter.Text" xml:space="preserve">
     <value>篩選表格：</value>
   </data>
-  <data name="cmbGridFilterFields_0.Location" type="System.Drawing.Point, System.Drawing">
-    <value>158, 45</value>
-  </data>
-  <data name="cmbGridFilterFields_0.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 28</value>
-  </data>
-  <data name="cmbGridFilterFields_1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>508, 45</value>
-  </data>
-  <data name="cmbGridFilterFields_1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 28</value>
-  </data>
-  <data name="cmbGridFilterValue_3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>358, 88</value>
-  </data>
-  <data name="cmbGridFilterValue_3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
-  <data name="cmbGridFilterFields_4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>508, 88</value>
-  </data>
-  <data name="cmbGridFilterFields_4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 28</value>
-  </data>
-  <data name="cmbGridFilterValue_4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>708, 88</value>
-  </data>
-  <data name="cmbGridFilterValue_4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
-  <data name="cmbGridFilterFields_5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>858, 88</value>
-  </data>
-  <data name="cmbGridFilterFields_5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 28</value>
-  </data>
-  <data name="cmbGridFilterValue_1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>708, 45</value>
-  </data>
-  <data name="cmbGridFilterValue_1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
-  <data name="cmbGridFilterValue_5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1058, 88</value>
-  </data>
-  <data name="cmbGridFilterValue_5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
-  <data name="cmbGridFilterValue_2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1058, 45</value>
-  </data>
-  <data name="cmbGridFilterValue_2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
-  <data name="cmbGridFilterFields_2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>858, 45</value>
-  </data>
-  <data name="cmbGridFilterFields_2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 28</value>
-  </data>
-  <data name="cmbGridFilterValue_0.Location" type="System.Drawing.Point, System.Drawing">
-    <value>358, 45</value>
-  </data>
-  <data name="cmbGridFilterValue_0.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
-  <data name="cmbGridFilterFields_3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>158, 88</value>
-  </data>
-  <data name="cmbGridFilterFields_3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 28</value>
-  </data>
   <data name="rbMerge.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1022, 3</value>
-  </data>
-  <data name="rbMerge.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>1170, 3</value>
   </data>
   <data name="rbMerge.Size" type="System.Drawing.Size, System.Drawing">
     <value>66, 24</value>
   </data>
   <data name="rbMerge.Text" xml:space="preserve">
     <value>合 併</value>
-  </data>
-  <data name="btnDeleteAddMerge.Location" type="System.Drawing.Point, System.Drawing">
-    <value>908, 2</value>
-  </data>
-  <data name="btnDeleteAddMerge.Size" type="System.Drawing.Size, System.Drawing">
-    <value>94, 35</value>
   </data>
   <data name="GridContextMenu_SetAsMainFilter.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 24</value>
@@ -319,10 +186,7 @@
     <value>清除所有篩選</value>
   </data>
   <data name="rbAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>822, 3</value>
-  </data>
-  <data name="rbAdd.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>942, 3</value>
   </data>
   <data name="rbAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>66, 24</value>
@@ -331,19 +195,16 @@
     <value>新 增</value>
   </data>
   <data name="rbDelete.Location" type="System.Drawing.Point, System.Drawing">
-    <value>720, 3</value>
-  </data>
-  <data name="rbDelete.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>830, 3</value>
   </data>
   <data name="rbDelete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 24</value>
+    <value>62, 24</value>
+  </data>
+  <data name="rbDelete.Text" xml:space="preserve">
+    <value>刪除</value>
   </data>
   <data name="rbEdit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>620, 3</value>
-  </data>
-  <data name="rbEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>712, 3</value>
   </data>
   <data name="rbEdit.Size" type="System.Drawing.Size, System.Drawing">
     <value>70, 24</value>
@@ -352,10 +213,7 @@
     <value>編  輯</value>
   </data>
   <data name="rbView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>520, 3</value>
-  </data>
-  <data name="rbView.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
+    <value>598, 3</value>
   </data>
   <data name="rbView.Size" type="System.Drawing.Size, System.Drawing">
     <value>70, 24</value>
@@ -363,170 +221,11 @@
   <data name="rbView.Text" xml:space="preserve">
     <value>查  看</value>
   </data>
-  <data name="lblComboFilter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 179</value>
-  </data>
-  <data name="lblComboFilter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="lblComboFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
   <data name="lblComboFilter.Text" xml:space="preserve">
     <value>篩選表格／組合：</value>
   </data>
-  <data name="cmbGridFilterFields_7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>508, 120</value>
-  </data>
-  <data name="cmbGridFilterFields_7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 28</value>
-  </data>
-  <data name="cmbGridFilterValue_6.Location" type="System.Drawing.Point, System.Drawing">
-    <value>358, 120</value>
-  </data>
-  <data name="cmbGridFilterValue_6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
-  <data name="cmbGridFilterFields_6.Location" type="System.Drawing.Point, System.Drawing">
-    <value>158, 120</value>
-  </data>
-  <data name="cmbGridFilterFields_6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 28</value>
-  </data>
-  <data name="cmbGridFilterValue_7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>708, 120</value>
-  </data>
-  <data name="cmbGridFilterValue_7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
-  <data name="cmbGridFilterFields_8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>858, 120</value>
-  </data>
-  <data name="cmbGridFilterFields_8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 28</value>
-  </data>
-  <data name="cmbGridFilterValue_8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1058, 120</value>
-  </data>
-  <data name="cmbGridFilterValue_8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 28</value>
-  </data>
-  <data name="lblCmbFilterField_3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>357, 210</value>
-  </data>
-  <data name="lblCmbFilterField_3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 24</value>
-  </data>
-  <data name="cmbComboFilterValue_3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>507, 213</value>
-  </data>
-  <data name="cmbComboFilterValue_3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="cmbComboFilterValue_3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 28</value>
-  </data>
-  <data name="lblCmbFilterField_4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>657, 210</value>
-  </data>
-  <data name="lblCmbFilterField_4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 24</value>
-  </data>
-  <data name="cmbComboFilterValue_4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>807, 213</value>
-  </data>
-  <data name="cmbComboFilterValue_4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="cmbComboFilterValue_4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 28</value>
-  </data>
-  <data name="lblCmbFilterField_5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>957, 210</value>
-  </data>
-  <data name="lblCmbFilterField_5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 24</value>
-  </data>
-  <data name="cmbComboFilterValue_5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1107, 213</value>
-  </data>
-  <data name="cmbComboFilterValue_5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="cmbComboFilterValue_5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 28</value>
-  </data>
-  <data name="lblCmbFilterField_0.Location" type="System.Drawing.Point, System.Drawing">
-    <value>357, 176</value>
-  </data>
-  <data name="lblCmbFilterField_0.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 24</value>
-  </data>
-  <data name="cmbComboFilterValue_0.Location" type="System.Drawing.Point, System.Drawing">
-    <value>507, 179</value>
-  </data>
-  <data name="cmbComboFilterValue_0.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="cmbComboFilterValue_0.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 28</value>
-  </data>
-  <data name="lblCmbFilterField_1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>657, 176</value>
-  </data>
-  <data name="lblCmbFilterField_1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 24</value>
-  </data>
-  <data name="cmbComboFilterValue_1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>807, 179</value>
-  </data>
-  <data name="cmbComboFilterValue_1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="cmbComboFilterValue_1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 28</value>
-  </data>
-  <data name="lblCmbFilterField_2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>957, 176</value>
-  </data>
-  <data name="lblCmbFilterField_2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 24</value>
-  </data>
-  <data name="cmbComboFilterValue_2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1107, 179</value>
-  </data>
-  <data name="cmbComboFilterValue_2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="cmbComboFilterValue_2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 28</value>
-  </data>
-  <data name="cmbComboTableList.Location" type="System.Drawing.Point, System.Drawing">
-    <value>157, 179</value>
-  </data>
-  <data name="cmbComboTableList.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 3, 2, 3</value>
-  </data>
-  <data name="cmbComboTableList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 28</value>
-  </data>
-  <data name="btnBlackLine.Location" type="System.Drawing.Point, System.Drawing">
-    <value>158, 163</value>
-  </data>
-  <data name="btnBlackLine.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1086, 11</value>
-  </data>
-  <data name="btnReload.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1157, 2</value>
-  </data>
   <data name="btnReload.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 29</value>
-  </data>
-  <data name="MainMenu1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 3, 0, 3</value>
-  </data>
-  <data name="MainMenu1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1538, 30</value>
+    <value>50, 29</value>
   </data>
   <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
     <value>55, 24</value>
@@ -540,23 +239,11 @@
   <data name="mnuConnections.Text" xml:space="preserve">
     <value>資料庫連結</value>
   </data>
-  <data name="mnuConnectionList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 26</value>
-  </data>
   <data name="mnuConnectionList.Text" xml:space="preserve">
     <value>連結記錄</value>
   </data>
-  <data name="mnuBlankLine3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 26</value>
-  </data>
-  <data name="mnuAddConnection.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 26</value>
-  </data>
   <data name="mnuAddConnection.Text" xml:space="preserve">
     <value>新增連結</value>
-  </data>
-  <data name="mnuDeleteConnection.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 26</value>
   </data>
   <data name="mnuDeleteConnection.Text" xml:space="preserve">
     <value>刪除連結</value>
@@ -574,31 +261,52 @@
     <value>表格</value>
   </data>
   <data name="mnuTools.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 24</value>
+    <value>71, 24</value>
   </data>
   <data name="mnuTools.Text" xml:space="preserve">
     <value>工具列</value>
   </data>
+  <data name="mnuTools_ShowITtools.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 26</value>
+  </data>
+  <data name="mnuTools_ShowITtools.Text" xml:space="preserve">
+    <value>展示 IT 工具</value>
+  </data>
   <data name="mnuDatabaseInfo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+    <value>224, 26</value>
+  </data>
+  <data name="mnuDatabaseInfo.Text" xml:space="preserve">
+    <value>資料庫資訊</value>
   </data>
   <data name="mnuDuplicateDisplayKeys.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+    <value>224, 26</value>
+  </data>
+  <data name="mnuDuplicateDisplayKeys.Text" xml:space="preserve">
+    <value>檢查重複的顯示鍵</value>
   </data>
   <data name="mnuForeignKeyMissing.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+    <value>224, 26</value>
+  </data>
+  <data name="mnuForeignKeyMissing.Text" xml:space="preserve">
+    <value>準備新的外鍵</value>
+  </data>
+  <data name="mnuToolsBackupDatabase.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 26</value>
+  </data>
+  <data name="mnuToolsBackupDatabase.Text" xml:space="preserve">
+    <value>備份資料庫</value>
+  </data>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>221, 6</value>
+  </data>
+  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>221, 6</value>
   </data>
   <data name="mnuPrintCurrentTable.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
+    <value>224, 26</value>
   </data>
-  <data name="mnuViewLog.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
-  </data>
-  <data name="mnuOrderComboListsByPK.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 26</value>
-  </data>
-  <data name="顯示IT工具列ToolStripMenuItem.Text" xml:space="preserve">
-    <value>顯示IT工具列</value>
+  <data name="mnuPrintCurrentTable.Text" xml:space="preserve">
+    <value>匯出到 Excel</value>
   </data>
   <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
     <value>63, 24</value>
@@ -612,23 +320,23 @@
   <data name="mnuHelpFile.Text" xml:space="preserve">
     <value>幫助文件</value>
   </data>
-  <data name="toolStripBottom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 768</value>
+  <data name="txtRecordsPerPage.ToolTipText" xml:space="preserve">
+    <value>每頁記錄數</value>
   </data>
-  <data name="toolStripBottom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1538, 27</value>
-  </data>
-  <data name="txtRecordsPerPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 27</value>
-  </data>
-  <data name="toolStripButton4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 24</value>
+  <data name="toolStripButton4.ToolTipText" xml:space="preserve">
+    <value>下一頁</value>
   </data>
   <data name="toolStripButton3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 24</value>
+    <value>45, 24</value>
   </data>
-  <data name="toolStripButton2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 24</value>
+  <data name="toolStripButton3.Text" xml:space="preserve">
+    <value>頁碼</value>
+  </data>
+  <data name="toolStripButton3.ToolTipText" xml:space="preserve">
+    <value>選擇頁碼</value>
+  </data>
+  <data name="toolStripButton2.ToolTipText" xml:space="preserve">
+    <value>前一頁</value>
   </data>
   <data name="toolStripButtonColumnWidth.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -639,70 +347,7 @@
         AAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>8, 20</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>1538, 795</value>
-  </data>
-  <data name="mnuTools_ShowITtools.Text" xml:space="preserve">
-    <value>展示 IT 工具</value>
-  </data>
-  <data name="mnuDatabaseInfo.Text" xml:space="preserve">
-    <value>資料庫資訊</value>
-  </data>
-  <data name="mnuDuplicateDisplayKeys.Text" xml:space="preserve">
-    <value>檢查重複的顯示鍵</value>
-  </data>
-  <data name="mnuForeignKeyMissing.Text" xml:space="preserve">
-    <value>準備新的外鍵</value>
-  </data>
-  <data name="mnuToolsBackupDatabase.Text" xml:space="preserve">
-    <value>備份資料庫</value>
-  </data>
-  <data name="mnuPrintCurrentTable.Text" xml:space="preserve">
-    <value>列印選擇</value>
-  </data>
-  <data name="txtRecordsPerPage.ToolTipText" xml:space="preserve">
-    <value>每頁記錄數</value>
-  </data>
-  <data name="txtRecordsPerPage.Text" xml:space="preserve">
-    <value>100</value>
-  </data>
-  <data name="toolStripButton4.Text" xml:space="preserve">
-    <value>toolStripButton4</value>
-  </data>
-  <data name="toolStripButton4.ToolTipText" xml:space="preserve">
-    <value>下一頁</value>
-  </data>
-  <data name="toolStripButton2.ToolTipText" xml:space="preserve">
-    <value>前一頁</value>
-  </data>
   <data name="toolStripButtonColumnWidth.Text" xml:space="preserve">
     <value>狹窄的</value>
-  </data>
-  <data name="toolStripBottom.Text" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>DataGridViewForm</value>
-  </data>
-  <data name="toolStripButton3.Text" xml:space="preserve">
-    <value>頁碼</value>
-  </data>
-  <data name="toolStripButton3.ToolTipText" xml:space="preserve">
-    <value>選擇頁碼</value>
-  </data>
-  <data name="toolStripButton2.Text" xml:space="preserve">
-    <value>toolStripButton2</value>
-  </data>
-  <data name="mnuBlankLine3.Text" xml:space="preserve">
-    <value>---------------------------</value>
-  </data>
-  <data name="btnBlackLine.Text" xml:space="preserve">
-    <value>No Text</value>
-  </data>
-  <data name="rbDelete.Text" xml:space="preserve">
-    <value>刪除</value>
   </data>
 </root>

@@ -18,6 +18,7 @@ namespace SqlDataGridViewEditor
             logFileName = string.Empty;
             orderComboListsByPK = false;
             strSuperStaticWhereClause = String.Empty;
+            excelFilesFolder = String.Empty;
     }
         public bool debugging { get; set; }
         public bool runTimer { get; set; }
@@ -27,6 +28,8 @@ namespace SqlDataGridViewEditor
         public string strSuperStaticWhereClause { get; set; } // Use to take clause to a new table
         public bool narrowColumns { get; set; }
         public bool orderComboListsByPK { get; set; }
+        public string excelFilesFolder { get; set; }
+
 
         public FileStream? ts;
         public Color[] nonDkColorArray = new Color[] { Color.LightCyan, Color.LavenderBlush, Color.Plum, Color.Pink, Color.LightGray, Color.LightSalmon, Color.Azure, Color.OrangeRed };

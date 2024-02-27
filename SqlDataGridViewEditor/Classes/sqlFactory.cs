@@ -66,11 +66,7 @@ namespace SqlDataGridViewEditor
             myPage = page;
             myPageSize = pageSize;
 
-            SqlFactoryFinishConstructor();
-        }
-
-       public void SqlFactoryFinishConstructor()
-        {
+            // The main work of this constructor
             errorMsg = addFieldsAndInnerJoins();
 
             // If there is no ostensive definition for any PK or FK, add the primary key of myTable or refTable
@@ -95,10 +91,18 @@ namespace SqlDataGridViewEditor
         }
 
         // addInnerJoin is complex - it stores somewhere everything about the table that the program needs to know 
-        // Go through table and adds to myInnerJoins and myFields lists
-        // Also, add map from every primary key to all ForeignKeys.  (PKs_InnerjoinMap[PK] --> list of FK inner joins)
-        // Also, add map from every primary key to all its displayFields (PKs_OstensiveDictionary[PK] --> list of display fields)
-        // Finally, keep a list of errors. After returning from the constructor, datagridview1 reports these to the user.
+        // (1) Go through table and adds to myInnerJoins and myFields lists
+        // (2) Add map from every primary key to all ForeignKeys.  (PKs_InnerjoinMap[PK] --> list of FK inner joins in that PK table)
+        // Note: The list of FK does NOT contain grandchildren.  But the PK of the Son (ref.) table will be a key in PKs_InnerJoinMap, and this will have its FKs.
+        // (3) Add map from every primary key to all its displayFields (PKs_OstensiveDictionary[PK] --> list of display fields)
+        // Note: the list of Display keys has grandchildren.  And every entry has an FKAncestors list that maps the Display back to a column in myTable.
+        // Consider "StudentDegreesID", the table has 3 FK display keys (studentID, degreeID, handbookID).
+        // THe student table and degree table both have one display key (the names)
+        // The degreeID PK has 2 display keys: The name and DelMethID. The DelMethID display key has one display key (the name).  
+        // So StudentDegreesID will map to 4 display keys.
+        // The degreeName/Handbook/StudentName all have one FK ancester - Fk back to the StudentDegree table
+        // The DelMethod Name has two ancesters -- tracing back to Delivery Method table and then to the StudentDegree Table
+        // (4) Finally, keep a list of errors. After returning from the constructor, datagridview1 reports these to the user.
         // These things never change for an sqlFactory object.
         private string addFieldsAndInnerJoins()
         {
@@ -109,11 +113,11 @@ namespace SqlDataGridViewEditor
             // Begin the program
             field pkMyTable = dataHelper.getTablePrimaryKeyField(myTable);
             myFields.Add(pkMyTable);  // Always want this first
-            addFieldsAndInnerJoins(pkMyTable, true, ancestorFields, ref displayKeys, ref allTables, ref errMsgs);  // This does all the work
+            addFieldsAndInnerJoins(pkMyTable, ancestorFields, ref displayKeys, ref allTables, ref errMsgs);  // This does all the work
             return String.Join(", ", errMsgs);  // errMsgs is a public List<string> variable which the above function can add to
         }
 
-        private void addFieldsAndInnerJoins(field pkCurrentTable, bool seekingDisplayKeys, List<field> ancestorFields, ref List<field> displayKeys, ref List<string> allTables, ref List<string> errMsgs)
+        private void addFieldsAndInnerJoins(field pkCurrentTable, List<field> ancestorFields, ref List<field> displayKeys, ref List<string> allTables, ref List<string> errMsgs)
         {
             // Circular table inner join check
             bool circular = false;
@@ -155,12 +159,11 @@ namespace SqlDataGridViewEditor
                     if (dataHelper.isForeignKeyField(drField))
                     {
                         // Decide whether this inner join is included / shown - if not do nothing
-                        if (includeAllColumnsInAllTables || pkCurrentTable.table == myTable || (seekingDisplayKeys && dataHelper.isDisplayKey(drField)))
+                        if (includeAllColumnsInAllTables || pkCurrentTable.table == myTable || dataHelper.isDisplayKey(drField))
                         {
                             myFields.Add(drField);
                             // drField is a foreign key, so we can get the Primary Key of the Reference (Child) table
-                            field pkRefTable = dataHelper.getForeignKeyRefField(drField);                           
-                            bool stillSeekingDisplayKey = seekingDisplayKeys && dataHelper.isDisplayKey(drField);
+                            field pkRefTable = dataHelper.getForeignKeyRefField(drField);
                             // Add inner join to this tables inner joins
                             innerJoin new_ij = new innerJoin(drField, pkRefTable);
                             currentTableInnerJoins.Add(new_ij);
@@ -171,8 +174,11 @@ namespace SqlDataGridViewEditor
                             List<field> myAncestorFields = new List<field>();
                             myAncestorFields.Add(drField);
                             myAncestorFields.AddRange(ancestorFields);
-                            addFieldsAndInnerJoins(pkRefTable, stillSeekingDisplayKey, myAncestorFields, ref newDisplayKeys, ref allTables, ref errMsgs);
-                            displayKeys.AddRange(newDisplayKeys);
+                            addFieldsAndInnerJoins(pkRefTable, myAncestorFields, ref newDisplayKeys, ref allTables, ref errMsgs);
+                            if (dataHelper.isDisplayKey(drField))
+                            {
+                                displayKeys.AddRange(newDisplayKeys);
+                            }
                         }
                     }
                     else if (dataHelper.isTablePrimaryKeyField(drField))

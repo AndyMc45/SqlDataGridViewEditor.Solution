@@ -5,6 +5,9 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using System.IO;
+using SqlDataGridViewEditor.Classes;
+
 
 namespace SqlDataGridViewEditor
 {
@@ -452,8 +455,10 @@ namespace SqlDataGridViewEditor
             tableOptions.writingTable = true;
             ClearFiltersOnNewTable(); // All events are cancelled via "if(Selected_index != -1) . . ."
             tableOptions.writingTable = false;
+
             //1. Create currentSql - same currentSql used until new table is loaded - same myFields and myInnerJoins
             currentSql = new SqlFactory(table, 1, formOptions.pageSize);
+
             // Above may produce error message
             if (!String.IsNullOrEmpty(currentSql.errorMsg))
             {
@@ -813,10 +818,18 @@ namespace SqlDataGridViewEditor
                         (!dataHelper.isDisplayKey(colField)) || tableOptions.allowDisplayKeyEdit)
                     {
                         col.ReadOnly = false;
+                        // Make sure it is visible
+                        if (col.Width < 62)
+                        {
+                            col.Width = 62;
+                        }
+
                     }
                 }
             }
         }
+
+
 
         private void ColorComboBoxes()
         {
@@ -1094,6 +1107,31 @@ namespace SqlDataGridViewEditor
 
         #region EVENTS - Main Menu events
 
+        private void mnuPrintCurrentTable_Click(object sender, EventArgs e)
+        {
+
+            saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "Excel Files (*.xlsx)|*.xlsx";
+            saveFileDialog1.DefaultExt = "xlsx";
+            saveFileDialog1.AddExtension = true;
+            if (currentSql != null && MsSql.cn != null)
+            {
+                saveFileDialog1.FileName = String.Format("{0}--{1}--Page_{2}", MsSql.cn.Database, currentSql.myTable, currentSql.myPage.ToString());
+            }
+            if (!String.IsNullOrEmpty(formOptions.excelFilesFolder))
+            {
+                saveFileDialog1.InitialDirectory = formOptions.excelFilesFolder;
+            }
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = saveFileDialog1.FileName;
+                formOptions.excelFilesFolder = Path.GetDirectoryName(fileName);
+                Print_to_Excel.datagridview_to_Exel(fileName, dataGridView1);
+
+            }
+        }
+
         private void mnuToolsMenuStripItem_Click(object sender, EventArgs e)
         {
             foreach (ToolStripItem gtsi in GridContextMenu.Items)
@@ -1108,6 +1146,7 @@ namespace SqlDataGridViewEditor
                 }
             }
         }
+
         private void mnuClose_Click(object sender, EventArgs e)
         {
             AppData.StoreFormOptions(formOptions);
@@ -1237,10 +1276,10 @@ namespace SqlDataGridViewEditor
         {
             mnuForeignKeyMissing.Visible = mnuTools_ShowITtools.Checked;
             mnuDuplicateDisplayKeys.Visible = mnuTools_ShowITtools.Checked;
-            mnuPrintCurrentTable.Visible = mnuTools_ShowITtools.Checked;
             rbMerge.Visible = mnuTools_ShowITtools.Checked;
             mnuDatabaseInfo.Visible = mnuTools_ShowITtools.Checked;
             mnuToolsBackupDatabase.Visible = mnuTools_ShowITtools.Checked;
+            mnuPrintCurrentTable.Visible = true; // Always visible
 
             if (mnuTools_ShowITtools.Checked)
             {
@@ -1935,6 +1974,7 @@ namespace SqlDataGridViewEditor
             if (programMode == ProgramMode.edit)
             {
                 field colField = currentSql.myFields[e.ColumnIndex];
+                // Change to ID column
                 // Set update command
                 List<field> fieldsToUpdate = new List<field>();
                 fieldsToUpdate.Add(colField);
@@ -2969,7 +3009,7 @@ namespace SqlDataGridViewEditor
                 dataGridView1.MultiSelect = false;
                 dataGridView1.EditMode = DataGridViewEditMode.EditProgrammatically;
                 btnDeleteAddMerge.Enabled = false;
-                SetAllFiltersByMode();
+                SetAllFiltersByMode();  // Calls SetColumnReadOnly() - which turns on and off col.ReadOnly
             }
         }
 
@@ -3005,7 +3045,7 @@ namespace SqlDataGridViewEditor
                     column.ReadOnly = true;
                 }
                 btnDeleteAddMerge.Enabled = false;
-                SetAllFiltersByMode();
+                SetAllFiltersByMode();  // Calls SetColReadOnlyProperty()
                 writeGrid_NewPage();  // Needed to add FK_cols
                 // Select the original row
                 if (selectedRow > 0 && dataGridView1.Rows.Count > selectedRow)
@@ -3406,6 +3446,15 @@ namespace SqlDataGridViewEditor
 
         #endregion
 
+        private void folderBrowserDialog1_HelpRequest(object sender, EventArgs e)
+        {
+
+        }
+
+        private void mnuTools_ShowITtools_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 

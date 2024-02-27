@@ -585,18 +585,19 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("transcripts", "成績單");
             columnHeaderTranslations.Add("print transcript", "列印成績單");
             columnHeaderTranslations.Add("print class list", "列印課程學生");
+            columnHeaderTranslations.Add("update student status", "更新學生身份");
             columnHeaderTranslations.Add("options", "選類");
-
+            
             return columnHeaderTranslations;
         }
-
-
-
     }
 
     internal static class TableName
     {
         // Names of the tables <string>
+        internal static string countries { get => "Countries"; }
+        internal static string countryProvinces { get => "CountryProvinces"; }
+
         internal static string courseNames { get => "CourseNames"; }
         internal static string courses { get => "Courses"; }
         internal static string courseTerms { get => "CourseTerms"; }
@@ -615,6 +616,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         internal static string requirementName { get => "RequirementName"; }
         internal static string section { get => "Section"; }
         internal static string studentGradReq { get => "StudentGradReq"; }
+        internal static string studentStatusHistory { get => "StudentStatusHistory"; }
+
         internal static string students { get => "Students"; }
         internal static string terms { get => "Terms"; }
         internal static string transcript { get => "Transcript"; }

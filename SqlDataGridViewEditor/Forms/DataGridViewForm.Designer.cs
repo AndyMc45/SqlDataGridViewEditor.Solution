@@ -30,9 +30,9 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataGridViewForm));
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             splitContainer1 = new SplitContainer();
             tableLayoutPanel = new TableLayoutPanel();
             lblMainFilter = new Label();
@@ -103,10 +103,10 @@
             mnuDatabaseInfo = new ToolStripMenuItem();
             mnuDuplicateDisplayKeys = new ToolStripMenuItem();
             mnuForeignKeyMissing = new ToolStripMenuItem();
-            mnuPrintCurrentTable = new ToolStripMenuItem();
             mnuToolsBackupDatabase = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
             toolStripSeparator3 = new ToolStripSeparator();
+            mnuPrintCurrentTable = new ToolStripMenuItem();
             mnuHelp = new ToolStripMenuItem();
             mnuHelpFile = new ToolStripMenuItem();
             toolStripBottom = new ToolStrip();
@@ -115,6 +115,7 @@
             toolStripButton3 = new ToolStripButton();
             toolStripButton2 = new ToolStripButton();
             toolStripButtonColumnWidth = new ToolStripButton();
+            saveFileDialog1 = new SaveFileDialog();
             folderBrowserDialog1 = new FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -134,12 +135,13 @@
             // 
             // splitContainer1.Panel1
             // 
+            resources.ApplyResources(splitContainer1.Panel1, "splitContainer1.Panel1");
             splitContainer1.Panel1.Controls.Add(tableLayoutPanel);
             splitContainer1.Panel1.Controls.Add(txtMessages);
-            resources.ApplyResources(splitContainer1.Panel1, "splitContainer1.Panel1");
             // 
             // splitContainer1.Panel2
             // 
+            resources.ApplyResources(splitContainer1.Panel2, "splitContainer1.Panel2");
             splitContainer1.Panel2.Controls.Add(dataGridView1);
             // 
             // tableLayoutPanel
@@ -378,57 +380,57 @@
             // 
             // GridContextMenu
             // 
+            resources.ApplyResources(GridContextMenu, "GridContextMenu");
             GridContextMenu.ImageScalingSize = new Size(20, 20);
             GridContextMenu.Items.AddRange(new ToolStripItem[] { GridContextMenu_SetAsMainFilter, GridContextMenu_SetFKasMainFIlter, toolStripSeparator1, GridContextMenu_TimesUsedAsFK, GridContextMenu_OrderCombolByPK, GridContextMenu_Seperator, GridContextMenu_RestoreFilters, GridContextMenu_ClearFilters });
             GridContextMenu.Name = "contextMenuStrip1";
-            resources.ApplyResources(GridContextMenu, "GridContextMenu");
             // 
             // GridContextMenu_SetAsMainFilter
             // 
-            GridContextMenu_SetAsMainFilter.Name = "GridContextMenu_SetAsMainFilter";
             resources.ApplyResources(GridContextMenu_SetAsMainFilter, "GridContextMenu_SetAsMainFilter");
+            GridContextMenu_SetAsMainFilter.Name = "GridContextMenu_SetAsMainFilter";
             GridContextMenu_SetAsMainFilter.Click += GridContextMenu_SetAsMainFilter_Click;
             // 
             // GridContextMenu_SetFKasMainFIlter
             // 
+            resources.ApplyResources(GridContextMenu_SetFKasMainFIlter, "GridContextMenu_SetFKasMainFIlter");
             GridContextMenu_SetFKasMainFIlter.DoubleClickEnabled = true;
             GridContextMenu_SetFKasMainFIlter.Name = "GridContextMenu_SetFKasMainFIlter";
-            resources.ApplyResources(GridContextMenu_SetFKasMainFIlter, "GridContextMenu_SetFKasMainFIlter");
             GridContextMenu_SetFKasMainFIlter.Click += GridContextMenu_SetFkAsMainFilter_Click;
             // 
             // toolStripSeparator1
             // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
+            toolStripSeparator1.Name = "toolStripSeparator1";
             // 
             // GridContextMenu_TimesUsedAsFK
             // 
-            GridContextMenu_TimesUsedAsFK.Name = "GridContextMenu_TimesUsedAsFK";
             resources.ApplyResources(GridContextMenu_TimesUsedAsFK, "GridContextMenu_TimesUsedAsFK");
+            GridContextMenu_TimesUsedAsFK.Name = "GridContextMenu_TimesUsedAsFK";
             GridContextMenu_TimesUsedAsFK.Click += GridContextMenu_TimesUsedAsFK_Click;
             // 
             // GridContextMenu_OrderCombolByPK
             // 
+            resources.ApplyResources(GridContextMenu_OrderCombolByPK, "GridContextMenu_OrderCombolByPK");
             GridContextMenu_OrderCombolByPK.CheckOnClick = true;
             GridContextMenu_OrderCombolByPK.Name = "GridContextMenu_OrderCombolByPK";
-            resources.ApplyResources(GridContextMenu_OrderCombolByPK, "GridContextMenu_OrderCombolByPK");
             GridContextMenu_OrderCombolByPK.Click += GridContextMenu_OrderComboByPK_Click;
             // 
             // GridContextMenu_Seperator
             // 
-            GridContextMenu_Seperator.Name = "GridContextMenu_Seperator";
             resources.ApplyResources(GridContextMenu_Seperator, "GridContextMenu_Seperator");
+            GridContextMenu_Seperator.Name = "GridContextMenu_Seperator";
             // 
             // GridContextMenu_RestoreFilters
             // 
-            GridContextMenu_RestoreFilters.Name = "GridContextMenu_RestoreFilters";
             resources.ApplyResources(GridContextMenu_RestoreFilters, "GridContextMenu_RestoreFilters");
+            GridContextMenu_RestoreFilters.Name = "GridContextMenu_RestoreFilters";
             GridContextMenu_RestoreFilters.Click += GridContextMenu_RestoreFilters_Click;
             // 
             // GridContextMenu_ClearFilters
             // 
-            GridContextMenu_ClearFilters.Name = "GridContextMenu_ClearFilters";
             resources.ApplyResources(GridContextMenu_ClearFilters, "GridContextMenu_ClearFilters");
+            GridContextMenu_ClearFilters.Name = "GridContextMenu_ClearFilters";
             GridContextMenu_ClearFilters.Click += GridContextMenu_ClearFilters_Click;
             // 
             // rbAdd
@@ -661,11 +663,11 @@
             // 
             // btnBlackLine
             // 
+            resources.ApplyResources(btnBlackLine, "btnBlackLine");
             btnBlackLine.BackColor = Color.Black;
             btnBlackLine.CausesValidation = false;
             tableLayoutPanel.SetColumnSpan(btnBlackLine, 22);
             btnBlackLine.ForeColor = Color.Black;
-            resources.ApplyResources(btnBlackLine, "btnBlackLine");
             btnBlackLine.Name = "btnBlackLine";
             btnBlackLine.UseVisualStyleBackColor = false;
             // 
@@ -679,41 +681,41 @@
             // 
             // txtMessages
             // 
-            txtMessages.BackColor = SystemColors.ControlLight;
             resources.ApplyResources(txtMessages, "txtMessages");
+            txtMessages.BackColor = SystemColors.ControlLight;
             txtMessages.ForeColor = Color.Red;
             txtMessages.Name = "txtMessages";
             txtMessages.ReadOnly = true;
             // 
             // dataGridView1
             // 
+            resources.ApplyResources(dataGridView1, "dataGridView1");
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = Color.WhiteSmoke;
-            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.BackColor = Color.WhiteSmoke;
+            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            resources.ApplyResources(dataGridView1, "dataGridView1");
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = SystemColors.Control;
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             dataGridView1.ContextMenuStrip = GridContextMenu;
             dataGridView1.EnableHeadersVisualStyles = false;
             dataGridView1.GridColor = Color.WhiteSmoke;
             dataGridView1.MultiSelect = false;
             dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
-            dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = SystemColors.Control;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
+            dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             dataGridView1.RowTemplate.Height = 27;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.CellBeginEdit += dataGridView1_CellBeginEdit;
@@ -739,124 +741,126 @@
             // 
             // MainMenu1
             // 
+            resources.ApplyResources(MainMenu1, "MainMenu1");
             MainMenu1.BackColor = SystemColors.ControlLight;
             MainMenu1.ImageScalingSize = new Size(20, 20);
             MainMenu1.Items.AddRange(new ToolStripItem[] { mnuFile, mnuOpenTables, mnuTools, mnuHelp });
-            resources.ApplyResources(MainMenu1, "MainMenu1");
             MainMenu1.Name = "MainMenu1";
             // 
             // mnuFile
             // 
+            resources.ApplyResources(mnuFile, "mnuFile");
             mnuFile.DropDownItems.AddRange(new ToolStripItem[] { mnuConnections, mnuClose });
             mnuFile.Name = "mnuFile";
-            resources.ApplyResources(mnuFile, "mnuFile");
             // 
             // mnuConnections
             // 
+            resources.ApplyResources(mnuConnections, "mnuConnections");
             mnuConnections.DropDownItems.AddRange(new ToolStripItem[] { mnuConnectionList, mnuBlankLine3, mnuAddConnection, mnuDeleteConnection });
             mnuConnections.Name = "mnuConnections";
-            resources.ApplyResources(mnuConnections, "mnuConnections");
             // 
             // mnuConnectionList
             // 
-            mnuConnectionList.Name = "mnuConnectionList";
             resources.ApplyResources(mnuConnectionList, "mnuConnectionList");
+            mnuConnectionList.Name = "mnuConnectionList";
             mnuConnectionList.DropDownItemClicked += mnuDatabaseList_DropDownItemClicked;
             // 
             // mnuBlankLine3
             // 
-            mnuBlankLine3.Name = "mnuBlankLine3";
             resources.ApplyResources(mnuBlankLine3, "mnuBlankLine3");
+            mnuBlankLine3.Name = "mnuBlankLine3";
             // 
             // mnuAddConnection
             // 
-            mnuAddConnection.Name = "mnuAddConnection";
             resources.ApplyResources(mnuAddConnection, "mnuAddConnection");
+            mnuAddConnection.Name = "mnuAddConnection";
             mnuAddConnection.Click += mnuAddDatabase_Click;
             // 
             // mnuDeleteConnection
             // 
-            mnuDeleteConnection.Name = "mnuDeleteConnection";
             resources.ApplyResources(mnuDeleteConnection, "mnuDeleteConnection");
+            mnuDeleteConnection.Name = "mnuDeleteConnection";
             mnuDeleteConnection.Click += mnuDeleteDatabase_Click;
             // 
             // mnuClose
             // 
-            mnuClose.Name = "mnuClose";
             resources.ApplyResources(mnuClose, "mnuClose");
+            mnuClose.Name = "mnuClose";
             mnuClose.Click += mnuClose_Click;
             // 
             // mnuOpenTables
             // 
-            mnuOpenTables.Name = "mnuOpenTables";
             resources.ApplyResources(mnuOpenTables, "mnuOpenTables");
+            mnuOpenTables.Name = "mnuOpenTables";
             mnuOpenTables.DropDownItemClicked += mnuOpenTables_DropDownItemClicked;
             mnuOpenTables.Click += mnuOpenTables_Click;
             // 
             // mnuTools
             // 
-            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuTools_ShowITtools, mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuPrintCurrentTable, mnuToolsBackupDatabase, toolStripSeparator2, toolStripSeparator3 });
-            mnuTools.Name = "mnuTools";
             resources.ApplyResources(mnuTools, "mnuTools");
+            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuTools_ShowITtools, mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuToolsBackupDatabase, toolStripSeparator2, toolStripSeparator3, mnuPrintCurrentTable });
+            mnuTools.Name = "mnuTools";
             // 
             // mnuTools_ShowITtools
             // 
+            resources.ApplyResources(mnuTools_ShowITtools, "mnuTools_ShowITtools");
             mnuTools_ShowITtools.Checked = true;
             mnuTools_ShowITtools.CheckOnClick = true;
             mnuTools_ShowITtools.CheckState = CheckState.Checked;
             mnuTools_ShowITtools.Name = "mnuTools_ShowITtools";
-            resources.ApplyResources(mnuTools_ShowITtools, "mnuTools_ShowITtools");
             mnuTools_ShowITtools.CheckedChanged += mnuTools_ShowITtools_CheckedChanged;
+            mnuTools_ShowITtools.Click += mnuTools_ShowITtools_Click;
             // 
             // mnuDatabaseInfo
             // 
-            mnuDatabaseInfo.Name = "mnuDatabaseInfo";
             resources.ApplyResources(mnuDatabaseInfo, "mnuDatabaseInfo");
+            mnuDatabaseInfo.Name = "mnuDatabaseInfo";
             mnuDatabaseInfo.Click += mnuToolsDatabaseInformation_Click;
             // 
             // mnuDuplicateDisplayKeys
             // 
-            mnuDuplicateDisplayKeys.Name = "mnuDuplicateDisplayKeys";
             resources.ApplyResources(mnuDuplicateDisplayKeys, "mnuDuplicateDisplayKeys");
+            mnuDuplicateDisplayKeys.Name = "mnuDuplicateDisplayKeys";
             mnuDuplicateDisplayKeys.Click += mnuToolDuplicateDisplayKeys_Click;
             // 
             // mnuForeignKeyMissing
             // 
-            mnuForeignKeyMissing.Name = "mnuForeignKeyMissing";
             resources.ApplyResources(mnuForeignKeyMissing, "mnuForeignKeyMissing");
+            mnuForeignKeyMissing.Name = "mnuForeignKeyMissing";
             mnuForeignKeyMissing.Click += mnuForeignKeyMissing_Click;
-            // 
-            // mnuPrintCurrentTable
-            // 
-            mnuPrintCurrentTable.Name = "mnuPrintCurrentTable";
-            resources.ApplyResources(mnuPrintCurrentTable, "mnuPrintCurrentTable");
             // 
             // mnuToolsBackupDatabase
             // 
-            mnuToolsBackupDatabase.Name = "mnuToolsBackupDatabase";
             resources.ApplyResources(mnuToolsBackupDatabase, "mnuToolsBackupDatabase");
+            mnuToolsBackupDatabase.Name = "mnuToolsBackupDatabase";
             mnuToolsBackupDatabase.Click += mnuToolsBackupDatabase_Click;
             // 
             // toolStripSeparator2
             // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
             resources.ApplyResources(toolStripSeparator2, "toolStripSeparator2");
+            toolStripSeparator2.Name = "toolStripSeparator2";
             // 
             // toolStripSeparator3
             // 
-            toolStripSeparator3.Name = "toolStripSeparator3";
             resources.ApplyResources(toolStripSeparator3, "toolStripSeparator3");
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            // 
+            // mnuPrintCurrentTable
+            // 
+            resources.ApplyResources(mnuPrintCurrentTable, "mnuPrintCurrentTable");
+            mnuPrintCurrentTable.Name = "mnuPrintCurrentTable";
+            mnuPrintCurrentTable.Click += mnuPrintCurrentTable_Click;
             // 
             // mnuHelp
             // 
+            resources.ApplyResources(mnuHelp, "mnuHelp");
             mnuHelp.DropDownItems.AddRange(new ToolStripItem[] { mnuHelpFile });
             mnuHelp.Name = "mnuHelp";
-            resources.ApplyResources(mnuHelp, "mnuHelp");
             // 
             // mnuHelpFile
             // 
-            mnuHelpFile.Name = "mnuHelpFile";
             resources.ApplyResources(mnuHelpFile, "mnuHelpFile");
+            mnuHelpFile.Name = "mnuHelpFile";
             // 
             // toolStripBottom
             // 
@@ -869,44 +873,44 @@
             // 
             // txtRecordsPerPage
             // 
+            resources.ApplyResources(txtRecordsPerPage, "txtRecordsPerPage");
             txtRecordsPerPage.Alignment = ToolStripItemAlignment.Right;
             txtRecordsPerPage.Name = "txtRecordsPerPage";
-            resources.ApplyResources(txtRecordsPerPage, "txtRecordsPerPage");
             txtRecordsPerPage.Leave += txtRecordsPerPage_Leave;
             // 
             // toolStripButton4
             // 
+            resources.ApplyResources(toolStripButton4, "toolStripButton4");
             toolStripButton4.Alignment = ToolStripItemAlignment.Right;
             toolStripButton4.AutoToolTip = false;
             toolStripButton4.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolStripButton4.Image = Properties.MyResources.iconmonstr_arrow_32_OneRight;
-            resources.ApplyResources(toolStripButton4, "toolStripButton4");
             toolStripButton4.Name = "toolStripButton4";
             toolStripButton4.Click += toolStripButton4_Click;
             // 
             // toolStripButton3
             // 
+            resources.ApplyResources(toolStripButton3, "toolStripButton3");
             toolStripButton3.Alignment = ToolStripItemAlignment.Right;
             toolStripButton3.AutoToolTip = false;
             toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            resources.ApplyResources(toolStripButton3, "toolStripButton3");
             toolStripButton3.Name = "toolStripButton3";
             toolStripButton3.Click += toolStripButton3_Click;
             // 
             // toolStripButton2
             // 
+            resources.ApplyResources(toolStripButton2, "toolStripButton2");
             toolStripButton2.Alignment = ToolStripItemAlignment.Right;
             toolStripButton2.AutoToolTip = false;
             toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolStripButton2.Image = Properties.MyResources.iconmonstr_arrow_32_OneLEFT;
-            resources.ApplyResources(toolStripButton2, "toolStripButton2");
             toolStripButton2.Name = "toolStripButton2";
             toolStripButton2.Click += toolStripButton2_Click;
             // 
             // toolStripButtonColumnWidth
             // 
-            toolStripButtonColumnWidth.Alignment = ToolStripItemAlignment.Right;
             resources.ApplyResources(toolStripButtonColumnWidth, "toolStripButtonColumnWidth");
+            toolStripButtonColumnWidth.Alignment = ToolStripItemAlignment.Right;
             toolStripButtonColumnWidth.AutoToolTip = false;
             toolStripButtonColumnWidth.BackColor = Color.Silver;
             toolStripButtonColumnWidth.CheckOnClick = true;
@@ -915,6 +919,14 @@
             toolStripButtonColumnWidth.Margin = new Padding(10, 0, 10, 0);
             toolStripButtonColumnWidth.Name = "toolStripButtonColumnWidth";
             toolStripButtonColumnWidth.Click += toolStripColumnWidth_Click;
+            // 
+            // saveFileDialog1
+            // 
+            resources.ApplyResources(saveFileDialog1, "saveFileDialog1");
+            // 
+            // folderBrowserDialog1
+            // 
+            resources.ApplyResources(folderBrowserDialog1, "folderBrowserDialog1");
             // 
             // DataGridViewForm
             // 
@@ -1030,8 +1042,9 @@
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem backupDatabaseToolStripMenuItem;
-        private FolderBrowserDialog folderBrowserDialog1;
         private ToolStripMenuItem mnuToolsBackupDatabase;
+        private SaveFileDialog saveFileDialog1;
+        private FolderBrowserDialog folderBrowserDialog1;
         //private Button button2;
     }
 }

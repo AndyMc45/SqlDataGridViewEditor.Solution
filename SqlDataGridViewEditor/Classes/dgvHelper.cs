@@ -114,7 +114,8 @@ namespace SqlDataGridViewEditor
                         dgv.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                         if (narrowColumns)
                         {
-                            if (dataHelper.isTablePrimaryKeyField(myFields[i]) || dataHelper.isForeignKeyField(myFields[i]))
+                             // ReadOnly = false means this is editable
+                            if (dgv.Columns[i].ReadOnly == true && (dataHelper.isTablePrimaryKeyField(myFields[i]) || dataHelper.isForeignKeyField(myFields[i])))
                             {
                                 nextWidth = 3;
                                 dgv.Columns[i].DefaultCellStyle.ForeColor = Color.White;

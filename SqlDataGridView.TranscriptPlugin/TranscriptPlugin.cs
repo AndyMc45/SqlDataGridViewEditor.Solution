@@ -35,6 +35,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             {
                 ("Print Transcript", "printTranscript"),
                 ("Print Class List", "printClassList"),
+                ("Update Student Status", "updateEveryStudentStatus"),
                 ("Options", "options")
             };
 
@@ -93,6 +94,44 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     fOptions.headerTranslations = columnHeaderTranslations;
                     fOptions.translationCultureName = translationCultureName;
                     fOptions.ShowDialog();    // 
+                }
+            }
+            else if (e.Value == "updateEveryStudentStatus")
+            {
+                // MainForm variable in the plugin has been set to the mainForm of the program by a delegate.  See mainForm constructor. 
+                DataGridViewForm dgvForm = (DataGridViewForm)mainForm;
+                if (dgvForm.currentSql.myTable == TableName.studentDegrees || dgvForm.currentSql.myTable == TableName.studentStatusHistory)
+                {
+                    // Get all the rows that need updated and then update - or do this with one update
+                    string sqlString = "Select . . .";   
+                    //        //Get studentDegreeID column
+                    //        field fld = dataHelper.getForeignKeyFromRefTableName(dgvForm.currentSql.myTable, TableName.studentDegrees);
+                    //        int colNum = dgvForm.getDGVcolumn(fld);
+                    //        studentDegreeID = (Int32)dgvForm.dataGridView1.SelectedRows[0].Cells[colNum].Value;
+                    //    }
+                    //    else if (dgvForm.currentSql.myTable == TableName.studentDegrees)
+                    //    {
+                    //        field fld = dataHelper.getTablePrimaryKeyField(TableName.studentDegrees);
+                    //        int colNum = dgvForm.getDGVcolumn(fld);
+                    //        studentDegreeID = (Int32)dgvForm.dataGridView1.SelectedRows[0].Cells[colNum].Value;
+                    //    }
+                    //    else if (dgvForm.currentSql.myTable == TableName.students)
+                    //    {
+                    //        string err = String.Format(Properties.PluginResources.selectStudentInTable01, TableName.studentDegrees, TableName.students);
+                    //        sbError.AppendLine(err);
+                    //    }
+                    //    else
+                    //    {
+                    //        string err = String.Format(Properties.PluginResources.selectOneRowinTable0or1, TableName.transcript, TableName.studentDegrees);
+                    //        sbError.AppendLine(err);
+                    //    }
+                    //}
+                }
+                else
+                {
+                    // This doesn't cause an error, but I force user to run this method when in a relevant table
+                    string err = string.Format("Please select tables {0} or {1}.", "StudentDegrees", "StudentStatusHistory");
+                    MessageBox.Show(err, "Error message", MessageBoxButtons.OK, MessageBoxIcon.Question);
                 }
             }
             else
