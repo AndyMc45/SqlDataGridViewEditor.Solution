@@ -336,6 +336,13 @@ namespace SqlDataGridViewEditor
             return getFieldFromFieldsDT(FkRefTable, FkRefCol);
         }
 
+        public static DataRow getDataRowFromFieldsDT(string tableName, string columnName)
+        {
+            DataRow dr = dataHelper.fieldsDT.Select(string.Format("TableName = '{0}' AND ColumnName = '{1}'", tableName, columnName)).FirstOrDefault();
+            return dr;
+        }
+
+
         public static bool isDisplayKey(field fi)
         {
             DataRow dr = getDataRowFromFieldsDT(fi.table, fi.fieldName);
@@ -395,7 +402,7 @@ namespace SqlDataGridViewEditor
 
         public static void AddRowToFieldsDT(string TableName, int ColNum, string ColumnName, string ColumnDisplayName
             , string DataType, bool Nullable, bool _identity, bool is_PK, bool is_FK, bool is_DK, short MaxLength
-            , string RefTable, string RefPkColumn, string displayFields, int Width)
+            , string RefTable, string RefPkColumn, int Width)
         {
             DataRow newRow = fieldsDT.NewRow();
             newRow[0] = TableName;
@@ -411,8 +418,7 @@ namespace SqlDataGridViewEditor
             newRow[10] = MaxLength;
             newRow[11] = RefTable;
             newRow[12] = RefPkColumn;
-            newRow[13] = displayFields;
-            newRow[14] = Width;
+            newRow[13] = Width;
             fieldsDT.Rows.Add(newRow);
         }
 
@@ -420,11 +426,6 @@ namespace SqlDataGridViewEditor
 
         #region Getting information from FieldsDT and setting width: private methods
 
-        private static DataRow getDataRowFromFieldsDT(string tableName, string columnName)
-        {
-            DataRow dr = dataHelper.fieldsDT.Select(string.Format("TableName = '{0}' AND ColumnName = '{1}'", tableName, columnName)).FirstOrDefault();
-            return dr;
-        }
 
         private static void setIntValueFieldsDT(string tableName, string columnName, string columnToReturn, int value)
         {

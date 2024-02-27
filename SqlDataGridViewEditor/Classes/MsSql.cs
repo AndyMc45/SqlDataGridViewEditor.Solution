@@ -58,7 +58,7 @@ namespace SqlDataGridViewEditor
         // Used in editing dropdown combo.
         public static SqlDataAdapter comboDA { get; set; }
 
-        // Used for all datatables that don't have own DataAdaptor - see "GetDataAdaptor" below 
+        // Used for all Data Tables that don't have own DataAdaptor - see "GetDataAdaptor" below 
         public static SqlDataAdapter readOnlyDA { get; set; }  // No update of table and so no need to keep adaptar, etc.
 
         // Methods
@@ -235,8 +235,8 @@ namespace SqlDataGridViewEditor
         {
             List<string> defaultStrings = new List<string>();
             // Don't include any spaces before or afer "=" or ";".
-            defaultStrings.Add("Server={0};Database={1};User id={2};Password={3};MultipleActiveResultSets=true");
             defaultStrings.Add("Data Source={0};initial catalog={1};Trusted_Connection=True;MultipleActiveResultSets=true");
+            defaultStrings.Add("Server={0};Database={1};User id={2};Password={3};MultipleActiveResultSets=true");
             return defaultStrings;
         }
 
@@ -302,6 +302,7 @@ namespace SqlDataGridViewEditor
             }
             cn = null;
         }
+
         public static void CloseDataAdapters()
         {
             currentDA = null;
@@ -327,6 +328,87 @@ namespace SqlDataGridViewEditor
             using (SqlCommand cmd = new SqlCommand(strSql, cn))
             {
                 result = (int)cmd.ExecuteScalar();
+            }
+            return result;
+        }
+
+        public static string DeleteRowsFromDT(DataTable dt, where wh)   // Doing 1 where only, usually the PK & value
+        {
+            try
+            {
+                DataRow[] drs = dt.Select(string.Format("{0} = {1}", wh.fl.fieldName, wh.whereValue));
+                foreach (DataRow dr in drs)
+                {
+                    // Delete datarow from dataTable
+                    dr.Delete();
+                }
+                DataRow[] drArray = new DataRow[drs.Count()];
+                for (int i = 0; i < drArray.Length; i++)
+                {
+                    drArray[i] = drs[i];
+                }
+                // Delete Command (set above) uses PK field of each dr to delete - should be first column of dt
+                // Again, the dt might have inner joins but these are ignored.  Delete acts on the PK of main table.
+                // A pledge - the dataTable must have an adaptor and its deleteCommand must be set
+                MsSql.GetDataAdaptor(dt).Update(drArray);
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+                Console.Beep();
+            }
+        }
+
+        public static string CreateForeignKey(string table, string field, string refTable, string refField)
+        {
+            string result = String.Empty;
+            string constraintName = String.Format("FK_{0}_{1}_{2}", table, field, refTable);
+            try
+            {
+
+                var query = String.Format("ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY({2}) REFERENCES {3}({4}) ON DELETE CASCADE ON UPDATE CASCADE",
+                    table, constraintName, field, refTable, refField);
+
+                using (var command = new SqlCommand(query, cn))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+                MessageBox.Show(ex.Message, Properties.MyResources.errorBackingUpDatabase, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return result;
+        }
+
+        public static string CreateUniqueIndex(string table, List<string> fields, string indexName)
+        {
+            string result = String.Empty;
+            string withClause = "WITH(DROP_EXISTING = ON)";
+            if (String.IsNullOrEmpty(indexName))
+            {
+                withClause = "WITH(DROP_EXISTING = OFF)";
+                indexName = String.Format("DK_{0}", table);
+            }
+            string columns = String.Join(",", fields);
+            try
+            {
+                // "CREATE UNIQUE NONCLUSTERED INDEX {0} ON {1}({2}){3}";
+
+                var query = String.Format("CREATE UNIQUE NONCLUSTERED INDEX {0} ON {1}({2}){3}",
+                    indexName, table, columns, withClause);
+
+                using (var command = new SqlCommand(query, cn))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+                MessageBox.Show(ex.Message, "Error creating index", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return result;
         }
@@ -397,7 +479,7 @@ namespace SqlDataGridViewEditor
             sb.Append("sc.is_identity as _identity, ");
             sb.Append("CAST('0' as bit) as is_PK, CAST('0' as bit) as is_FK, CAST('0' as bit) as is_DK, ");
             sb.Append("sc.max_length as MaxLength, ");
-            sb.Append("'' as RefTable, '' as RefPkColumn, '' as DisplayFields, 0 as Width ");
+            sb.Append("'' as RefTable, '' as RefPkColumn, 0 as Width ");
             sb.Append("FROM sys.objects so inner join sys.columns sc on so.object_id = sc.object_id ");
             sb.Append("inner join sys.tables st on so.object_id = st.object_id ");
             sb.Append("WHERE so.is_ms_shipped <> 1 AND so.type = 'U' and st.lob_data_space_id = 0 ");
@@ -409,61 +491,6 @@ namespace SqlDataGridViewEditor
             errorNotice = dataHelper.updateTablesDTtableOnProgramLoad(); // fills in "DK_Index"
             dataHelper.updateFieldsDTtableOnProgramLoad(); // fills in many columns that are used in the rest of the program
             return errorNotice;
-        }
-
-        // Copied from web.  Point: SqlParameter implements this conversion
-        public static DbType GetDbType(Type runtimeType)
-        {
-            var nonNullableType = Nullable.GetUnderlyingType(runtimeType);
-            if (nonNullableType != null)
-            {
-                runtimeType = nonNullableType;
-            }
-
-            var templateValue = (Object)null;
-            if (runtimeType.IsClass == false)
-            {
-                templateValue = Activator.CreateInstance(runtimeType);
-            }
-
-            var sqlParamter = new SqlParameter(parameterName: String.Empty, value: templateValue);
-
-            return sqlParamter.DbType;
-        }
-
-        public static string DeleteRowsFromDT(DataTable dt, where wh)   // Doing 1 where only, usually the PK & value
-        {
-            try
-            {
-                DataRow[] drs = dt.Select(string.Format("{0} = {1}", wh.fl.fieldName, wh.whereValue));
-                foreach (DataRow dr in drs)
-                {
-                    // Delete datarow from dataTable
-                    dr.Delete();
-                }
-                DataRow[] drArray = new DataRow[drs.Count()];
-                for (int i = 0; i < drArray.Length; i++)
-                {
-                    drArray[i] = drs[i];
-                }
-                // Delete Command (set above) uses PK field of each dr to delete - should be first column of dt
-                // Again, the dt might have inner joins but these are ignored.  Delete acts on the PK of main table.
-                // A pledge - the dataTable must have an adaptor and its deleteCommand must be set
-                MsSql.GetDataAdaptor(dt).Update(drArray);
-                return string.Empty;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-                Console.Beep();
-            }
-        }
-
-        public static int ExecuteIntScalar(string sqlString)
-        {
-            SqlCommand cmd = new SqlCommand(sqlString, cn);
-            int value = (int)cmd.ExecuteScalar();
-            return value;
         }
 
     }

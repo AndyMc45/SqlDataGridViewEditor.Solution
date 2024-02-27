@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using System.Text.Json;
-using System.Web;
+using System.Text.RegularExpressions;
 
 namespace SqlDataGridViewEditor
 {
@@ -40,8 +40,8 @@ namespace SqlDataGridViewEditor
                 FormOptions formOpts = JsonSerializer.Deserialize<FormOptions>(jsonString);
                 return formOpts;
             }
-            catch 
-            { 
+            catch
+            {
                 FormOptions formOptsNew = new FormOptions();
                 return formOptsNew;
             }
@@ -51,12 +51,32 @@ namespace SqlDataGridViewEditor
         {
             // Create List
             List<string> strCsList = new List<string>();
-            foreach(connectionString cs in csList) 
+            foreach (connectionString cs in csList)
             {
                 strCsList.Add(JsonSerializer.Serialize<connectionString>(cs));
             }
-            // Store list - this first deletes old list and stores new list
-            regitStoreList(strCsList, "ConnectionList");
+
+            //Delete old list
+            int i = 0;
+            string currentValue = string.Empty;
+            while (currentValue != "_end")
+            {
+                currentValue = Interaction.GetSetting(appName, "ConnectionList", i.ToString(), "_end");
+                if (currentValue != "_end")
+                {
+                    Interaction.DeleteSetting(appName, "ConnectionList", i.ToString());
+                }
+                i++;
+            }
+
+            //Store the new list
+            i = 0;
+            foreach (string str in strCsList)
+            {
+                Interaction.SaveSetting(appName, "ConnectionList", i.ToString(), str);
+                i++;
+            }
+
         }
 
         public static connectionString? GetFirstConnectionStringOrNull()
@@ -81,14 +101,16 @@ namespace SqlDataGridViewEditor
             }
             return csList;
         }
-        
+
         public static bool sameConnectionString(connectionString value1, connectionString value2)
         {
             string v1 = JsonSerializer.Serialize<connectionString>(value1);
             string v2 = JsonSerializer.Serialize<connectionString>(value2);
             // Connection strings are the same if they differ only by spaces before or after = or ;
-            v1 = v1.Replace(" ;", ";").Replace("; ", ";").Replace(" =", "=").Replace("= ", "=");
-            v2 = v2.Replace(" ;", ";").Replace("; ", ";").Replace(" =", "=").Replace("= ", "=");
+            v1 = Regex.Replace(v1, @"\s*=\\s*", "=");
+            v1 = Regex.Replace(v1, @"\s*;\\s*", ";");
+            v2 = Regex.Replace(v2, @"\s*=\\s*", "=");
+            v2 = Regex.Replace(v2, @"\s*;\\s*", ";");
             if (v1 == v2) { return true; }
             return false;
         }
@@ -119,30 +141,5 @@ namespace SqlDataGridViewEditor
             return strList;
         }
 
-        private static void regitStoreList(List<string> strList, string section)
-        { 
-            //Delete old list
-            regitDeleteList(section);
-            //Store the new list
-            int i = 0;
-            foreach (string str in strList) 
-            {
-                Interaction.SaveSetting(appName, section, i.ToString(), str);
-                i++;
-            }
-        }
-
-        private static void regitDeleteList(string section)
-        {
-            //Interaction.DeleteSetting(appName, section, i.ToString());
-            int i = 0;
-            string currentValue = string.Empty;
-            while (currentValue != "_end")
-            {
-                currentValue = Interaction.GetSetting(appName, section, i.ToString(), "_end");
-                if (currentValue != "_end") { Interaction.DeleteSetting(appName, section, i.ToString()); }
-                i++;
-            }
-        }
     }
 }
