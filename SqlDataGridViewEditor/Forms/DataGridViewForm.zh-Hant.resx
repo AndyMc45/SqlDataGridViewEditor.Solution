@@ -1,64 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <!--
-    Microsoft ResX Schema 
-
-    Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
-    associated with the data types.
-
-    Example:
-
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-
-    There are any number of "resheader" rows that contain simple
-    name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
-    mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
-    extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
-    read any of the formats listed below.
-
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
+﻿<root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -118,15 +58,50 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="GridContextMenu_SetAsMainFilter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>255, 32</value>
+  </data>
+  <data name="GridContextMenu_SetAsMainFilter.Text" xml:space="preserve">
+    <value>設定為主要篩選</value>
+  </data>
+  <data name="GridContextMenu_SetFKasMainFIlter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>255, 32</value>
+  </data>
+  <data name="GridContextMenu_SetFKasMainFIlter.Text" xml:space="preserve">
+    <value>設定外鍵為主要篩選</value>
+  </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>252, 6</value>
+  </data>
+  <data name="GridContextMenu_TimesUsedAsFK.Size" type="System.Drawing.Size, System.Drawing">
+    <value>255, 32</value>
+  </data>
+  <data name="GridContextMenu_TimesUsedAsFK.Text" xml:space="preserve">
+    <value>使用外鍵的次數</value>
+  </data>
+  <data name="GridContextMenu_OrderCombolByPK.Size" type="System.Drawing.Size, System.Drawing">
+    <value>255, 32</value>
+  </data>
+  <data name="GridContextMenu_OrderCombolByPK.Text" xml:space="preserve">
+    <value>按主鍵排序下拉清單</value>
+  </data>
+  <data name="GridContextMenu_Seperator.Size" type="System.Drawing.Size, System.Drawing">
+    <value>252, 6</value>
+  </data>
+  <data name="GridContextMenu_RestoreFilters.Size" type="System.Drawing.Size, System.Drawing">
+    <value>255, 32</value>
+  </data>
+  <data name="GridContextMenu_RestoreFilters.Text" xml:space="preserve">
+    <value>恢復上一個篩選</value>
+  </data>
+  <data name="GridContextMenu_ClearFilters.Size" type="System.Drawing.Size, System.Drawing">
+    <value>255, 32</value>
+  </data>
+  <data name="GridContextMenu_ClearFilters.Text" xml:space="preserve">
+    <value>清除所有篩選</value>
+  </data>
   <data name="GridContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>223, 160</value>
-  </data>
-  <data name="dataGridView1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1776, 326</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
-    <value>409</value>
+    <value>256, 208</value>
   </data>
   <data name="lblMainFilter.Text" xml:space="preserve">
     <value>主要篩選：</value>
@@ -135,88 +110,46 @@
     <value>篩選表格：</value>
   </data>
   <data name="rbMerge.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1170, 3</value>
+    <value>1459, 4</value>
   </data>
   <data name="rbMerge.Size" type="System.Drawing.Size, System.Drawing">
-    <value>66, 24</value>
+    <value>80, 29</value>
   </data>
   <data name="rbMerge.Text" xml:space="preserve">
     <value>合 併</value>
   </data>
-  <data name="GridContextMenu_SetAsMainFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 24</value>
-  </data>
-  <data name="GridContextMenu_SetAsMainFilter.Text" xml:space="preserve">
-    <value>設定為主要篩選</value>
-  </data>
-  <data name="GridContextMenu_SetFKasMainFIlter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 24</value>
-  </data>
-  <data name="GridContextMenu_SetFKasMainFIlter.Text" xml:space="preserve">
-    <value>設定外鍵為主要篩選</value>
-  </data>
-  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 6</value>
-  </data>
-  <data name="GridContextMenu_TimesUsedAsFK.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 24</value>
-  </data>
-  <data name="GridContextMenu_TimesUsedAsFK.Text" xml:space="preserve">
-    <value>使用外鍵的次數</value>
-  </data>
-  <data name="GridContextMenu_OrderCombolByPK.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 24</value>
-  </data>
-  <data name="GridContextMenu_OrderCombolByPK.Text" xml:space="preserve">
-    <value>按主鍵排序下拉清單</value>
-  </data>
-  <data name="GridContextMenu_Seperator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 6</value>
-  </data>
-  <data name="GridContextMenu_RestoreFilters.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 24</value>
-  </data>
-  <data name="GridContextMenu_RestoreFilters.Text" xml:space="preserve">
-    <value>恢復上一個篩選</value>
-  </data>
-  <data name="GridContextMenu_ClearFilters.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 24</value>
-  </data>
-  <data name="GridContextMenu_ClearFilters.Text" xml:space="preserve">
-    <value>清除所有篩選</value>
-  </data>
   <data name="rbAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>942, 3</value>
+    <value>1175, 4</value>
   </data>
   <data name="rbAdd.Size" type="System.Drawing.Size, System.Drawing">
-    <value>66, 24</value>
+    <value>80, 29</value>
   </data>
   <data name="rbAdd.Text" xml:space="preserve">
     <value>新 增</value>
   </data>
   <data name="rbDelete.Location" type="System.Drawing.Point, System.Drawing">
-    <value>830, 3</value>
+    <value>1035, 4</value>
   </data>
   <data name="rbDelete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>62, 24</value>
+    <value>75, 29</value>
   </data>
   <data name="rbDelete.Text" xml:space="preserve">
     <value>刪除</value>
   </data>
   <data name="rbEdit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>712, 3</value>
+    <value>888, 4</value>
   </data>
   <data name="rbEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 24</value>
+    <value>85, 29</value>
   </data>
   <data name="rbEdit.Text" xml:space="preserve">
     <value>編  輯</value>
   </data>
   <data name="rbView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>598, 3</value>
+    <value>746, 4</value>
   </data>
   <data name="rbView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 24</value>
+    <value>85, 29</value>
   </data>
   <data name="rbView.Text" xml:space="preserve">
     <value>查  看</value>
@@ -225,19 +158,14 @@
     <value>篩選表格／組合：</value>
   </data>
   <data name="btnReload.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 29</value>
+    <value>62, 29</value>
   </data>
-  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>55, 24</value>
+  <data name="dataGridView1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1776, 510</value>
   </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>檔案</value>
-  </data>
-  <data name="mnuConnections.Size" type="System.Drawing.Size, System.Drawing">
-    <value>172, 26</value>
-  </data>
-  <data name="mnuConnections.Text" xml:space="preserve">
-    <value>資料庫連結</value>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
+    <value>409</value>
   </data>
   <data name="mnuConnectionList.Text" xml:space="preserve">
     <value>連結記錄</value>
@@ -248,77 +176,89 @@
   <data name="mnuDeleteConnection.Text" xml:space="preserve">
     <value>刪除連結</value>
   </data>
+  <data name="mnuConnections.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 34</value>
+  </data>
+  <data name="mnuConnections.Text" xml:space="preserve">
+    <value>資料庫連結</value>
+  </data>
   <data name="mnuClose.Size" type="System.Drawing.Size, System.Drawing">
-    <value>172, 26</value>
+    <value>270, 34</value>
   </data>
   <data name="mnuClose.Text" xml:space="preserve">
     <value>關閉</value>
   </data>
+  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 29</value>
+  </data>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>檔案</value>
+  </data>
   <data name="mnuOpenTables.Size" type="System.Drawing.Size, System.Drawing">
-    <value>55, 24</value>
+    <value>66, 29</value>
   </data>
   <data name="mnuOpenTables.Text" xml:space="preserve">
     <value>表格</value>
   </data>
+  <data name="mnuPrintCurrentTable.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 34</value>
+  </data>
+  <data name="mnuPrintCurrentTable.Text" xml:space="preserve">
+    <value>匯出到 Excel</value>
+  </data>
   <data name="mnuTools.Size" type="System.Drawing.Size, System.Drawing">
-    <value>71, 24</value>
+    <value>85, 29</value>
   </data>
   <data name="mnuTools.Text" xml:space="preserve">
     <value>工具列</value>
   </data>
-  <data name="mnuTools_ShowITtools.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
-  </data>
-  <data name="mnuTools_ShowITtools.Text" xml:space="preserve">
-    <value>展示 IT 工具</value>
-  </data>
   <data name="mnuDatabaseInfo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>266, 34</value>
   </data>
   <data name="mnuDatabaseInfo.Text" xml:space="preserve">
     <value>資料庫資訊</value>
   </data>
   <data name="mnuDuplicateDisplayKeys.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>266, 34</value>
   </data>
   <data name="mnuDuplicateDisplayKeys.Text" xml:space="preserve">
     <value>檢查重複的顯示鍵</value>
   </data>
   <data name="mnuForeignKeyMissing.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>266, 34</value>
   </data>
   <data name="mnuForeignKeyMissing.Text" xml:space="preserve">
     <value>準備新的外鍵</value>
   </data>
   <data name="mnuToolsBackupDatabase.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>266, 34</value>
   </data>
   <data name="mnuToolsBackupDatabase.Text" xml:space="preserve">
     <value>備份資料庫</value>
   </data>
-  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 6</value>
+  <data name="mnuShowITTools.Size" type="System.Drawing.Size, System.Drawing">
+    <value>266, 34</value>
   </data>
-  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 6</value>
+  <data name="mnuShowITTools.Text" xml:space="preserve">
+    <value>顯示 IT 工具</value>
   </data>
-  <data name="mnuPrintCurrentTable.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+  <data name="mnuIT_Tools.Size" type="System.Drawing.Size, System.Drawing">
+    <value>104, 29</value>
   </data>
-  <data name="mnuPrintCurrentTable.Text" xml:space="preserve">
-    <value>匯出到 Excel</value>
-  </data>
-  <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>63, 24</value>
-  </data>
-  <data name="mnuHelp.Text" xml:space="preserve">
-    <value>說  明</value>
+  <data name="mnuIT_Tools.Text" xml:space="preserve">
+    <value>IT 工具列</value>
   </data>
   <data name="mnuHelpFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 26</value>
+    <value>270, 34</value>
   </data>
   <data name="mnuHelpFile.Text" xml:space="preserve">
     <value>幫助文件</value>
+  </data>
+  <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>76, 29</value>
+  </data>
+  <data name="mnuHelp.Text" xml:space="preserve">
+    <value>說  明</value>
   </data>
   <data name="txtRecordsPerPage.ToolTipText" xml:space="preserve">
     <value>每頁記錄數</value>
@@ -327,7 +267,7 @@
     <value>下一頁</value>
   </data>
   <data name="toolStripButton3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 24</value>
+    <value>54, 29</value>
   </data>
   <data name="toolStripButton3.Text" xml:space="preserve">
     <value>頁碼</value>
@@ -341,7 +281,7 @@
   <data name="toolStripButtonColumnWidth.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAACRSURBVDhPY/j27dt/SjDYACcnJ7IwigEf3n8kCZNswPNb
+        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAACRSURBVDhPY/j27dt/SjDYACcnJ7IwigEf3n8kCZNswPNb
         J/+f6DYF0yA+yQac6Db5f6hWCmwIiE+mC0wIu2DS2Vf/F1x6DefjwlgNyNr34r/0wkdgTMgQDAOQNRNj
         CIoBOg0rMTTDMLIhIHbriZeYBmDTiIxBGkEYxge5liQDsGGQqykyAISpZwAlmIEywMAAAAc1/Jwvt6sN
         AAAAAElFTkSuQmCC

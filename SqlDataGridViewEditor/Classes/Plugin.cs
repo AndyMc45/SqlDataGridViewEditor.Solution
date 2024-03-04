@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SqlDataGridViewEditor.PluginsInterface;
 using System.Reflection;
 using Unity;
-using SqlDataGridViewEditor.PluginsInterface;
 // using SqlDataGridViewEditor.TranscriptPlugin.Plugins;
 
 
@@ -33,7 +28,7 @@ namespace SqlDataGridViewEditor
         }
 
 
-        static internal MenuStrip Load_Plugins(ref Dictionary<string,string> colHeaderTranslations, ref string translationCultureName)
+        static internal MenuStrip Load_Plugins(ref Dictionary<string, string> colHeaderTranslations, ref string translationCultureName, ref List<(string, string)> readOnlyFields)
         {
             MenuStrip plugInMenus = new MenuStrip();
             pluginFilePath = Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.FullName + @"\PluginsToConsume\";
@@ -65,24 +60,31 @@ namespace SqlDataGridViewEditor
             if (container != null)
             {
                 loadedPlugins = container.ResolveAll<IPlugin>();
-                if (loadedPlugins.Count() > 0) { 
+                if (loadedPlugins.Count() > 0)
+                {
                     foreach (var loadedPlugin in loadedPlugins)
                     {
                         // Tomorrow - redo the 'transcript existed above but not now
                         // loadedPlugin.CntTemplate().menuStrip.Text = plugInMenus.Text;
                         plugInMenus.Items.Add(loadedPlugin.CntTemplate().menuStrip);
                         // First in is approved if there is a conflict
-                        foreach (string key in loadedPlugin.ColumnHeaderTranslations().Keys)
+                        foreach (string key in loadedPlugin.CntTemplate().ColumnHeaderTranslations.Keys)
                         {
                             if (!colHeaderTranslations.ContainsKey(key))
-                            { 
-                                colHeaderTranslations.Add(key, loadedPlugin.ColumnHeaderTranslations()[key]);
+                            {
+                                colHeaderTranslations.Add(key, loadedPlugin.CntTemplate().ColumnHeaderTranslations[key]);
                             }
                         }
                         // The language of the translation - if two plugins have this, the last one wins!
                         // The UICulture is set in the plugin.
                         // If it is set to the translationCultureName, the headers will be translated
-                        translationCultureName = loadedPlugin.TranslationCultureName();
+                        translationCultureName = loadedPlugin.CntTemplate().TranslationCultureName;
+                        // ReadOnly Fields - added twice if in two plugins but unlikely and o.k.
+                        foreach ((string, string) readOnly in loadedPlugin.CntTemplate().ReadOnlyFields)
+                        {
+                            readOnlyFields.Add(readOnly);
+                        }
+
                     }
                 }
             }

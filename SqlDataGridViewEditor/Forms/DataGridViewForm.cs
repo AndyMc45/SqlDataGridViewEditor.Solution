@@ -1,12 +1,11 @@
 ﻿using Microsoft.VisualBasic;
+using SqlDataGridViewEditor.Classes;
 using SqlDataGridViewEditor.Properties;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using System.IO;
-using SqlDataGridViewEditor.Classes;
 
 
 namespace SqlDataGridViewEditor
@@ -49,6 +48,7 @@ namespace SqlDataGridViewEditor
         private Dictionary<string, string> colHeaderTranslations = new Dictionary<string, string>();
         private String translationCultureName = String.Empty;
         private String uiCulture = string.Empty;
+        private Dictionary<string, List<string>> aliasTableDictionary = new Dictionary<string, List<string>>();
 
         #endregion
 
@@ -69,8 +69,8 @@ namespace SqlDataGridViewEditor
 
         internal DataGridViewForm()
         {
-            // This loads plugins into Plugins.loadedPlugins AND return pluginMenus
-            MenuStrip pluginMenus = Plugins.Load_Plugins(ref dgvHelper.translations, ref translationCultureName);
+            // This loads plugins into Plugins.loadedPlugins AND return pluginMenus, translations, etc.
+            MenuStrip pluginMenus = Plugins.Load_Plugins(ref dgvHelper.translations, ref translationCultureName, ref dgvHelper.readOnlyField);
             uiCulture = AppData.GetKeyValue("UICulture");
             dgvHelper.translate = (translationCultureName == uiCulture);
 
@@ -140,6 +140,14 @@ namespace SqlDataGridViewEditor
 
         private void DataGridViewForm_Load(object sender, EventArgs e)
         {
+            //Shrink size of elements if the screen is too small.
+            int tlp_pixelWidth = tableLayoutPanel.Width;
+            System.Drawing.Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
+            if (workingArea.Width < tlp_pixelWidth)
+            {
+                tableLayoutPanel.Width = workingArea.Width;
+            }
+
             // Set things that don't change even if connection changes
             formOptions = AppData.GetFormOptions();  // Sets initial option values
             formOptions.runTimer = false;  // Set to true when debugging to check what is slow
@@ -185,9 +193,10 @@ namespace SqlDataGridViewEditor
 
             // 6. Set Mode and filters to "none".
             programMode = ProgramMode.none;
-            SetAllFiltersByMode(); // Will disable filters and call SetTableLayoutPanelHeight();
+            SetFiltersColumnsTablePanel(); // Will disable filters and call SetTableLayoutPanelHeight();
 
-            mnuTools_ShowITtools.Checked = false;
+            // 7. Hide IT tools
+            mnuShowITTools.Checked = false;
         }
 
         private void DataGridViewForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -352,7 +361,7 @@ namespace SqlDataGridViewEditor
         private string OpenConnection()
         {
             programMode = ProgramMode.none;  // Affects SetAllFilters and sets PanelHeight
-            SetAllFiltersByMode();
+            SetFiltersColumnsTablePanel();
             connectionOptions = new ConnectionOptions();  // resets options
             StringBuilder sb = new StringBuilder();
             try
@@ -442,7 +451,7 @@ namespace SqlDataGridViewEditor
 
         #region Write to Gird
 
-        private void writeGrid_NewTable(string table)
+        private void writeGrid_NewTable(string table, bool clearManualFilter)
         {
             ComboBox[] cmbGridFilterFields = { cmbGridFilterFields_0, cmbGridFilterFields_1, cmbGridFilterFields_2, cmbGridFilterFields_3, cmbGridFilterFields_4, cmbGridFilterFields_5, cmbGridFilterFields_6, cmbGridFilterFields_7, cmbGridFilterFields_8 };
             ComboBox[] cmbGridFilterValue = { cmbGridFilterValue_0, cmbGridFilterValue_1, cmbGridFilterValue_2, cmbGridFilterValue_3, cmbGridFilterValue_4, cmbGridFilterValue_5, cmbGridFilterValue_6, cmbGridFilterValue_7, cmbGridFilterValue_8 };
@@ -453,7 +462,7 @@ namespace SqlDataGridViewEditor
             // 0. New tableOptions and Clear Grid-Combo filters
             tableOptions = new TableOptions(); // Resets options
             tableOptions.writingTable = true;
-            ClearFiltersOnNewTable(); // All events are cancelled via "if(Selected_index != -1) . . ."
+            ClearFilters(true, false, clearManualFilter); // All events are cancelled via "if(Selected_index != -1) . . ."
             tableOptions.writingTable = false;
 
             //1. Create currentSql - same currentSql used until new table is loaded - same myFields and myInnerJoins
@@ -468,11 +477,24 @@ namespace SqlDataGridViewEditor
             {
                 msgText(dgvHelper.TranslateString("Table") + " : " + dgvHelper.TranslateString(currentSql.myTable));
             }
-            if (!String.IsNullOrEmpty(formOptions.strSuperStaticWhereClause))
+
+            // Get aliasTableList
+            aliasTableDictionary.Clear();
+            foreach (field fl in currentSql.myFields)
             {
-                currentSql.strStaticWhereClause = formOptions.strSuperStaticWhereClause;
-                formOptions.strSuperStaticWhereClause = string.Empty;   // Only use this once
+                if (!aliasTableDictionary.ContainsKey(fl.tableAlias))
+                {
+                    List<string> fieldList = new List<string>();
+                    aliasTableDictionary.Add(fl.tableAlias, fieldList);
+                }
+                aliasTableDictionary[fl.tableAlias].Add(fl.fieldName);
             }
+
+            //if (!String.IsNullOrEmpty(formOptions.strSuperStaticWhereClause))
+            //{
+            //    currentSql.strManualWhereClause = formOptions.strSuperStaticWhereClause;
+            //    formOptions.strSuperStaticWhereClause = string.Empty;   // Only use this once
+            //}
 
             // 2. Bind 9 cmbGridFilterFields with fields for user to select
             //    Only setting up cmbGridFilterFields - cmbGridFilterValues set on cmbGridFilterField SelectionChanged event
@@ -554,8 +576,21 @@ namespace SqlDataGridViewEditor
 
             // 2. Get record Count
             string strSql = currentSql.returnSql(command.count);
-            currentSql.RecordCount = MsSql.GetRecordCount(strSql);
-
+            // Error likely caused by manual filter
+            try
+            {
+                currentSql.RecordCount = MsSql.GetRecordCount(strSql);
+            }
+            catch (Exception e)
+            {
+                msgTextError(strSql);
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(e.Message);
+                sb.AppendLine("Sql in the message area. Right click on the area twice to select all and then copy.");
+                msgTextError(sb.ToString());
+                MessageBox.Show(sb.ToString(), "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             // 3. Fetch must have an order by clause - so I may add one on first column
             if (currentSql.myOrderBys.Count == 0)  //Should always be true at this point
             {
@@ -592,6 +627,7 @@ namespace SqlDataGridViewEditor
             string errorMsg = MsSql.FillDataTable(dataHelper.currentDT, strSql);
             if (errorMsg != string.Empty)
             {
+                msgTextError(errorMsg);
                 MessageBox.Show(errorMsg, "ERROR in WriteGrid_NewPage", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -717,7 +753,7 @@ namespace SqlDataGridViewEditor
             // e. Format the rest of the grid and form
             dgvHelper.SetHeaderColorsOnWritePage(dataGridView1, currentSql.myTable, currentSql.myFields);// Must do everytime we re-write grid
             SetColumnsReadOnlyProperty(); // Might change editable column
-            SetAllFiltersByMode();   // Because Write_NewPage may require changes
+            SetFiltersColumnsTablePanel();   // Because Write_NewPage may require changes
             // A plugin might add translations and a translationCultureName
             // Use the translation if it equals to uiCulture (might change to first 2 letters the same)
             tableOptions.writingTable = true;
@@ -768,6 +804,7 @@ namespace SqlDataGridViewEditor
         #region Setting up Filters, Colors, TablePanel
         private void SetTableLayoutPanelHeight()
         {
+            // tableLayoutPanel.RowStyles[4] = new RowStyle(SizeType.Absolute, 19);
             int height = 2;
             if (programMode != ProgramMode.none) //2nd Row
             {
@@ -786,11 +823,16 @@ namespace SqlDataGridViewEditor
                 height = cmbGridFilterFields_6.Top + cmbGridFilterFields_6.Height + 10;
             }
 
-            if (cmbComboTableList.Enabled)  // 6th row
+            if (txtManualFilter.Enabled && programMode != ProgramMode.none)  // First always true as of now
+            {
+                height = txtManualFilter.Top + txtManualFilter.Height + 10;
+            }
+
+            if (cmbComboTableList.Enabled)  // 7th row
             {
                 height = cmbComboTableList.Top + cmbComboTableList.Height + 10;
             }
-            if (cmbComboFilterValue_3.Enabled)  // 7th row
+            if (cmbComboFilterValue_3.Enabled)  // 8th row
             {
                 height = cmbComboFilterValue_3.Top + cmbComboFilterValue_3.Height + 10;
             }
@@ -817,19 +859,20 @@ namespace SqlDataGridViewEditor
                         !dataHelper.isTablePrimaryKeyField(colField) &&
                         (!dataHelper.isDisplayKey(colField)) || tableOptions.allowDisplayKeyEdit)
                     {
-                        col.ReadOnly = false;
-                        // Make sure it is visible
-                        if (col.Width < 62)
+                        (string, string) field = (colField.table, colField.fieldName);
+                        if (!dgvHelper.readOnlyField.Contains(field))
                         {
-                            col.Width = 62;
+                            col.ReadOnly = false;
+                            // Make sure it is visible
+                            if (col.Width < 62)
+                            {
+                                col.Width = 62;
+                            }
                         }
-
                     }
                 }
             }
         }
-
-
 
         private void ColorComboBoxes()
         {
@@ -883,10 +926,12 @@ namespace SqlDataGridViewEditor
         }
 
         // Results of this coloring use in color combo boxes above
-
-        private void SetAllFiltersByMode()
+        // Called when Write_NewPage (near end),
+        // Also called by Open connection, Load Form, Change of radio button (View, Edit, etc)
+        // This calls SetColumnsReadOnlyProperty(); SetSelectedCellsColor(); SetTableLayoutPanelHeight();
+        private void SetFiltersColumnsTablePanel()
         {
-            if (currentSql != null && currentSql.strStaticWhereClause != String.Empty)
+            if (currentSql != null && currentSql.strManualWhereClause != String.Empty)
             {
                 EnableMainFilter(false);
                 EnableGridFiltersAndSetStyle(false);
@@ -1030,36 +1075,51 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        private void ClearFiltersOnNewTable()
+        private void ClearFilters(bool loadingNewTable, bool clearMainFilter, bool clearManualFilter)
         {
-            ClearAllGridFilterLabelCombos(true);
-            ClearAllGridFilterValueCombos(true);
+            if (clearMainFilter && cmbMainFilter.Items.Count > 0)
+            {
+                formOptions.loadingMainFilter = true;
+                cmbMainFilter.SelectedIndex = cmbMainFilter.Items.Count - 1;
+                formOptions.loadingMainFilter = false;
+            }
 
-            cmbComboTableList.DataSource = null;
-            cmbComboTableList.Visible = false;
-            cmbComboTableList.Enabled = false;
+            ClearAllGridFilterLabelCombos(loadingNewTable);
+            ClearAllGridFilterValueCombos(loadingNewTable);
+            if (loadingNewTable)
+            {
+                cmbComboTableList.DataSource = null;
+                cmbComboTableList.Visible = false;
+                cmbComboTableList.Enabled = false;
+            }
 
             tableOptions.doNotRebindGridFV = true;
-            ClearAllComboFilterCombos(true);
+            ClearAllComboFilterCombos(loadingNewTable);
             tableOptions.doNotRebindGridFV = false;
+
+            if (loadingNewTable && clearManualFilter)
+            {
+                ClearManualFilter();
+            }
         }
 
         private void ClearAllGridFilterLabelCombos(bool loadingNewTable)
         {
-            ComboBox[] cmbGridFilterFields = { cmbGridFilterFields_0, cmbGridFilterFields_1, cmbGridFilterFields_2, cmbGridFilterFields_3, cmbGridFilterFields_4, cmbGridFilterFields_5, cmbGridFilterFields_6, cmbGridFilterFields_7, cmbGridFilterFields_8 };
-            for (int i = 0; i < cmbGridFilterFields.Length; i++)
+            // Don't clear these if the table is not loading
+            if (loadingNewTable)
             {
-                cmbGridFilterFields[i].DataSource = null;
-                cmbGridFilterFields[i].Items.Clear();
-                if (loadingNewTable)
+                ComboBox[] cmbGridFilterFields = { cmbGridFilterFields_0, cmbGridFilterFields_1, cmbGridFilterFields_2, cmbGridFilterFields_3, cmbGridFilterFields_4, cmbGridFilterFields_5, cmbGridFilterFields_6, cmbGridFilterFields_7, cmbGridFilterFields_8 };
+                for (int i = 0; i < cmbGridFilterFields.Length; i++)
                 {
+                    cmbGridFilterFields[i].DataSource = null;
+                    cmbGridFilterFields[i].Items.Clear();
                     cmbGridFilterFields[i].Visible = false;
                     cmbGridFilterFields[i].Enabled = false;
+
+                    cmbGridFilterFields[i].Text = string.Empty;
                 }
-                cmbGridFilterFields[i].Text = string.Empty;
             }
         }
-
         private void ClearAllGridFilterValueCombos(bool loadingNewTable)
         {
             ComboBox[] cmbGridFilterValue = { cmbGridFilterValue_0, cmbGridFilterValue_1, cmbGridFilterValue_2, cmbGridFilterValue_3, cmbGridFilterValue_4, cmbGridFilterValue_5, cmbGridFilterValue_6, cmbGridFilterValue_7, cmbGridFilterValue_8 };
@@ -1098,7 +1158,10 @@ namespace SqlDataGridViewEditor
             }
         }
 
-
+        private void ClearManualFilter()
+        {
+            txtManualFilter.Text = String.Empty;
+        }
 
         #endregion
 
@@ -1197,17 +1260,14 @@ namespace SqlDataGridViewEditor
                         field refField = dataHelper.getTablePrimaryKeyField(selectedRefTable);
                         field nonFkField = dataHelper.getFieldFromFieldsDT(currentSql.myTable, selectedNonFK);
                         StringBuilder sbWhere = new StringBuilder();
-                        sbWhere.Append(" WHERE (NOT EXISTS (SELECT ");
+                        sbWhere.Append(" (NOT EXISTS (SELECT ");
                         sbWhere.Append(refField.fieldName + " FROM " + refField.table + " AS " + refField.tableAlias);
                         sbWhere.Append(" WHERE ");
                         sbWhere.Append(dataHelper.QualifiedAliasFieldName(refField) + " = " + dataHelper.QualifiedAliasFieldName(nonFkField));
                         sbWhere.Append("))");
-                        currentSql.strStaticWhereClause = sbWhere.ToString(); // Will change currentSql.returnSql();
-                        // tableOptions.strStaticWhereClause = currentSql.returnFixDatabaseSql(sbWhere.ToString());
+                        txtManualFilter.Text = sbWhere.ToString(); // Will change currentSql.returnSql();
                         msgText(Properties.MyResources.eachOfDisplayedRowsHasEmptyFK + "  " + Properties.MyResources.ifNoDisplayedRowsNoEmptyFK);
-                        writeGrid_NewPage();
-                        //SELECT *  FROM [StudentDegrees] 
-                        //WHERE(NOT EXISTS (SELECT studentID FROM Students WHERE[students].studentID = [StudentDegrees].studentID) )
+                        writeGrid_NewFilter(false);
                     }
                 }
             }
@@ -1267,27 +1327,8 @@ namespace SqlDataGridViewEditor
                 }
             }
             string whereCondition = String.Join(" OR ", andConditions);
-            currentSql.strStaticWhereClause = " WHERE " + whereCondition;
-            // tableOptions.strStaticWhereClause = currentSql.returnFixDatabaseSql(" WHERE " + whereCondition);
-            writeGrid_NewPage();
-        }
-
-        private void mnuTools_ShowITtools_CheckedChanged(object sender, EventArgs e)
-        {
-            mnuForeignKeyMissing.Visible = mnuTools_ShowITtools.Checked;
-            mnuDuplicateDisplayKeys.Visible = mnuTools_ShowITtools.Checked;
-            rbMerge.Visible = mnuTools_ShowITtools.Checked;
-            mnuDatabaseInfo.Visible = mnuTools_ShowITtools.Checked;
-            mnuToolsBackupDatabase.Visible = mnuTools_ShowITtools.Checked;
-            mnuPrintCurrentTable.Visible = true; // Always visible
-
-            if (mnuTools_ShowITtools.Checked)
-            {
-                mnuTools.DropDown.Visible = true;
-
-            }
-
-
+            txtManualFilter.Text = whereCondition;
+            writeGrid_NewFilter(false);
         }
 
         private void mnuToolsDatabaseInformation_Click(object sender, EventArgs e)
@@ -1333,7 +1374,7 @@ namespace SqlDataGridViewEditor
         {
             string tableName = e.ClickedItem.Name;  // the text can be translated.  Set Name = Text when adding ToolStripMenuItem
             //Open a new table
-            writeGrid_NewTable(tableName);
+            writeGrid_NewTable(tableName, true);
         }
 
         private void mnuDatabaseList_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -1465,7 +1506,7 @@ namespace SqlDataGridViewEditor
         private void GridContextMenu_OrderComboByPK_Click(object sender, EventArgs e)
         {
             formOptions.orderComboListsByPK = GridContextMenu_OrderCombolByPK.Checked;
-            writeGrid_NewTable(currentSql.myTable);
+            writeGrid_NewTable(currentSql.myTable, false);
         }
 
         private void GridContextMenu_SetAsMainFilter_Click(object sender, EventArgs e)
@@ -1584,7 +1625,7 @@ namespace SqlDataGridViewEditor
                         cmbMainFilter.SelectedIndex = 0;
                         cmbMainFilter.Enabled = true;
                         formOptions.loadingMainFilter = false;
-                        writeGrid_NewTable(currentSql.myTable);  // Shows one row, which is selected
+                        writeGrid_NewTable(currentSql.myTable, false);  // Shows one row, which is selected
                         txtMessages.Text = String.Format(Properties.MyResources.selectedRowIsNotValueOfForeignKey);
                         return;
                     }
@@ -1630,15 +1671,8 @@ namespace SqlDataGridViewEditor
         {
             if (tableOptions != null)  // Make sure there is a table selected
             {
-                formOptions.loadingMainFilter = true;
-                cmbMainFilter.SelectedIndex = cmbMainFilter.Items.Count - 1;
-                formOptions.loadingMainFilter = false;
+                ClearFilters(false, true, true);
 
-                ClearAllGridFilterValueCombos(false);
-
-                tableOptions.doNotRebindGridFV = true;
-                ClearAllComboFilterCombos(false);
-                tableOptions.doNotRebindGridFV = false;
                 writeGrid_NewFilter(false);
             }
         }
@@ -1780,8 +1814,9 @@ namespace SqlDataGridViewEditor
 
             // 1. Clear any old filters from currentSql
             currentSql.myWheres.Clear();
+            currentSql.strManualWhereClause = string.Empty;
 
-            // 2.  Add row to last filter if needed
+            // 2.  Add row to last filter if we have not added it yet
             DataRow lastFilterDR = dataHelper.getDataRowFromDataTable("Table", currentSql.myTable, dataHelper.lastFilterValuesDT);
             if (lastFilterDR is null)
             {
@@ -1803,6 +1838,7 @@ namespace SqlDataGridViewEditor
             if (programMode != ProgramMode.add && cmbMainFilter.Enabled && cmbMainFilter.SelectedIndex != cmbMainFilter.Items.Count - 1)
             {
                 where mfWhere = (where)cmbMainFilter.SelectedValue;
+                // Store the old Main Filter
                 if (newLastFilter)
                 {
                     dataHelper.setColumnValueInDR(lastFilterDR, "cMF", mfWhere.whereValue);
@@ -1831,7 +1867,9 @@ namespace SqlDataGridViewEditor
                     // On ProgramMode.add, we only filter on displayKeys.  In other modes, we filter on all of these
                     if (programMode != ProgramMode.add || dataHelper.isDisplayKey(selectedField))
                     {
-                        // ComboBoxStyle.DropDownList have integer values; for ComboStyle.DropDown the text is the value 
+                        // Step 1.  Determine if filter x has a value, and if not, clear old value from lastFilter row
+                        // ComboBoxStyle.DropDownList have integer values;
+                        // For ComboStyle.DropDown the text is the value 
                         if (cmbGridFilterValue[i].DropDownStyle == ComboBoxStyle.DropDown)
                         {
                             // User can add value - add second clause because selected value index 1 might be String.Empty
@@ -1842,6 +1880,7 @@ namespace SqlDataGridViewEditor
                             }
                             else
                             {
+                                // If value is String.Empty clear lastFilter 
                                 if (newLastFilter)
                                 {
                                     dataHelper.setColumnValueInDR(lastFilterDR, "cGFF" + i.ToString(), string.Empty);
@@ -1865,6 +1904,7 @@ namespace SqlDataGridViewEditor
                                 }
                             }
                         }
+                        // Step 2.  If filter x has a value, add where and write value to lastFilter table
                         if (addWhere)
                         {
                             where wh = new where(selectedField, whValue);
@@ -1923,6 +1963,13 @@ namespace SqlDataGridViewEditor
                 field fl = (field)cmbComboTableList.SelectedValue;
                 dataHelper.setColumnValueInDR(lastFilterDR, "cCTL", fl.fieldName);
             }
+
+            currentSql.strManualWhereClause = txtManualFilter.Text;
+            if (newLastFilter)
+            {
+                dataHelper.setColumnValueInDR(lastFilterDR, "manualFilter", txtManualFilter.Text);
+            }
+
         }
 
         #endregion
@@ -2690,7 +2737,7 @@ namespace SqlDataGridViewEditor
                     }
                     else
                     {   // Return to viewing after the merge
-                        currentSql.strStaticWhereClause = string.Empty;
+                        currentSql.strManualWhereClause = string.Empty;
                         rbView.Checked = true;
                         writeGrid_NewFilter(true);
                     }
@@ -2718,11 +2765,12 @@ namespace SqlDataGridViewEditor
                 string errorMsg = MsSql.DeleteRowsFromDT(dataHelper.currentDT, wh);
                 if (errorMsg != string.Empty)
                 {
+                    msgTextError(errorMsg);
                     MessageBox.Show(String.Format("Error deleting row: {0}", errorMsg), "Delete Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    currentSql.strStaticWhereClause = string.Empty;
+                    currentSql.strManualWhereClause = string.Empty;
                     rbView.Checked = true;
                     writeGrid_NewFilter(true);
                 }
@@ -2793,21 +2841,22 @@ namespace SqlDataGridViewEditor
                 if (dkWhere.Count > 0)
                 {
                     string newWhereClause = SqlFactory.SqlStatic.sqlWhereString(dkWhere, string.Empty, true);  // Only display keys enabled so filtered
-                    currentSql.strStaticWhereClause = newWhereClause; // Causes the following to search on this where only
+                    currentSql.strManualWhereClause = newWhereClause; // Causes the following to search on this where only
                     string strSql = currentSql.returnSql(command.selectAll);
                     MsSqlWithDaDt dadt = new MsSqlWithDaDt(strSql);
                     string errorMsg = dadt.errorMsg;
                     if (errorMsg != string.Empty)
                     {
+                        msgTextError(errorMsg);
                         MessageBox.Show(errorMsg, "ERROR in btnDeleteAddMerge_Click (Add)", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        currentSql.strStaticWhereClause = string.Empty;
+                        // currentSql.strManualWhereClause = string.Empty;
                         return;
                     }
 
                     if (dadt.dt.Rows.Count > 0)
                     {
                         MessageBox.Show(Properties.MyResources.youAlreadyHaveThisObjectInDatabase, Properties.MyResources.displayKeyValueArrayMustBeUnique, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        currentSql.strStaticWhereClause = string.Empty;
+                        currentSql.strManualWhereClause = string.Empty;
                         rbView.Checked = true;
                         writeGrid_NewFilter(true); return;
                     }
@@ -2818,12 +2867,13 @@ namespace SqlDataGridViewEditor
                 {
                     MsSql.SetInsertCommand(currentSql.myTable, whereList, dataHelper.currentDT);  // knows to use currentDA
                     MsSql.currentDA.InsertCommand.ExecuteNonQuery();
-                    currentSql.strStaticWhereClause = string.Empty;
+                    currentSql.strManualWhereClause = string.Empty;
                     rbView.Checked = true;
                     writeGrid_NewFilter(true);
                 }
                 catch (Exception ex)
                 {
+                    msgTextError(ex.Message);
                     MessageBox.Show(ex.Message, "DATABASE ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -2892,7 +2942,8 @@ namespace SqlDataGridViewEditor
                         if (errorMsg2 != string.Empty)
                         {
                             msgSB.Clear();
-                            msgSB.AppendLine(String.Format("Error filling datatable with table {0}.", TableWithFK));
+                            msgSB.AppendLine(String.Format("Error filling datatable with tableS {0}.", TableWithFK));
+                            msgTextError(msgSB.ToString());
                             MessageBox.Show(msgSB.ToString(), "ERROR in btnDeleteAddMerge (Merge)", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         txtMessages.Text = txtMessages.Text + "; " + dadt.dt.Rows.Count;
@@ -2904,7 +2955,7 @@ namespace SqlDataGridViewEditor
                             // Example:  Suppose that the DK has three columns.  Suppose we want to replace the first column pk2 with pk1.
                             //           But if the FK table has both "pk1, X, Y" and "pk2, X, Y", this will violate the unique constraint.
                             //           The user will need to first merge these two rows in the higher table -- I don't try this.  I just give a message
-                            if (dataHelper.isDisplayKey(fld))  // Non-display keys can have dublicates
+                            if (dataHelper.isDisplayKey(fld))  // Non-display keys can have duplicates
                             {
                                 SqlFactory sqlForeignKeyTable = new SqlFactory(TableWithFK, 0, 0);
                                 foreach (field fl3 in sqlForeignKeyTable.myFields)
@@ -2959,8 +3010,8 @@ namespace SqlDataGridViewEditor
                                             orConditions.Add(String.Format("({0} = '{1}' OR {0} IS NULL)", dataHelper.QualifiedAliasFieldName(fkTablePKfield), strPkValue));
                                         }
                                         string whereCondition = String.Join(" OR ", orConditions);
-                                        formOptions.strSuperStaticWhereClause = " WHERE " + whereCondition;
-                                        writeGrid_NewTable(TableWithFK);
+                                        txtManualFilter.Text = whereCondition;
+                                        writeGrid_NewTable(TableWithFK, false);  // 
                                     }
                                     return false;
                                 }
@@ -3009,7 +3060,7 @@ namespace SqlDataGridViewEditor
                 dataGridView1.MultiSelect = false;
                 dataGridView1.EditMode = DataGridViewEditMode.EditProgrammatically;
                 btnDeleteAddMerge.Enabled = false;
-                SetAllFiltersByMode();  // Calls SetColumnReadOnly() - which turns on and off col.ReadOnly
+                SetFiltersColumnsTablePanel();  // Calls SetColumnReadOnly() - which turns on and off col.ReadOnly
             }
         }
 
@@ -3024,7 +3075,7 @@ namespace SqlDataGridViewEditor
                 btnDeleteAddMerge.Text = "Delete row";
                 // Add deleteCommand
                 MsSql.SetDeleteCommand(currentSql.myTable, dataHelper.currentDT);
-                SetAllFiltersByMode();
+                SetFiltersColumnsTablePanel();
             }
         }
 
@@ -3045,7 +3096,7 @@ namespace SqlDataGridViewEditor
                     column.ReadOnly = true;
                 }
                 btnDeleteAddMerge.Enabled = false;
-                SetAllFiltersByMode();  // Calls SetColReadOnlyProperty()
+                SetFiltersColumnsTablePanel();  // Calls SetColReadOnlyProperty()
                 writeGrid_NewPage();  // Needed to add FK_cols
                 // Select the original row
                 if (selectedRow > 0 && dataGridView1.Rows.Count > selectedRow)
@@ -3064,7 +3115,7 @@ namespace SqlDataGridViewEditor
                 dataGridView1.EditMode = DataGridViewEditMode.EditProgrammatically;
                 btnDeleteAddMerge.Enabled = true;
                 btnDeleteAddMerge.Text = "Add row";
-                SetAllFiltersByMode();
+                SetFiltersColumnsTablePanel();
             }
         }
 
@@ -3076,7 +3127,7 @@ namespace SqlDataGridViewEditor
                 btnDeleteAddMerge.Enabled = true;
                 btnDeleteAddMerge.Text = "Merge 2 rows";
                 dataGridView1.MultiSelect = true;
-                SetAllFiltersByMode();
+                SetFiltersColumnsTablePanel();
             }
         }
 
@@ -3284,7 +3335,11 @@ namespace SqlDataGridViewEditor
             string strSql = currentSql.returnComboSql(fl, formOptions.orderComboListsByPK, cmbValueType);
             dataHelper.comboDT = new DataTable();
             string errorMsg = MsSql.FillDataTable(dataHelper.comboDT, strSql);
-            if (errorMsg != string.Empty) { MessageBox.Show(errorMsg, "ERROR in FillComboDT", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            if (errorMsg != string.Empty)
+            {
+                msgTextError(errorMsg);
+                MessageBox.Show(errorMsg, "ERROR in FillComboDT", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
         }
 
@@ -3426,7 +3481,7 @@ namespace SqlDataGridViewEditor
                     ChildTablesForm = null;
                     if (!String.IsNullOrEmpty(selectedTable))
                     {
-                        writeGrid_NewTable(selectedTable);
+                        writeGrid_NewTable(selectedTable, true);
                     }
                 }
             }
@@ -3451,9 +3506,89 @@ namespace SqlDataGridViewEditor
 
         }
 
-        private void mnuTools_ShowITtools_Click(object sender, EventArgs e)
+        private void tableLayoutPanel_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void txtManualFilter_TextChanged(object sender, EventArgs e)
+        {
+            if (!txtManualFilter.Enabled) { return; }
+
+            string text = txtManualFilter.Text;
+            if (text.Length == 0) { return; }
+
+            // Show fields
+            if (text.Length > 3)
+            {
+                if (text.Substring(text.Length - 2, 2) == "].")
+                {
+                    foreach (string key in aliasTableDictionary.Keys)
+                    {
+                        if (text.Length > key.Length + 2)
+                        {
+                            if (text.Substring(text.Length - (key.Length + 3)) == String.Format("[{0}].", key))
+                            {
+                                txtManualFilter.AutoCompleteMode = AutoCompleteMode.Suggest;
+                                txtManualFilter.AutoCompleteCustomSource = null;
+                                txtManualFilter.AutoCompleteSource = AutoCompleteSource.None;
+                                AutoCompleteStringCollection lstStrings = new AutoCompleteStringCollection();
+                                foreach (string fieldName in aliasTableDictionary[key])
+                                {
+                                    lstStrings.Add(text + "[" + fieldName + "]");
+
+                                }
+                                txtManualFilter.AutoCompleteCustomSource = lstStrings;
+                                txtManualFilter.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                                return;
+                            }
+                        }
+                    }
+                    return;  // Found ]. but not with a table
+                }
+
+            }
+            else
+            {
+                bool showTables = false;
+                if (text == "[") { showTables = true; }
+                else if (text.Length > 3)
+                {
+                    if (text.Substring(text.Length - 1) == "[" && text.Substring(text.Length - 2) != ".[")
+                    { showTables = true; }
+                }
+                if (showTables)
+                {
+                    txtManualFilter.AutoCompleteMode = AutoCompleteMode.Suggest;
+                    txtManualFilter.AutoCompleteCustomSource = null;
+                    txtManualFilter.AutoCompleteSource = AutoCompleteSource.None;
+                    AutoCompleteStringCollection lstStrings = new AutoCompleteStringCollection();
+                    foreach (string key in aliasTableDictionary.Keys)
+                    {
+                        lstStrings.Add(text + key + "].");
+                    }
+                    txtManualFilter.AutoCompleteCustomSource = lstStrings;
+                    txtManualFilter.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                }
+            }
+        }
+
+        private void mnuShowITTools_CheckedChanged(object sender, EventArgs e)
+        {
+            foreach (ToolStripMenuItem mi in mnuIT_Tools.DropDownItems)
+            {
+                if (mi.Name != mnuShowITTools.Name)
+                {
+                    mi.Visible = mnuShowITTools.Checked;
+                    txtManualFilter.Visible = mnuShowITTools.Checked;
+                    lblManualFilter.Visible = mnuShowITTools.Checked;
+                    txtManualFilter.Enabled = mnuShowITTools.Checked;
+                }
+            }
+            if (mnuShowITTools.Checked)
+            {
+                SetTableLayoutPanelHeight();
+            }
         }
     }
 }

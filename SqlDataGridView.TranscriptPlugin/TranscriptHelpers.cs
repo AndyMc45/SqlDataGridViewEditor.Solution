@@ -100,28 +100,28 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             // If no rows in above, the rows have already been added to dataHelper.fieldsDT
             if (drs.Count() == 0)
             {
-                dataHelper.AddRowToFieldsDT("StudentReq", 1, "StudentReqID", "StudentReqID", "int", false, true, true, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 1, "StudentReqID", "StudentReqID", "int", false, true, true, false, false, 4, String.Empty, String.Empty, 0);
                 //RequirementType table -
-                dataHelper.AddRowToFieldsDT("StudentReq", 9, "ReqTypeDK", "ReqTypeDK", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 2, "ReqType", "ReqType", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 10, "eReqType", "eReqType", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 9, "ReqTypeDK", "ReqTypeDK", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 2, "ReqType", "ReqType", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 10, "eReqType", "eReqType", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, 0);
                 //RequirementName table - 
-                dataHelper.AddRowToFieldsDT("StudentReq", 11, "ReqNameDK", "ReqNameDK", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 3, "ReqName", "ReqName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 12, "eReqName", "eReqName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 11, "ReqNameDK", "ReqNameDK", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 3, "ReqName", "ReqName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 12, "eReqName", "eReqName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, 0);
                 // DeliveryMethodTable
-                dataHelper.AddRowToFieldsDT("StudentReq", 13, "DelMethDK", "DelMethDK", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 4, "DelMethName", "DelMethName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 14, "eDelMethName", "eDelMethName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 15, "rDeliveryLevel", "rDeliveryLevel", "int", false, false, false, false, true, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 13, "DelMethDK", "DelMethDK", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 4, "DelMethName", "DelMethName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 14, "eDelMethName", "eDelMethName", "nvarchar", false, false, false, false, true, 200, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 15, "rDeliveryLevel", "rDeliveryLevel", "int", false, false, false, false, true, 4, String.Empty, String.Empty, 0);
                 // GradRequirement Table itself
-                dataHelper.AddRowToFieldsDT("StudentReq", 5, "Required", "Required", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 16, "Limit", "Limit", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 5, "Required", "Required", "real", false, false, false, false, false, 4, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 16, "Limit", "Limit", "real", false, false, false, false, false, 4, String.Empty, String.Empty, 0);
                 // Need to calucate the following from transcript
-                dataHelper.AddRowToFieldsDT("StudentReq", 6, "Earned", "Earned", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 7, "Needed", "Needed", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 8, "InProgress", "InProgress", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
-                dataHelper.AddRowToFieldsDT("StudentReq", 17, "Icredits", "Icredits", "real", false, false, false, false, false, 4, String.Empty, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 6, "Earned", "Earned", "real", false, false, false, false, false, 4, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 7, "Needed", "Needed", "real", false, false, false, false, false, 4, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 8, "InProgress", "InProgress", "real", false, false, false, false, false, 4, String.Empty, String.Empty, 0);
+                dataHelper.AddRowToFieldsDT("StudentReq", 17, "Icredits", "Icredits", "real", false, false, false, false, false, 4, String.Empty, String.Empty, 0);
             }
 
             // 2. Get Grad Requirements for this degree and handbook
@@ -497,6 +497,11 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("ancestors", "祖宗");
             columnHeaderTranslations.Add("auditing", "潘婷");
             columnHeaderTranslations.Add("cdepname", "c學科名字");
+            columnHeaderTranslations.Add("country", "國家");
+            columnHeaderTranslations.Add("countries", "國家");
+            columnHeaderTranslations.Add("countryname", "國家名字");
+            columnHeaderTranslations.Add("countryprovince", "國家省市");
+            columnHeaderTranslations.Add("countryprovinces", "國家省市");
             columnHeaderTranslations.Add("courses", "課程");
             columnHeaderTranslations.Add("course", "課程");
             columnHeaderTranslations.Add("coursename", "課程名字");
@@ -504,6 +509,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("courseterms", "學季課程");
             columnHeaderTranslations.Add("courseterm", "課程學季");
             columnHeaderTranslations.Add("coursetermsection", "學季課程班");
+            columnHeaderTranslations.Add("createdate", "創建日期");
             columnHeaderTranslations.Add("creditlimit", "學分限制");
             columnHeaderTranslations.Add("credits", "學分");
             columnHeaderTranslations.Add("creditsearned", "總學分");
@@ -515,6 +521,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("degreelevelname", "學位程度名字");
             columnHeaderTranslations.Add("degreename", "學位名字");
             columnHeaderTranslations.Add("degreenamelong", "學位名字長");
+            columnHeaderTranslations.Add("degreesubarea", "學位分割");
+            columnHeaderTranslations.Add("subareaname", "輔修分割名字");
             columnHeaderTranslations.Add("departments", "課系");
             columnHeaderTranslations.Add("deliverylevel", "上課方法程度");
             columnHeaderTranslations.Add("deliverymethod", "上課方法");
@@ -522,7 +530,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("delmethname", "上課方法名字");
             columnHeaderTranslations.Add("depname", "學科名字");
             columnHeaderTranslations.Add("department", "學科");
-            columnHeaderTranslations.Add("earnedcredits", "earned學分s");
+            columnHeaderTranslations.Add("earnedcredits", "得到學分");
+            columnHeaderTranslations.Add("ecountryname", "e國家名字");
             columnHeaderTranslations.Add("ecoursename", "e課程名字");
             columnHeaderTranslations.Add("ecreditsource", "e學分來源");
             columnHeaderTranslations.Add("edegreename", "e學位名字");
@@ -533,14 +542,18 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("enddate", "結束日期");
             columnHeaderTranslations.Add("endmonth", "結束月");
             columnHeaderTranslations.Add("endyear", "結束年");
-            columnHeaderTranslations.Add("ereqname", "e規則名字");
+            columnHeaderTranslations.Add("eprovincename", "e省市名字");
+            columnHeaderTranslations.Add("ereqarea", "e規則範圍");
             columnHeaderTranslations.Add("ereqtype", "e規則Type");
+            columnHeaderTranslations.Add("esubareaname", "e輔修分割名字");
             columnHeaderTranslations.Add("estatusname", "e狀態名字");
             columnHeaderTranslations.Add("estudentname", "e學生名字");
             columnHeaderTranslations.Add("etermname", "e學季名字");
+            columnHeaderTranslations.Add("etypename", "e類別名字");
             columnHeaderTranslations.Add("faculty", "老師");
             columnHeaderTranslations.Add("facultyname", "老師名字");
             columnHeaderTranslations.Add("facultyunique", "老師Unique");
+            columnHeaderTranslations.Add("forcredit", "可得到學分");
             columnHeaderTranslations.Add("fulfillrequirementnocredit", "滿足畢業要求_沒學分");
             columnHeaderTranslations.Add("grade", "成績");
             columnHeaderTranslations.Add("grades", "成績");
@@ -548,19 +561,25 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("gradrequirement", "畢業要求");
             columnHeaderTranslations.Add("gradrequirements", "畢業要求");
             columnHeaderTranslations.Add("gradrequirementtype", "畢業要求類別");
+            columnHeaderTranslations.Add("gradreqtype", "畢業要求類別");
             columnHeaderTranslations.Add("graduated", "已畢業");
             columnHeaderTranslations.Add("handbook", "手冊");
             columnHeaderTranslations.Add("handbooks", "手冊");
             columnHeaderTranslations.Add("lastupdatedqpa", "QPA更新日期");
+            columnHeaderTranslations.Add("lastupdatedstudentstatus", "狀態更新日期");
+            columnHeaderTranslations.Add("lastterm", "最近上課學季");
             columnHeaderTranslations.Add("note", "說明");
+            columnHeaderTranslations.Add("province", "省市");
+            columnHeaderTranslations.Add("provincename", "省市名字");
+            columnHeaderTranslations.Add("rdeliverymethod", "r上課方法");
             columnHeaderTranslations.Add("repeatspermitted", "可重複");
-            columnHeaderTranslations.Add("reqname", "規則名字");
-            columnHeaderTranslations.Add("reqnamedk", "規則名字DK");
-            columnHeaderTranslations.Add("reqtype", "規則Type");
-            columnHeaderTranslations.Add("reqtypedk", "規則TypeDK");
-            columnHeaderTranslations.Add("requirementname", "要求名稱");
+            columnHeaderTranslations.Add("reqarea", "規則範圍");
+            //columnHeaderTranslations.Add("reqnamedk", "規則名字DK");
+            columnHeaderTranslations.Add("reqtype", "規則類別");
+            columnHeaderTranslations.Add("reqtypedk", "規則類別DK");
+            columnHeaderTranslations.Add("requirementarea", "要求名稱");
             columnHeaderTranslations.Add("requirementType", "規則Type");
-            columnHeaderTranslations.Add("reqUnits", "規則Units");
+            columnHeaderTranslations.Add("reqUnits", "必獲數目");
             columnHeaderTranslations.Add("section", "班");
             columnHeaderTranslations.Add("selfstudycourse", "自修課程");
             columnHeaderTranslations.Add("startdate", "錄取日期");
@@ -573,6 +592,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("student", "學生");
             columnHeaderTranslations.Add("students", "學生");
             columnHeaderTranslations.Add("studentname", "學生名字");
+            columnHeaderTranslations.Add("studentstatus", "學生狀態");
+            columnHeaderTranslations.Add("studentstatushistory", "學生狀態紀錄");
             columnHeaderTranslations.Add("studentunique", "學生Unique");
             columnHeaderTranslations.Add("table", "表格");
             columnHeaderTranslations.Add("term", "學季");
@@ -580,14 +601,16 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("termname", "學季名字");
             columnHeaderTranslations.Add("transcript", "成績單");
             columnHeaderTranslations.Add("transfercredits", "轉學分");
+            columnHeaderTranslations.Add("typename", "類別名字");
 
             // My menu items    
             columnHeaderTranslations.Add("transcripts", "成績單");
             columnHeaderTranslations.Add("print transcript", "列印成績單");
             columnHeaderTranslations.Add("print class list", "列印課程學生");
             columnHeaderTranslations.Add("update student status", "更新學生身份");
+            columnHeaderTranslations.Add("update student QPA", "更新學生QPA");
             columnHeaderTranslations.Add("options", "選類");
-            
+
             return columnHeaderTranslations;
         }
     }
@@ -630,6 +653,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
         // Fields used in where statement
         internal static field GradRequirements_DegreeID { get => dataHelper.getFieldFromFieldsDT(TableName.gradRequirements, "degreeID"); }
         internal static field GradRequirements_handbookID { get => dataHelper.getFieldFromFieldsDT(TableName.gradRequirements, "handbookID"); }
+
     }
 
 

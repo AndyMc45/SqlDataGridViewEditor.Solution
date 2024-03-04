@@ -13,40 +13,49 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
     {
         #region Variables
         public String Name() { return this.name; }
-        public ControlTemplate CntTemplate() { return cntTemplate; }
-        public Form MainForm  // read-write instance property
-        {
-            set => mainForm = value;
-        }
-        public String TranslationCultureName() { return translationCultureName; }
-        public Dictionary<string, string> ColumnHeaderTranslations() { return columnHeaderTranslations; }
-
-        private ControlTemplate cntTemplate;
         private String name = String.Empty;
-        private Dictionary<string, string> columnHeaderTranslations;
+
+        public ControlTemplate CntTemplate() { return cntTemplate; }
+        private ControlTemplate cntTemplate;
+
+        public Form MainForm { set => mainForm = value; }
         private Form mainForm;   // This will be set to the main form by a delegate
-        private string translationCultureName;
+
         #endregion
 
         public TransPlugin(String name)
         {
             this.name = "Transcripts";
-            var tupleList = new List<(String, String)>
+            var menuList = new List<(String, String)>
             {
                 ("Print Transcript", "printTranscript"),
                 ("Print Class List", "printClassList"),
                 ("Update Student Status", "updateEveryStudentStatus"),
+                ("Update Student QPA", "updateEveryStudentQPA"),
                 ("Options", "options")
             };
+            // Set appData to desired culture, and then translate if this is same as translationCultureName.
+            // See DataGridViewForm.cs constructor.    
+            Dictionary<string, string> columnHeaderTranslations = TranscriptHelper.FillColumnHeaderTranslationDictionary();
+
+            List<(String, String)> readOnlyFields = new List<(string, string)>{
+                (TableName.studentDegrees, "creditsEarned"), (TableName.studentDegrees, "lastTerm") ,
+                (TableName.studentDegrees, "QPA"), (TableName.studentDegrees, "studentStatusID") };
+
+            String translationCultureName = "zh-Hant";  // Hard coded to the language of the translation
 
             frmTranscriptOptions fOptions = new frmTranscriptOptions();
+
             cntTemplate = new ControlTemplate(("Transcripts", "transcriptMenu"),
-                                                tupleList, fOptions, Transcript_CallBack);
-            columnHeaderTranslations = TranscriptHelper.FillColumnHeaderTranslationDictionary();
-            translationCultureName = "zh-Hant";  // Hard coded to the language of the translation
+                                                menuList,
+                                                Transcript_CallBack,
+                                                fOptions,
+                                                translationCultureName,
+                                                columnHeaderTranslations,
+                                                readOnlyFields);
         }
 
-        // CallBack - If things are good, then open the form with 'job'
+        // Define CallBack - If things are good, then open the form with 'job'
         void Transcript_CallBack(object? sender, EventArgs<string> e)
         {
             if (e.Value == "transcriptMenu")
@@ -72,8 +81,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     frmTranscriptOptions fOptions = new frmTranscriptOptions();
                     fOptions.myJob = frmTranscriptOptions.Job.printTranscript;
                     fOptions.studentDegreeID = studentDegreeID;
-                    fOptions.headerTranslations = columnHeaderTranslations;
-                    fOptions.translationCultureName = translationCultureName;
+                    fOptions.headerTranslations = cntTemplate.ColumnHeaderTranslations;
+                    fOptions.translationCultureName = cntTemplate.TranslationCultureName;
 
                     fOptions.ShowDialog();    // 
                 }
@@ -91,8 +100,8 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     frmTranscriptOptions fOptions = new frmTranscriptOptions();
                     fOptions.myJob = frmTranscriptOptions.Job.printClassList;
                     fOptions.courseTermID = courseTermID;
-                    fOptions.headerTranslations = columnHeaderTranslations;
-                    fOptions.translationCultureName = translationCultureName;
+                    fOptions.headerTranslations = cntTemplate.ColumnHeaderTranslations;
+                    fOptions.translationCultureName = cntTemplate.TranslationCultureName;
                     fOptions.ShowDialog();    // 
                 }
             }
@@ -102,30 +111,12 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                 DataGridViewForm dgvForm = (DataGridViewForm)mainForm;
                 if (dgvForm.currentSql.myTable == TableName.studentDegrees || dgvForm.currentSql.myTable == TableName.studentStatusHistory)
                 {
-                    // Get all the rows that need updated and then update - or do this with one update
-                    string sqlString = "Select . . .";   
-                    //        //Get studentDegreeID column
-                    //        field fld = dataHelper.getForeignKeyFromRefTableName(dgvForm.currentSql.myTable, TableName.studentDegrees);
-                    //        int colNum = dgvForm.getDGVcolumn(fld);
-                    //        studentDegreeID = (Int32)dgvForm.dataGridView1.SelectedRows[0].Cells[colNum].Value;
-                    //    }
-                    //    else if (dgvForm.currentSql.myTable == TableName.studentDegrees)
-                    //    {
-                    //        field fld = dataHelper.getTablePrimaryKeyField(TableName.studentDegrees);
-                    //        int colNum = dgvForm.getDGVcolumn(fld);
-                    //        studentDegreeID = (Int32)dgvForm.dataGridView1.SelectedRows[0].Cells[colNum].Value;
-                    //    }
-                    //    else if (dgvForm.currentSql.myTable == TableName.students)
-                    //    {
-                    //        string err = String.Format(Properties.PluginResources.selectStudentInTable01, TableName.studentDegrees, TableName.students);
-                    //        sbError.AppendLine(err);
-                    //    }
-                    //    else
-                    //    {
-                    //        string err = String.Format(Properties.PluginResources.selectOneRowinTable0or1, TableName.transcript, TableName.studentDegrees);
-                    //        sbError.AppendLine(err);
-                    //    }
-                    //}
+                    string result = MsSql.UpdateEveryChangedStudentDegreeStatus();
+                    if (result == String.Empty)
+                    {
+                        MessageBox.Show("All Student statuses in the StudentDegree table updated.", "Update Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+
                 }
                 else
                 {
@@ -133,6 +124,27 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     string err = string.Format("Please select tables {0} or {1}.", "StudentDegrees", "StudentStatusHistory");
                     MessageBox.Show(err, "Error message", MessageBoxButtons.OK, MessageBoxIcon.Question);
                 }
+            }
+            else if (e.Value == "updateEveryStudentQPA")
+            {
+                // MainForm variable in the plugin has been set to the mainForm of the program by a delegate.  See mainForm constructor. 
+                DataGridViewForm dgvForm = (DataGridViewForm)mainForm;
+                if (dgvForm.currentSql.myTable == TableName.studentDegrees || dgvForm.currentSql.myTable == TableName.studentStatusHistory)
+                {
+                    string result = MsSql.UpdateEveryChangedStudentDegreeStatus();
+                    if (result == String.Empty)
+                    {
+                        MessageBox.Show("All Student statuses in the StudentDegree table updated.", "Update Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+
+                }
+                else
+                {
+                    // This doesn't cause an error, but I force user to run this method when in a relevant table
+                    string err = string.Format("Please select tables {0} or {1}.", "StudentDegrees", "StudentStatusHistory");
+                    MessageBox.Show(err, "Error message", MessageBoxButtons.OK, MessageBoxIcon.Question);
+                }
+
             }
             else
             {

@@ -229,6 +229,6 @@
     <value>You must enter a Server name</value>
   </data>
   <data name="youNeedtoMergeRowIn0" xml:space="preserve">
-    <value>You need to merge rows in {0}.</value>
+    <value>You will need to merge rows in {0} first.</value>
   </data>
 </root>

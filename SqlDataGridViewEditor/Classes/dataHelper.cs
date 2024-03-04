@@ -55,6 +55,8 @@ namespace SqlDataGridViewEditor
                 lastFilterValuesDT.Columns.Add(col1);
                 lastFilterValuesDT.Columns.Add(col2);
             }
+            DataColumn dataColumn4 = new DataColumn("manualFilter");
+            lastFilterValuesDT.Columns.Add(dataColumn4);
         }
 
         public static string QualifiedFieldName(field fld)

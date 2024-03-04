@@ -24,22 +24,10 @@ namespace SqlDataGridViewEditor
             if (cn == null) { return false; }  // Also check this in call.
 
             bool success = false;
-            try
-            {
-
-                var query = String.Format("BACKUP DATABASE [{0}] TO DISK='{1}'", cn.Database, completeFilePath);
-
-                using (var command = new SqlCommand(query, cn))
-                {
-                    command.ExecuteNonQuery();
-                }
-                success = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, Properties.MyResources.errorBackingUpDatabase, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
+            var query = String.Format("BACKUP DATABASE [{0}] TO DISK='{1}'", cn.Database, completeFilePath);
+            string result = string.Empty;
+            result = ExecuteNonQuery(query);
+            success = (result == string.Empty);
             return success;
         }
 
@@ -303,6 +291,7 @@ namespace SqlDataGridViewEditor
             cn = null;
         }
 
+
         public static void CloseDataAdapters()
         {
             currentDA = null;
@@ -360,16 +349,11 @@ namespace SqlDataGridViewEditor
             }
         }
 
-        public static string CreateForeignKey(string table, string field, string refTable, string refField)
+        private static string ExecuteNonQuery(string query)
         {
             string result = String.Empty;
-            string constraintName = String.Format("FK_{0}_{1}_{2}", table, field, refTable);
             try
             {
-
-                var query = String.Format("ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY({2}) REFERENCES {3}({4}) ON DELETE CASCADE ON UPDATE CASCADE",
-                    table, constraintName, field, refTable, refField);
-
                 using (var command = new SqlCommand(query, cn))
                 {
                     command.ExecuteNonQuery();
@@ -383,6 +367,30 @@ namespace SqlDataGridViewEditor
             return result;
         }
 
+        public static string UpdateEveryChangedStudentDegreeStatus()
+        {
+            string result = string.Empty;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(";with cte AS (Select *, ROW_NUMBER() OVER(PARTITION BY[studentDegreeID] ORDER BY[createDate] DESC) as rn ");
+            sb.AppendLine("From[StudentStatusHistory])UPDATE[dbo].[StudentDegrees] SET [studentStatusID] = cte.studentStatusID ");
+            sb.AppendLine(", [lastUpdatedStudentStatus] = getdate()");
+            sb.AppendLine("FROM cte Inner Join StudentDegrees on StudentDegrees.studentDegreeID = cte.studentDegreeID");
+            sb.AppendLine("AND rn = 1 AND cte.createDate >= StudentDegrees.lastUpdatedStudentStatus");
+            string query = sb.ToString();
+            result = ExecuteNonQuery(query);
+            return result;
+        }
+
+        public static string CreateForeignKey(string table, string field, string refTable, string refField)
+        {
+            string result = String.Empty;
+            string constraintName = String.Format("FK_{0}_{1}_{2}", table, field, refTable);
+            var query = String.Format("ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY({2}) REFERENCES {3}({4}) ON DELETE CASCADE ON UPDATE CASCADE",
+                table, constraintName, field, refTable, refField);
+            result = ExecuteNonQuery(query);
+            return result;
+        }
+
         public static string CreateUniqueIndex(string table, List<string> fields, string indexName)
         {
             string result = String.Empty;
@@ -393,23 +401,10 @@ namespace SqlDataGridViewEditor
                 indexName = String.Format("DK_{0}", table);
             }
             string columns = String.Join(",", fields);
-            try
-            {
-                // "CREATE UNIQUE NONCLUSTERED INDEX {0} ON {1}({2}){3}";
-
-                var query = String.Format("CREATE UNIQUE NONCLUSTERED INDEX {0} ON {1}({2}){3}",
-                    indexName, table, columns, withClause);
-
-                using (var command = new SqlCommand(query, cn))
-                {
-                    command.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                result = ex.Message;
-                MessageBox.Show(ex.Message, "Error creating index", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            // "CREATE UNIQUE NONCLUSTERED INDEX {0} ON {1}({2}){3}";
+            var query = String.Format("CREATE UNIQUE NONCLUSTERED INDEX {0} ON {1}({2}){3}",
+                indexName, table, columns, withClause);
+            result = ExecuteNonQuery(query);
             return result;
         }
 

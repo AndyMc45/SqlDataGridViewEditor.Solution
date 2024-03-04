@@ -9,6 +9,9 @@ namespace SqlDataGridViewEditor
 
         public static bool translate;
 
+        public static List<(string, string)> readOnlyField = new List<(string, string)>();
+
+
         // Results of this coloring use in color combo boxes above
         public static void SetHeaderColorsOnWritePage(DataGridView dgv, string myTable, List<field> myFields)
         {
@@ -114,7 +117,7 @@ namespace SqlDataGridViewEditor
                         dgv.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                         if (narrowColumns)
                         {
-                             // ReadOnly = false means this is editable
+                            // ReadOnly = false means this is editable
                             if (dgv.Columns[i].ReadOnly == true && (dataHelper.isTablePrimaryKeyField(myFields[i]) || dataHelper.isForeignKeyField(myFields[i])))
                             {
                                 nextWidth = 3;
@@ -171,6 +174,7 @@ namespace SqlDataGridViewEditor
             if (translate)
             {
                 // Rename the header rows (if a plugin has added some colHeaderTranslation.keys)
+                // Microsoft might add a "1" at the end if two columns have the same header
                 foreach (DataGridViewColumn col in dgv.Columns)
                 {
                     string headerText = col.HeaderText;

@@ -30,11 +30,21 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataGridViewForm));
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             splitContainer1 = new SplitContainer();
             tableLayoutPanel = new TableLayoutPanel();
+            GridContextMenu = new ContextMenuStrip(components);
+            GridContextMenu_SetAsMainFilter = new ToolStripMenuItem();
+            GridContextMenu_SetFKasMainFIlter = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            GridContextMenu_TimesUsedAsFK = new ToolStripMenuItem();
+            GridContextMenu_OrderCombolByPK = new ToolStripMenuItem();
+            GridContextMenu_Seperator = new ToolStripSeparator();
+            GridContextMenu_RestoreFilters = new ToolStripMenuItem();
+            GridContextMenu_ClearFilters = new ToolStripMenuItem();
+            lblManualFilter = new Label();
             lblMainFilter = new Label();
             cmbMainFilter = new ComboBox();
             lblGridFilter = new Label();
@@ -52,15 +62,6 @@
             cmbGridFilterFields_3 = new ComboBox();
             rbMerge = new RadioButton();
             btnDeleteAddMerge = new Button();
-            GridContextMenu = new ContextMenuStrip(components);
-            GridContextMenu_SetAsMainFilter = new ToolStripMenuItem();
-            GridContextMenu_SetFKasMainFIlter = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
-            GridContextMenu_TimesUsedAsFK = new ToolStripMenuItem();
-            GridContextMenu_OrderCombolByPK = new ToolStripMenuItem();
-            GridContextMenu_Seperator = new ToolStripSeparator();
-            GridContextMenu_RestoreFilters = new ToolStripMenuItem();
-            GridContextMenu_ClearFilters = new ToolStripMenuItem();
             rbAdd = new RadioButton();
             rbDelete = new RadioButton();
             rbEdit = new RadioButton();
@@ -87,6 +88,7 @@
             cmbComboTableList = new ComboBox();
             btnBlackLine = new Button();
             btnReload = new Button();
+            txtManualFilter = new TextBox();
             txtMessages = new TextBox();
             dataGridView1 = new DataGridView();
             MainMenu1 = new MenuStrip();
@@ -99,14 +101,13 @@
             mnuClose = new ToolStripMenuItem();
             mnuOpenTables = new ToolStripMenuItem();
             mnuTools = new ToolStripMenuItem();
-            mnuTools_ShowITtools = new ToolStripMenuItem();
+            mnuPrintCurrentTable = new ToolStripMenuItem();
+            mnuIT_Tools = new ToolStripMenuItem();
             mnuDatabaseInfo = new ToolStripMenuItem();
             mnuDuplicateDisplayKeys = new ToolStripMenuItem();
             mnuForeignKeyMissing = new ToolStripMenuItem();
             mnuToolsBackupDatabase = new ToolStripMenuItem();
-            toolStripSeparator2 = new ToolStripSeparator();
-            toolStripSeparator3 = new ToolStripSeparator();
-            mnuPrintCurrentTable = new ToolStripMenuItem();
+            mnuShowITTools = new ToolStripMenuItem();
             mnuHelp = new ToolStripMenuItem();
             mnuHelpFile = new ToolStripMenuItem();
             toolStripBottom = new ToolStrip();
@@ -147,6 +148,8 @@
             // tableLayoutPanel
             // 
             resources.ApplyResources(tableLayoutPanel, "tableLayoutPanel");
+            tableLayoutPanel.ContextMenuStrip = GridContextMenu;
+            tableLayoutPanel.Controls.Add(lblManualFilter, 1, 4);
             tableLayoutPanel.Controls.Add(lblMainFilter, 1, 0);
             tableLayoutPanel.Controls.Add(cmbMainFilter, 4, 0);
             tableLayoutPanel.Controls.Add(lblGridFilter, 1, 1);
@@ -188,9 +191,72 @@
             tableLayoutPanel.Controls.Add(lblCmbFilterField_2, 20, 6);
             tableLayoutPanel.Controls.Add(cmbComboFilterValue_2, 23, 6);
             tableLayoutPanel.Controls.Add(cmbComboTableList, 4, 6);
-            tableLayoutPanel.Controls.Add(btnBlackLine, 4, 5);
+            tableLayoutPanel.Controls.Add(btnBlackLine, 8, 5);
             tableLayoutPanel.Controls.Add(btnReload, 23, 0);
+            tableLayoutPanel.Controls.Add(txtManualFilter, 4, 4);
             tableLayoutPanel.Name = "tableLayoutPanel";
+            tableLayoutPanel.Paint += tableLayoutPanel_Paint;
+            // 
+            // GridContextMenu
+            // 
+            resources.ApplyResources(GridContextMenu, "GridContextMenu");
+            GridContextMenu.ImageScalingSize = new Size(20, 20);
+            GridContextMenu.Items.AddRange(new ToolStripItem[] { GridContextMenu_SetAsMainFilter, GridContextMenu_SetFKasMainFIlter, toolStripSeparator1, GridContextMenu_TimesUsedAsFK, GridContextMenu_OrderCombolByPK, GridContextMenu_Seperator, GridContextMenu_RestoreFilters, GridContextMenu_ClearFilters });
+            GridContextMenu.Name = "contextMenuStrip1";
+            // 
+            // GridContextMenu_SetAsMainFilter
+            // 
+            resources.ApplyResources(GridContextMenu_SetAsMainFilter, "GridContextMenu_SetAsMainFilter");
+            GridContextMenu_SetAsMainFilter.Name = "GridContextMenu_SetAsMainFilter";
+            GridContextMenu_SetAsMainFilter.Click += GridContextMenu_SetAsMainFilter_Click;
+            // 
+            // GridContextMenu_SetFKasMainFIlter
+            // 
+            resources.ApplyResources(GridContextMenu_SetFKasMainFIlter, "GridContextMenu_SetFKasMainFIlter");
+            GridContextMenu_SetFKasMainFIlter.DoubleClickEnabled = true;
+            GridContextMenu_SetFKasMainFIlter.Name = "GridContextMenu_SetFKasMainFIlter";
+            GridContextMenu_SetFKasMainFIlter.Click += GridContextMenu_SetFkAsMainFilter_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            // 
+            // GridContextMenu_TimesUsedAsFK
+            // 
+            resources.ApplyResources(GridContextMenu_TimesUsedAsFK, "GridContextMenu_TimesUsedAsFK");
+            GridContextMenu_TimesUsedAsFK.Name = "GridContextMenu_TimesUsedAsFK";
+            GridContextMenu_TimesUsedAsFK.Click += GridContextMenu_TimesUsedAsFK_Click;
+            // 
+            // GridContextMenu_OrderCombolByPK
+            // 
+            resources.ApplyResources(GridContextMenu_OrderCombolByPK, "GridContextMenu_OrderCombolByPK");
+            GridContextMenu_OrderCombolByPK.CheckOnClick = true;
+            GridContextMenu_OrderCombolByPK.Name = "GridContextMenu_OrderCombolByPK";
+            GridContextMenu_OrderCombolByPK.Click += GridContextMenu_OrderComboByPK_Click;
+            // 
+            // GridContextMenu_Seperator
+            // 
+            resources.ApplyResources(GridContextMenu_Seperator, "GridContextMenu_Seperator");
+            GridContextMenu_Seperator.Name = "GridContextMenu_Seperator";
+            // 
+            // GridContextMenu_RestoreFilters
+            // 
+            resources.ApplyResources(GridContextMenu_RestoreFilters, "GridContextMenu_RestoreFilters");
+            GridContextMenu_RestoreFilters.Name = "GridContextMenu_RestoreFilters";
+            GridContextMenu_RestoreFilters.Click += GridContextMenu_RestoreFilters_Click;
+            // 
+            // GridContextMenu_ClearFilters
+            // 
+            resources.ApplyResources(GridContextMenu_ClearFilters, "GridContextMenu_ClearFilters");
+            GridContextMenu_ClearFilters.Name = "GridContextMenu_ClearFilters";
+            GridContextMenu_ClearFilters.Click += GridContextMenu_ClearFilters_Click;
+            // 
+            // lblManualFilter
+            // 
+            resources.ApplyResources(lblManualFilter, "lblManualFilter");
+            tableLayoutPanel.SetColumnSpan(lblManualFilter, 3);
+            lblManualFilter.Name = "lblManualFilter";
             // 
             // lblMainFilter
             // 
@@ -377,61 +443,6 @@
             btnDeleteAddMerge.Name = "btnDeleteAddMerge";
             btnDeleteAddMerge.UseVisualStyleBackColor = true;
             btnDeleteAddMerge.Click += btnDeleteAddMerge_Click;
-            // 
-            // GridContextMenu
-            // 
-            resources.ApplyResources(GridContextMenu, "GridContextMenu");
-            GridContextMenu.ImageScalingSize = new Size(20, 20);
-            GridContextMenu.Items.AddRange(new ToolStripItem[] { GridContextMenu_SetAsMainFilter, GridContextMenu_SetFKasMainFIlter, toolStripSeparator1, GridContextMenu_TimesUsedAsFK, GridContextMenu_OrderCombolByPK, GridContextMenu_Seperator, GridContextMenu_RestoreFilters, GridContextMenu_ClearFilters });
-            GridContextMenu.Name = "contextMenuStrip1";
-            // 
-            // GridContextMenu_SetAsMainFilter
-            // 
-            resources.ApplyResources(GridContextMenu_SetAsMainFilter, "GridContextMenu_SetAsMainFilter");
-            GridContextMenu_SetAsMainFilter.Name = "GridContextMenu_SetAsMainFilter";
-            GridContextMenu_SetAsMainFilter.Click += GridContextMenu_SetAsMainFilter_Click;
-            // 
-            // GridContextMenu_SetFKasMainFIlter
-            // 
-            resources.ApplyResources(GridContextMenu_SetFKasMainFIlter, "GridContextMenu_SetFKasMainFIlter");
-            GridContextMenu_SetFKasMainFIlter.DoubleClickEnabled = true;
-            GridContextMenu_SetFKasMainFIlter.Name = "GridContextMenu_SetFKasMainFIlter";
-            GridContextMenu_SetFKasMainFIlter.Click += GridContextMenu_SetFkAsMainFilter_Click;
-            // 
-            // toolStripSeparator1
-            // 
-            resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            // 
-            // GridContextMenu_TimesUsedAsFK
-            // 
-            resources.ApplyResources(GridContextMenu_TimesUsedAsFK, "GridContextMenu_TimesUsedAsFK");
-            GridContextMenu_TimesUsedAsFK.Name = "GridContextMenu_TimesUsedAsFK";
-            GridContextMenu_TimesUsedAsFK.Click += GridContextMenu_TimesUsedAsFK_Click;
-            // 
-            // GridContextMenu_OrderCombolByPK
-            // 
-            resources.ApplyResources(GridContextMenu_OrderCombolByPK, "GridContextMenu_OrderCombolByPK");
-            GridContextMenu_OrderCombolByPK.CheckOnClick = true;
-            GridContextMenu_OrderCombolByPK.Name = "GridContextMenu_OrderCombolByPK";
-            GridContextMenu_OrderCombolByPK.Click += GridContextMenu_OrderComboByPK_Click;
-            // 
-            // GridContextMenu_Seperator
-            // 
-            resources.ApplyResources(GridContextMenu_Seperator, "GridContextMenu_Seperator");
-            GridContextMenu_Seperator.Name = "GridContextMenu_Seperator";
-            // 
-            // GridContextMenu_RestoreFilters
-            // 
-            resources.ApplyResources(GridContextMenu_RestoreFilters, "GridContextMenu_RestoreFilters");
-            GridContextMenu_RestoreFilters.Name = "GridContextMenu_RestoreFilters";
-            GridContextMenu_RestoreFilters.Click += GridContextMenu_RestoreFilters_Click;
-            // 
-            // GridContextMenu_ClearFilters
-            // 
-            resources.ApplyResources(GridContextMenu_ClearFilters, "GridContextMenu_ClearFilters");
-            GridContextMenu_ClearFilters.Name = "GridContextMenu_ClearFilters";
-            GridContextMenu_ClearFilters.Click += GridContextMenu_ClearFilters_Click;
             // 
             // rbAdd
             // 
@@ -666,7 +677,7 @@
             resources.ApplyResources(btnBlackLine, "btnBlackLine");
             btnBlackLine.BackColor = Color.Black;
             btnBlackLine.CausesValidation = false;
-            tableLayoutPanel.SetColumnSpan(btnBlackLine, 22);
+            tableLayoutPanel.SetColumnSpan(btnBlackLine, 16);
             btnBlackLine.ForeColor = Color.Black;
             btnBlackLine.Name = "btnBlackLine";
             btnBlackLine.UseVisualStyleBackColor = false;
@@ -678,6 +689,13 @@
             btnReload.Name = "btnReload";
             btnReload.UseVisualStyleBackColor = true;
             btnReload.Click += btnReload_Click;
+            // 
+            // txtManualFilter
+            // 
+            resources.ApplyResources(txtManualFilter, "txtManualFilter");
+            tableLayoutPanel.SetColumnSpan(txtManualFilter, 20);
+            txtManualFilter.Name = "txtManualFilter";
+            txtManualFilter.TextChanged += txtManualFilter_TextChanged;
             // 
             // txtMessages
             // 
@@ -692,30 +710,30 @@
             resources.ApplyResources(dataGridView1, "dataGridView1");
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle4.BackColor = Color.WhiteSmoke;
-            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.BackColor = Color.WhiteSmoke;
+            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.ContextMenuStrip = GridContextMenu;
             dataGridView1.EnableHeadersVisualStyles = false;
             dataGridView1.GridColor = Color.WhiteSmoke;
             dataGridView1.MultiSelect = false;
             dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = SystemColors.Control;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
-            dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dataGridView1.RowTemplate.Height = 27;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.CellBeginEdit += dataGridView1_CellBeginEdit;
@@ -744,7 +762,7 @@
             resources.ApplyResources(MainMenu1, "MainMenu1");
             MainMenu1.BackColor = SystemColors.ControlLight;
             MainMenu1.ImageScalingSize = new Size(20, 20);
-            MainMenu1.Items.AddRange(new ToolStripItem[] { mnuFile, mnuOpenTables, mnuTools, mnuHelp });
+            MainMenu1.Items.AddRange(new ToolStripItem[] { mnuFile, mnuOpenTables, mnuTools, mnuIT_Tools, mnuHelp });
             MainMenu1.Name = "MainMenu1";
             // 
             // mnuFile
@@ -798,18 +816,20 @@
             // mnuTools
             // 
             resources.ApplyResources(mnuTools, "mnuTools");
-            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuTools_ShowITtools, mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuToolsBackupDatabase, toolStripSeparator2, toolStripSeparator3, mnuPrintCurrentTable });
+            mnuTools.DropDownItems.AddRange(new ToolStripItem[] { mnuPrintCurrentTable });
             mnuTools.Name = "mnuTools";
             // 
-            // mnuTools_ShowITtools
+            // mnuPrintCurrentTable
             // 
-            resources.ApplyResources(mnuTools_ShowITtools, "mnuTools_ShowITtools");
-            mnuTools_ShowITtools.Checked = true;
-            mnuTools_ShowITtools.CheckOnClick = true;
-            mnuTools_ShowITtools.CheckState = CheckState.Checked;
-            mnuTools_ShowITtools.Name = "mnuTools_ShowITtools";
-            mnuTools_ShowITtools.CheckedChanged += mnuTools_ShowITtools_CheckedChanged;
-            mnuTools_ShowITtools.Click += mnuTools_ShowITtools_Click;
+            resources.ApplyResources(mnuPrintCurrentTable, "mnuPrintCurrentTable");
+            mnuPrintCurrentTable.Name = "mnuPrintCurrentTable";
+            mnuPrintCurrentTable.Click += mnuPrintCurrentTable_Click;
+            // 
+            // mnuIT_Tools
+            // 
+            resources.ApplyResources(mnuIT_Tools, "mnuIT_Tools");
+            mnuIT_Tools.DropDownItems.AddRange(new ToolStripItem[] { mnuDatabaseInfo, mnuDuplicateDisplayKeys, mnuForeignKeyMissing, mnuToolsBackupDatabase, mnuShowITTools });
+            mnuIT_Tools.Name = "mnuIT_Tools";
             // 
             // mnuDatabaseInfo
             // 
@@ -835,21 +855,14 @@
             mnuToolsBackupDatabase.Name = "mnuToolsBackupDatabase";
             mnuToolsBackupDatabase.Click += mnuToolsBackupDatabase_Click;
             // 
-            // toolStripSeparator2
+            // mnuShowITTools
             // 
-            resources.ApplyResources(toolStripSeparator2, "toolStripSeparator2");
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            // 
-            // toolStripSeparator3
-            // 
-            resources.ApplyResources(toolStripSeparator3, "toolStripSeparator3");
-            toolStripSeparator3.Name = "toolStripSeparator3";
-            // 
-            // mnuPrintCurrentTable
-            // 
-            resources.ApplyResources(mnuPrintCurrentTable, "mnuPrintCurrentTable");
-            mnuPrintCurrentTable.Name = "mnuPrintCurrentTable";
-            mnuPrintCurrentTable.Click += mnuPrintCurrentTable_Click;
+            resources.ApplyResources(mnuShowITTools, "mnuShowITTools");
+            mnuShowITTools.Checked = true;
+            mnuShowITTools.CheckOnClick = true;
+            mnuShowITTools.CheckState = CheckState.Checked;
+            mnuShowITTools.Name = "mnuShowITTools";
+            mnuShowITTools.CheckedChanged += mnuShowITTools_CheckedChanged;
             // 
             // mnuHelp
             // 
@@ -969,8 +982,6 @@
         public ToolStripMenuItem mnuDeleteConnection;
         public ToolStripMenuItem mnuClose;
         public ToolStripMenuItem mnuOpenTables;
-        public ToolStripMenuItem mnuTools;
-        public ToolStripMenuItem mnuPrintCurrentTable;
         public ToolStripMenuItem mnuHelp;
         public ToolStripMenuItem mnuHelpFile;
         private ToolStrip toolStripBottom;
@@ -1038,13 +1049,16 @@
         private ToolStripMenuItem GridContextMenu_ClearFilters;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem GridContextMenu_OrderCombolByPK;
-        private ToolStripMenuItem mnuTools_ShowITtools;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem backupDatabaseToolStripMenuItem;
         private ToolStripMenuItem mnuToolsBackupDatabase;
         private SaveFileDialog saveFileDialog1;
         private FolderBrowserDialog folderBrowserDialog1;
+        private Label lblManualFilter;
+        private TextBox txtManualFilter;
+        private ToolStripMenuItem mnuTools;
+        internal ToolStripMenuItem mnuIT_Tools;
+        public ToolStripMenuItem mnuPrintCurrentTable;
+        private ToolStripMenuItem mnuShowITTools;
         //private Button button2;
     }
 }

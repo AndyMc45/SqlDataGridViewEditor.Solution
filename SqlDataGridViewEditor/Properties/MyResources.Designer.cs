@@ -391,7 +391,7 @@ namespace SqlDataGridViewEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to merge rows in {0}..
+        ///   Looks up a localized string similar to You will need to merge rows in {0} first..
         /// </summary>
         public static string youNeedtoMergeRowIn0 {
             get {

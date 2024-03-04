@@ -1,33 +1,43 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-// "Shared" means that all plugins have a ControlTemplate
+﻿// "Shared" means that all plugins have a ControlTemplate
+// This has many things
 namespace SqlDataGridViewEditor.PluginsInterface
 {
     public class ControlTemplate
     {
         public Form frmTemplate;
 
-        public ToolStripMenuItem menuStrip;
+        public ToolStripMenuItem menuStrip;  // Constructed from menuItems, menuName, CallBack
+
+        public String TranslationCultureName;
+
+        public Dictionary<string, string> ColumnHeaderTranslations;
+
+        public List<(String, String)> ReadOnlyFields;
 
         public event EventHandler<EventArgs<String>> CallBack;
 
         // Constructor - called by plugin
-        public ControlTemplate( (String,String) menuName, 
-                                List<(String, String)> menuItems, 
-                                Form frmOptions,
-                                EventHandler<EventArgs<String>> callBack)
+        public ControlTemplate(
+                (String, String) menuName,
+                List<(String, String)> menuItems,
+                EventHandler<EventArgs<String>> callBack,
+                Form frmOptions,
+                String translationCultureName,
+                Dictionary<string, string> columnHeaderTranslations,
+                List<(String, String)> readOnlyFields
+            )
         {
+
             frmTemplate = frmOptions;
-            CallBack = callBack;
+            TranslationCultureName = translationCultureName;
+            ColumnHeaderTranslations = columnHeaderTranslations;
+            ReadOnlyFields = readOnlyFields;
 
             // Define and fill the menuStrip
+            CallBack = callBack;
             ToolStripMenuItem topLevelMenuStripItem = new ToolStripMenuItem(menuName.Item1);
             // topLevelMenuStripItem.Text = menuName.Item1;
-            topLevelMenuStripItem.Tag = menuName.Item2; 
+            topLevelMenuStripItem.Tag = menuName.Item2;
 
             foreach ((String, String) tuple in menuItems)
             {
