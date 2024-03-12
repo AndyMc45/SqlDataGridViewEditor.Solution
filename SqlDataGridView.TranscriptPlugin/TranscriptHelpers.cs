@@ -607,8 +607,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             columnHeaderTranslations.Add("transcripts", "成績單");
             columnHeaderTranslations.Add("print transcript", "列印成績單");
             columnHeaderTranslations.Add("print class list", "列印課程學生");
-            columnHeaderTranslations.Add("update student status", "更新學生身份");
-            columnHeaderTranslations.Add("update student QPA", "更新學生QPA");
+            columnHeaderTranslations.Add("update studentdegrees table", "更新學生學位表");
             columnHeaderTranslations.Add("options", "選類");
 
             return columnHeaderTranslations;

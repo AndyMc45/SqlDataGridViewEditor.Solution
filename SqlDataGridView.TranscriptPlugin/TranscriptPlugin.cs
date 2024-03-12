@@ -1,4 +1,5 @@
 ﻿using SqlDataGridViewEditor.PluginsInterface;
+using SqlDataGridViewEditor.TranscriptPlugin.Properties;
 using System.Text;
 
 
@@ -30,8 +31,7 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
             {
                 ("Print Transcript", "printTranscript"),
                 ("Print Class List", "printClassList"),
-                ("Update Student Status", "updateEveryStudentStatus"),
-                ("Update Student QPA", "updateEveryStudentQPA"),
+                ("Update StudentDegrees Table", "updateStudentDegreesTable"),
                 ("Options", "options")
             };
             // Set appData to desired culture, and then translate if this is same as translationCultureName.
@@ -105,46 +105,42 @@ namespace SqlDataGridViewEditor.TranscriptPlugin
                     fOptions.ShowDialog();    // 
                 }
             }
-            else if (e.Value == "updateEveryStudentStatus")
+            else if (e.Value == "updateStudentDegreesTable")
             {
                 // MainForm variable in the plugin has been set to the mainForm of the program by a delegate.  See mainForm constructor. 
                 DataGridViewForm dgvForm = (DataGridViewForm)mainForm;
-                if (dgvForm.currentSql.myTable == TableName.studentDegrees || dgvForm.currentSql.myTable == TableName.studentStatusHistory)
+                // 1. Ask
+                string msgStr = String.Format("{1}{0}{2} {3}",
+                    Environment.NewLine,
+                    PluginResources.doYouWantToUpdateStDeTable,
+                    PluginResources.thiswillUpdateTheStudentDegreesTable,
+                    PluginResources.andUpdateQPAbasedOnTranscriptTable);
+                DialogResult result = MessageBox.Show(msgStr, PluginResources.updateStudentDegreesTable, MessageBoxButtons.YesNo, MessageBoxIcon.Question);                 
+                                
+                // 2. Upgrade StudentDegrees Table
+                if(result == DialogResult.Yes)
                 {
-                    string result = MsSql.UpdateEveryChangedStudentDegreeStatus();
-                    if (result == String.Empty)
+                    // 2a. Upgrade StudentStatusID column
+                    int rowsAffected = 0;
+                    string strResult = MsSql.UpdateEveryChangedStudentDegreeStatus(ref rowsAffected);
+                    if (strResult == String.Empty)
                     {
-                        MessageBox.Show("All Student statuses in the StudentDegree table updated.", "Update Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        string strResult1 = String.Format(PluginResources.StDeTableUpdatedAndCount
+                                ,Environment.NewLine, rowsAffected);
+                        // 2b. Upgrade QPA-credit-LastTerm-Date columns
+                        strResult = MsSql.updateEveryChangedStudentCreditsLastTermQPA(ref rowsAffected);
+                        if (!String.IsNullOrEmpty(strResult))
+                        {
+                            MessageBox.Show(strResult1, "Partial Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            strResult1 += String.Format(PluginResources.CreditsQPALtUpdatedAndCount
+                                ,Environment.NewLine, rowsAffected); 
+                            MessageBox.Show(strResult1, "Update Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
                     }
-
                 }
-                else
-                {
-                    // This doesn't cause an error, but I force user to run this method when in a relevant table
-                    string err = string.Format("Please select tables {0} or {1}.", "StudentDegrees", "StudentStatusHistory");
-                    MessageBox.Show(err, "Error message", MessageBoxButtons.OK, MessageBoxIcon.Question);
-                }
-            }
-            else if (e.Value == "updateEveryStudentQPA")
-            {
-                // MainForm variable in the plugin has been set to the mainForm of the program by a delegate.  See mainForm constructor. 
-                DataGridViewForm dgvForm = (DataGridViewForm)mainForm;
-                if (dgvForm.currentSql.myTable == TableName.studentDegrees || dgvForm.currentSql.myTable == TableName.studentStatusHistory)
-                {
-                    string result = MsSql.UpdateEveryChangedStudentDegreeStatus();
-                    if (result == String.Empty)
-                    {
-                        MessageBox.Show("All Student statuses in the StudentDegree table updated.", "Update Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-
-                }
-                else
-                {
-                    // This doesn't cause an error, but I force user to run this method when in a relevant table
-                    string err = string.Format("Please select tables {0} or {1}.", "StudentDegrees", "StudentStatusHistory");
-                    MessageBox.Show(err, "Error message", MessageBoxButtons.OK, MessageBoxIcon.Question);
-                }
-
             }
             else
             {

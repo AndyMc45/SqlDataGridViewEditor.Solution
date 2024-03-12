@@ -169,6 +169,9 @@
   <data name="mustSelectAvalue" xml:space="preserve">
     <value>必須選擇一個值</value>
   </data>
+  <data name="narrow" xml:space="preserve">
+    <value>窄表列</value>
+  </data>
   <data name="NoPreviousConnectionSet" xml:space="preserve">
     <value>沒有連結的紀錄</value>
     <comment>Used in datagridviewForm.cs</comment>
@@ -199,6 +202,9 @@
   </data>
   <data name="warning" xml:space="preserve">
     <value>警 告</value>
+  </data>
+  <data name="wide" xml:space="preserve">
+    <value>寬表列</value>
   </data>
   <data name="XrowsPageY" xml:space="preserve">
     <value>{0} 列, 第 {1} 頁</value>

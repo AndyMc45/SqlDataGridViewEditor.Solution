@@ -54,9 +54,14 @@ namespace SqlDataGridViewEditor
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (keyData == (Keys.Control | Keys.U))
+            if (keyData == (Keys.Control | Keys.M))
             {
-                GridContextMenu_FindUnusedFK_Click(null, null);
+                GridContextMenu_SetAsMainFilter_Click(null, null);
+                return true;
+            }
+            else if (keyData == (Keys.Control | Keys.F))
+            {
+                GridContextMenu_SetFkAsMainFilter_Click(null, null);
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
@@ -140,63 +145,64 @@ namespace SqlDataGridViewEditor
 
         private void DataGridViewForm_Load(object sender, EventArgs e)
         {
-            //Shrink size of elements if the screen is too small.
-            int tlp_pixelWidth = tableLayoutPanel.Width;
-            System.Drawing.Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
-            if (workingArea.Width < tlp_pixelWidth)
-            {
-                tableLayoutPanel.Width = workingArea.Width;
-            }
+            ////Shrink size of elements if the screen is too small.
+            //int tlp_pixelWidth = tableLayoutPanel.Width;
+            //System.Drawing.Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
+            //if (workingArea.Width < tlp_pixelWidth)
+            //{
+            //    tableLayoutPanel.Width = workingArea.Width;
+            //}
 
-            // Set things that don't change even if connection changes
-            formOptions = AppData.GetFormOptions();  // Sets initial option values
-            formOptions.runTimer = false;  // Set to true when debugging to check what is slow
+            //// Set things that don't change even if connection changes
+            //formOptions = AppData.GetFormOptions();  // Sets initial option values
+            //formOptions.narrowColumns = false;  // Always begin with wide columns
+            //formOptions.runTimer = false;  // Set to true when debugging to check what is slow
 
-            // 0.  Main filter datasource always a list of wheres and 'last' element always the same (i.e. "No Reasearch object")
-            field fi = new field("none", "none", DbType.Int32, 4, fieldType.pseudo);
-            where wh = new where(fi, "0");
-            wh.DisplayMember = MyResources.MainFilterNotSet;
-            MainFilterList = new BindingList<where>();
-            MainFilterList.Add(wh);
-            cmbMainFilter.DisplayMember = "DisplayMember";
-            cmbMainFilter.ValueMember = "ValueMemeber";
-            formOptions.loadingMainFilter = true;
-            cmbMainFilter.DataSource = MainFilterList;
-            formOptions.loadingMainFilter = false;
-            cmbMainFilter.Enabled = false;  // Enabled by EnableMainFilter() when more than one element
+            //// 0.  Main filter datasource always a list of wheres and 'last' element always the same (i.e. "No Reasearch object")
+            //field fi = new field("none", "none", DbType.Int32, 4, fieldType.pseudo);
+            //where wh = new where(fi, "0");
+            //wh.DisplayMember = MyResources.MainFilterNotSet;
+            //MainFilterList = new BindingList<where>();
+            //MainFilterList.Add(wh);
+            //cmbMainFilter.DisplayMember = "DisplayMember";
+            //cmbMainFilter.ValueMember = "ValueMemeber";
+            //formOptions.loadingMainFilter = true;
+            //cmbMainFilter.DataSource = MainFilterList;
+            //formOptions.loadingMainFilter = false;
+            //cmbMainFilter.Enabled = false;  // Enabled by EnableMainFilter() when more than one element
 
-            // 1. Set pageSize
-            formOptions.pageSize = 100;
-            string strPageSize = AppData.GetKeyValue("RPP");  // If not set, this will return string.Empty
-            int newPageSize = 0;
-            if (int.TryParse(strPageSize, out newPageSize))
-            {
-                if (newPageSize > 9)  // Don't allow less than 10
-                {
-                    formOptions.pageSize = newPageSize;
-                }
-            }
-            txtRecordsPerPage.Text = formOptions.pageSize.ToString();
+            //// 1. Set pageSize
+            //formOptions.pageSize = 100;
+            //string strPageSize = AppData.GetKeyValue("RPP");  // If not set, this will return string.Empty
+            //int newPageSize = 0;
+            //if (int.TryParse(strPageSize, out newPageSize))
+            //{
+            //    if (newPageSize > 9)  // Don't allow less than 10
+            //    {
+            //        formOptions.pageSize = newPageSize;
+            //    }
+            //}
+            //txtRecordsPerPage.Text = formOptions.pageSize.ToString();
 
-            // 2. Set font size
-            DesignControlsOnFormLoad();  // Set font size and other features of various controls
+            //// 2. Set font size
+            //DesignControlsOnFormLoad();  // Set font size and other features of various controls
 
-            // 3. Load Database List (in files menu)
-            load_mnuDatabaseList();  // Add previously open databases to databases menu dropdown list
+            //// 3. Load Database List (in files menu)
+            //load_mnuDatabaseList();  // Add previously open databases to databases menu dropdown list
 
-            // 4. Open Log file
-            // openLogFile(); //errors ignored 
+            //// 4. Open Log file
+            //// openLogFile(); //errors ignored 
 
-            // 5. Open last connection 
-            string msg = OpenConnection();  // Returns any error msg
-            if (msg != string.Empty) { msgText(msg); txtMessages.ForeColor = System.Drawing.Color.Red; }
+            //// 5. Open last connection 
+            //string msg = OpenConnection();  // Returns any error msg
+            //if (msg != string.Empty) { msgText(msg); txtMessages.ForeColor = System.Drawing.Color.Red; }
 
-            // 6. Set Mode and filters to "none".
-            programMode = ProgramMode.none;
-            SetFiltersColumnsTablePanel(); // Will disable filters and call SetTableLayoutPanelHeight();
+            //// 6. Set Mode and filters to "none".
+            //programMode = ProgramMode.none;
+            //SetFiltersColumnsTablePanel(); // Will disable filters and call SetTableLayoutPanelHeight();
 
-            // 7. Hide IT tools
-            mnuShowITTools.Checked = false;
+            //// 7. Hide IT tools
+            //mnuShowITTools.Checked = false;
         }
 
         private void DataGridViewForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -279,77 +285,77 @@ namespace SqlDataGridViewEditor
 
         private void openLogFile()
         {
-            StreamWriter tsWriter = null;
-            string fileCurrentName = "";
-            System.DateTime fileCurrentDate = DateTime.FromOADate(0), fileDate = DateTime.FromOADate(0);
-            FileInfo fil = null;
-            try
-            {
-                string dbPath = Interaction.GetSetting("AccessFreeData", "DatabaseList", "path0", "");
-                string logDir = dbPath.Substring(0, Math.Min(dbPath.LastIndexOf("\\") + 1, dbPath.Length)) + "log";
-                //Create folder
-                if (!Directory.Exists(logDir))
-                {
-                    Directory.CreateDirectory(logDir);
-                }
-                for (int i = 1; i <= 50; i++)
-                {
-                    //if file i does not exist, create and use it
-                    fileCurrentName = logDir + "\\transcriptLog" + dataHelper.twoDigitNumber(i) + ".xml";
-                    if (!File.Exists(fileCurrentName))
-                    {
-                        goto label20;
-                    }
-                    //Compare date of fileCurrentName to previous, delete and use this name if less than previous
-                    fil = new FileInfo(fileCurrentName);
-                    if (fil.LastWriteTime < fileCurrentDate)
-                    {
-                        File.Delete(fileCurrentName);
-                        fil = null;
-                        goto label20;
-                    }
-                    //Update fileCurrentDate
-                    fileCurrentDate = fil.LastWriteTime;
-                    fil = null;
-                }
-                //No files found -- use file 1, 2nd loop, delete & recreate to change create date
-                fileCurrentName = logDir + "\\transcriptLog" + dataHelper.twoDigitNumber(1) + ".xml";
-                File.Delete(fileCurrentName);
+            //StreamWriter tsWriter = null;
+            //string fileCurrentName = "";
+            //System.DateTime fileCurrentDate = DateTime.FromOADate(0), fileDate = DateTime.FromOADate(0);
+            //FileInfo fil = null;
+            //try
+            //{
+            //    string dbPath = Interaction.GetSetting("AccessFreeData", "DatabaseList", "path0", "");
+            //    string logDir = dbPath.Substring(0, Math.Min(dbPath.LastIndexOf("\\") + 1, dbPath.Length)) + "log";
+            //    //Create folder
+            //    if (!Directory.Exists(logDir))
+            //    {
+            //        Directory.CreateDirectory(logDir);
+            //    }
+            //    for (int i = 1; i <= 50; i++)
+            //    {
+            //        //if file i does not exist, create and use it
+            //        fileCurrentName = logDir + "\\transcriptLog" + dataHelper.twoDigitNumber(i) + ".xml";
+            //        if (!File.Exists(fileCurrentName))
+            //        {
+            //            goto label20;
+            //        }
+            //        //Compare date of fileCurrentName to previous, delete and use this name if less than previous
+            //        fil = new FileInfo(fileCurrentName);
+            //        if (fil.LastWriteTime < fileCurrentDate)
+            //        {
+            //            File.Delete(fileCurrentName);
+            //            fil = null;
+            //            goto label20;
+            //        }
+            //        //Update fileCurrentDate
+            //        fileCurrentDate = fil.LastWriteTime;
+            //        fil = null;
+            //    }
+            //    //No files found -- use file 1, 2nd loop, delete & recreate to change create date
+            //    fileCurrentName = logDir + "\\transcriptLog" + dataHelper.twoDigitNumber(1) + ".xml";
+            //    File.Delete(fileCurrentName);
 
-            label20://UPGRADE_WARNING: (2081) CreateTextFile has a new behavior. More Information: https://docs.mobilize.net/vbuc/ewis#2081
-                FileStream tempAuxVar = new FileStream(fileCurrentName, FileMode.Create);
-                formOptions.logFileName = fileCurrentName;
-                FileStream tempAuxVar2 = new FileStream(formOptions.logFileName, FileMode.Create);
-                formOptions.ts = new FileStream(formOptions.logFileName, FileMode.OpenOrCreate, FileAccess.Write);
-                tsWriter = new StreamWriter(formOptions.ts);
-                tsWriter.WriteLine("<?xml version = \"1.0\" encoding=\"Big5\"?>");
-                tsWriter.WriteLine("<sessions>"); //manually add </sessions> if veiwing in xml
-                tsWriter.WriteLine("<d" + DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-" + DateAndTime.Day(DateTime.Now).ToString() + ">");
-                tsWriter.WriteLine("<dataBase>" + "\"" + dbPath + "\"" + "</dataBase>");
-            }
-            catch (Exception exc)
-            {
-                // NotUpgradedHelper.NotifyNotUpgradedElement("Resume in On-Error-Resume-Next Block");
-            }
+            //label20://UPGRADE_WARNING: (2081) CreateTextFile has a new behavior. More Information: https://docs.mobilize.net/vbuc/ewis#2081
+            //    FileStream tempAuxVar = new FileStream(fileCurrentName, FileMode.Create);
+            //    formOptions.logFileName = fileCurrentName;
+            //    FileStream tempAuxVar2 = new FileStream(formOptions.logFileName, FileMode.Create);
+            //    formOptions.ts = new FileStream(formOptions.logFileName, FileMode.OpenOrCreate, FileAccess.Write);
+            //    tsWriter = new StreamWriter(formOptions.ts);
+            //    tsWriter.WriteLine("<?xml version = \"1.0\" encoding=\"Big5\"?>");
+            //    tsWriter.WriteLine("<sessions>"); //manually add </sessions> if veiwing in xml
+            //    tsWriter.WriteLine("<d" + DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-" + DateAndTime.Day(DateTime.Now).ToString() + ">");
+            //    tsWriter.WriteLine("<dataBase>" + "\"" + dbPath + "\"" + "</dataBase>");
+            //}
+            //catch (Exception exc)
+            //{
+            //    // NotUpgradedHelper.NotifyNotUpgradedElement("Resume in On-Error-Resume-Next Block");
+            //}
 
         }
 
         private void closeLogFile()
         {
-            StreamWriter tsWriter = null;
-            //UPGRADE_TODO: (1069) Error handling statement (On Error Resume Next) was converted to a pattern that might have a different behavior. More Information: https://docs.mobilize.net/vbuc/ewis#1069
-            try
-            {
-                tsWriter = new StreamWriter(formOptions.ts);
-                tsWriter.WriteLine("</d" + DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-" + DateAndTime.Day(DateTime.Now).ToString() + ">");
-                tsWriter.WriteLine("</sessions>");
-                tsWriter.Close();
-                formOptions.ts = null;
-            }
-            catch (Exception exc)
-            {
-                // NotUpgradedHelper.NotifyNotUpgradedElement("Resume in On-Error-Resume-Next Block");
-            }
+            //StreamWriter tsWriter = null;
+            ////UPGRADE_TODO: (1069) Error handling statement (On Error Resume Next) was converted to a pattern that might have a different behavior. More Information: https://docs.mobilize.net/vbuc/ewis#1069
+            //try
+            //{
+            //    tsWriter = new StreamWriter(formOptions.ts);
+            //    tsWriter.WriteLine("</d" + DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-" + DateAndTime.Day(DateTime.Now).ToString() + ">");
+            //    tsWriter.WriteLine("</sessions>");
+            //    tsWriter.Close();
+            //    formOptions.ts = null;
+            //}
+            //catch (Exception exc)
+            //{
+            //    // NotUpgradedHelper.NotifyNotUpgradedElement("Resume in On-Error-Resume-Next Block");
+            //}
         }
 
         #endregion
@@ -646,6 +652,10 @@ namespace SqlDataGridViewEditor
                     if (formOptions.narrowColumns)
                     {
                         column.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
+                    }
+                    else
+                    {
+                        column.DefaultCellStyle.ForeColor = System.Drawing.Color.Navy;
                     }
                 }
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
@@ -2599,12 +2609,14 @@ namespace SqlDataGridViewEditor
         private void cmbComboFilterValue_Leave(object sender, EventArgs e)
         {
             ComboBox[] cmbComboFilterValue = { cmbComboFilterValue_0, cmbComboFilterValue_1, cmbComboFilterValue_2, cmbComboFilterValue_3, cmbComboFilterValue_4, cmbComboFilterValue_5 };
-            if (tableOptions.currentComboFilterValue_isDirty)
-            {
-                tableOptions.doNotWriteGrid = true;
-                RebindAllGridFilterValueCombos();
-                tableOptions.doNotWriteGrid = false;
-                tableOptions.currentComboFilterValue_isDirty = false;
+            if(tableOptions != null) { 
+                if (tableOptions.currentComboFilterValue_isDirty)
+                {
+                    tableOptions.doNotWriteGrid = true;
+                    RebindAllGridFilterValueCombos();
+                    tableOptions.doNotWriteGrid = false;
+                    tableOptions.currentComboFilterValue_isDirty = false;
+                }
             }
         }
 
@@ -2840,8 +2852,10 @@ namespace SqlDataGridViewEditor
                 // Defective table has no display keys, but can add an item
                 if (dkWhere.Count > 0)
                 {
-                    string newWhereClause = SqlFactory.SqlStatic.sqlWhereString(dkWhere, string.Empty, true);  // Only display keys enabled so filtered
-                    currentSql.strManualWhereClause = newWhereClause; // Causes the following to search on this where only
+                    // string newWhereClause = SqlFactory.SqlStatic.sqlWhereString(dkWhere, string.Empty, true);  // Only display keys enabled so filtered
+                    // currentSql.strManualWhereClause = newWhereClause; // Next line Causes the following to search on this where only
+                    currentSql.myWheres.Clear(); 
+                    currentSql.myWheres = dkWhere;
                     string strSql = currentSql.returnSql(command.selectAll);
                     MsSqlWithDaDt dadt = new MsSqlWithDaDt(strSql);
                     string errorMsg = dadt.errorMsg;
@@ -3138,12 +3152,15 @@ namespace SqlDataGridViewEditor
 
         private void toolStripColumnWidth_Click(object sender, EventArgs e)
         {
-            toolStripButtonColumnWidth.Enabled = false;
-            formOptions.narrowColumns = !formOptions.narrowColumns;
-            if (formOptions.narrowColumns) { toolStripButtonColumnWidth.Text = "Wide"; }
-            else { toolStripButtonColumnWidth.Text = "Narrow"; }
-            dgvHelper.SetNewColumnWidths(dataGridView1, currentSql.myFields, formOptions.narrowColumns);
-            toolStripButtonColumnWidth.Enabled = true;
+            if(currentSql != null)
+            { 
+                toolStripButtonColumnWidth.Enabled = false;
+                formOptions.narrowColumns = !formOptions.narrowColumns;
+                if (formOptions.narrowColumns) { toolStripButtonColumnWidth.Text = MyResources.wide; }
+                else { toolStripButtonColumnWidth.Text = MyResources.narrow; }
+                dgvHelper.SetNewColumnWidths(dataGridView1, currentSql.myFields, formOptions.narrowColumns);
+                toolStripButtonColumnWidth.Enabled = true;
+            }
         }
 
         #endregion

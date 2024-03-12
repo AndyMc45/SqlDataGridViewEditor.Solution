@@ -207,4 +207,22 @@
   <data name="doYouWantToOpenInWord" xml:space="preserve">
     <value>您想在 Word 中開啟該檔案嗎？</value>
   </data>
+  <data name="andUpdateQPAbasedOnTranscriptTable" xml:space="preserve">
+    <value>它將根據成績單表更新學分、QPA 和最後學期。</value>
+  </data>
+  <data name="CreditsQPALtUpdatedAndCount" xml:space="preserve">
+    <value>{0}已經跟新學分、QPA 和最後學期 ： {1} 學生。</value>
+  </data>
+  <data name="doYouWantToUpdateStDeTable" xml:space="preserve">
+    <value>是否要跟新學生學位表？</value>
+  </data>
+  <data name="StDeTableUpdatedAndCount" xml:space="preserve">
+    <value>已經跟新學生學位表，跟新： {1} 學生。.</value>
+  </data>
+  <data name="thiswillUpdateTheStudentDegreesTable" xml:space="preserve">
+    <value>這將根據學生狀態紀錄表更新學生學位表的學生狀態欄；</value>
+  </data>
+  <data name="updateStudentDegreesTable" xml:space="preserve">
+    <value>跟新學生學位表</value>
+  </data>
 </root>

@@ -264,6 +264,15 @@ namespace SqlDataGridViewEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Narrow.
+        /// </summary>
+        public static string narrow {
+            get {
+                return ResourceManager.GetString("narrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No previous connection string..
         /// </summary>
         public static string NoPreviousConnectionSet {
@@ -360,6 +369,15 @@ namespace SqlDataGridViewEditor.Properties {
         public static string warning {
             get {
                 return ResourceManager.GetString("warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wide.
+        /// </summary>
+        public static string wide {
+            get {
+                return ResourceManager.GetString("wide", resourceCulture);
             }
         }
         

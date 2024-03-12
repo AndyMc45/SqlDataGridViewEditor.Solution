@@ -61,6 +61,15 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to and it will update the credits, QPA, and lastTerm based on the transcript table..
+        /// </summary>
+        public static string andUpdateQPAbasedOnTranscriptTable {
+            get {
+                return ResourceManager.GetString("andUpdateQPAbasedOnTranscriptTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Print English Transcript.
         /// </summary>
         public static string btnEnglishPrintTranscript_Text {
@@ -115,11 +124,29 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}Credit-QPA-LastTerm updated: {1} students..
+        /// </summary>
+        public static string CreditsQPALtUpdatedAndCount {
+            get {
+                return ResourceManager.GetString("CreditsQPALtUpdatedAndCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to open the file in Word?.
         /// </summary>
         public static string doYouWantToOpenInWord {
             get {
                 return ResourceManager.GetString("doYouWantToOpenInWord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to update the StudentDegrees Table?.
+        /// </summary>
+        public static string doYouWantToUpdateStDeTable {
+            get {
+                return ResourceManager.GetString("doYouWantToUpdateStDeTable", resourceCulture);
             }
         }
         
@@ -259,6 +286,15 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to StudentDegree table updated.{0}Status updated: {1} students..
+        /// </summary>
+        public static string StDeTableUpdatedAndCount {
+            get {
+                return ResourceManager.GetString("StDeTableUpdatedAndCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Print.
         /// </summary>
         public static string tabActions_Text {
@@ -313,6 +349,15 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This will update the StudentDegrees Table studentStatus based on the StudentStatusHistory table;.
+        /// </summary>
+        public static string thiswillUpdateTheStudentDegreesTable {
+            get {
+                return ResourceManager.GetString("thiswillUpdateTheStudentDegreesTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Narrow.
         /// </summary>
         public static string toolStripBtnNarrow_Text {
@@ -327,6 +372,15 @@ namespace SqlDataGridViewEditor.TranscriptPlugin.Properties {
         public static string toolStripBtnNarrowWide_Text {
             get {
                 return ResourceManager.GetString("toolStripBtnNarrowWide.Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update StudentDegrees Table.
+        /// </summary>
+        public static string updateStudentDegreesTable {
+            get {
+                return ResourceManager.GetString("updateStudentDegreesTable", resourceCulture);
             }
         }
     }

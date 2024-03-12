@@ -185,6 +185,9 @@
   <data name="mustSelectAvalue" xml:space="preserve">
     <value>Must Select a value</value>
   </data>
+  <data name="narrow" xml:space="preserve">
+    <value>Narrow</value>
+  </data>
   <data name="NoPreviousConnectionSet" xml:space="preserve">
     <value>No previous connection string.</value>
   </data>
@@ -217,6 +220,9 @@
   </data>
   <data name="warning" xml:space="preserve">
     <value>Warning</value>
+  </data>
+  <data name="wide" xml:space="preserve">
+    <value>Wide</value>
   </data>
   <data name="XrowsPageY" xml:space="preserve">
     <value>{0} rows, Page {1}</value>

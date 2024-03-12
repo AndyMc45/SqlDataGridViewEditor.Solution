@@ -44,6 +44,11 @@
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.andUpdateQPAbasedOnTranscriptTable">
+            <summary>
+              Looks up a localized string similar to and it will update the credits, QPA, and lastTerm based on the transcript table..
+            </summary>
+        </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.btnEnglishPrintTranscript_Text">
             <summary>
               Looks up a localized string similar to Print English Transcript.
@@ -74,9 +79,19 @@
               Looks up a localized string similar to Course Role.
             </summary>
         </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.CreditsQPALtUpdatedAndCount">
+            <summary>
+              Looks up a localized string similar to {0}Credit-QPA-LastTerm updated: {1} students..
+            </summary>
+        </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.doYouWantToOpenInWord">
             <summary>
               Looks up a localized string similar to Do you want to open the file in Word?.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.doYouWantToUpdateStDeTable">
+            <summary>
+              Looks up a localized string similar to Do you want to update the StudentDegrees Table?.
             </summary>
         </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.ErrorFillingTranscriptTable0">
@@ -154,6 +169,11 @@
               Looks up a localized string similar to Select Student in {0} table (a descendant of the {1} table).
             </summary>
         </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.StDeTableUpdatedAndCount">
+            <summary>
+              Looks up a localized string similar to StudentDegree table updated.{0}Status updated: {1} students..
+            </summary>
+        </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.tabActions_Text">
             <summary>
               Looks up a localized string similar to Print.
@@ -184,6 +204,11 @@
               Looks up a localized string similar to Transcript.
             </summary>
         </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.thiswillUpdateTheStudentDegreesTable">
+            <summary>
+              Looks up a localized string similar to This will update the StudentDegrees Table studentStatus based on the StudentStatusHistory table;.
+            </summary>
+        </member>
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.toolStripBtnNarrow_Text">
             <summary>
               Looks up a localized string similar to Narrow.
@@ -192,6 +217,11 @@
         <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.toolStripBtnNarrowWide_Text">
             <summary>
               Looks up a localized string similar to Wide.
+            </summary>
+        </member>
+        <member name="P:SqlDataGridViewEditor.TranscriptPlugin.Properties.PluginResources.updateStudentDegreesTable">
+            <summary>
+              Looks up a localized string similar to Update StudentDegrees Table.
             </summary>
         </member>
     </members>

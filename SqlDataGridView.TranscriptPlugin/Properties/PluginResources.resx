@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="andUpdateQPAbasedOnTranscriptTable" xml:space="preserve">
+    <value>and it will update the credits, QPA, and lastTerm based on the transcript table.</value>
+  </data>
   <data name="btnEnglishPrintTranscript.Text" xml:space="preserve">
     <value>Print English Transcript</value>
   </data>
@@ -135,8 +138,14 @@
   <data name="courseRole" xml:space="preserve">
     <value>Course Role</value>
   </data>
+  <data name="CreditsQPALtUpdatedAndCount" xml:space="preserve">
+    <value>{0}Credit-QPA-LastTerm updated: {1} students.</value>
+  </data>
   <data name="doYouWantToOpenInWord" xml:space="preserve">
     <value>Do you want to open the file in Word?</value>
+  </data>
+  <data name="doYouWantToUpdateStDeTable" xml:space="preserve">
+    <value>Do you want to update the StudentDegrees Table?</value>
   </data>
   <data name="ErrorFillingTranscriptTable0" xml:space="preserve">
     <value>ERROR filling transcript table: {0}</value>
@@ -183,6 +192,9 @@
   <data name="selectStudentInTable01" xml:space="preserve">
     <value>Select Student in {0} table (a descendant of the {1} table)</value>
   </data>
+  <data name="StDeTableUpdatedAndCount" xml:space="preserve">
+    <value>StudentDegree table updated.{0}Status updated: {1} students.</value>
+  </data>
   <data name="tabActions.Text" xml:space="preserve">
     <value>Print</value>
   </data>
@@ -201,10 +213,16 @@
   <data name="tabTranscript.Text" xml:space="preserve">
     <value>Transcript</value>
   </data>
+  <data name="thiswillUpdateTheStudentDegreesTable" xml:space="preserve">
+    <value>This will update the StudentDegrees Table studentStatus based on the StudentStatusHistory table;</value>
+  </data>
   <data name="toolStripBtnNarrow.Text" xml:space="preserve">
     <value>Narrow</value>
   </data>
   <data name="toolStripBtnNarrowWide.Text" xml:space="preserve">
     <value>Wide</value>
+  </data>
+  <data name="updateStudentDegreesTable" xml:space="preserve">
+    <value>Update StudentDegrees Table</value>
   </data>
 </root>
